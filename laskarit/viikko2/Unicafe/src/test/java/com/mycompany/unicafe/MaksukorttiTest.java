@@ -17,4 +17,9 @@ public class MaksukorttiTest {
     public void luotuKorttiOlemassa() {
         assertTrue(kortti!=null);      
     }
+    
+    @Test
+    public void syoEdullisestiEiVieSaldoaNegatiiviseksi(){
+        
+    }
 }
