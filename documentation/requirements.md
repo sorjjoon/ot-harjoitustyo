@@ -20,4 +20,4 @@ Some ideas for more advanced properties
 > -Same for offensive cooldowns
 
 User Interace
-> - Uncertain at this time, will start with a very simple text-based interface, which can be later replaced by a more advanced text-based one or a grpahic one
+> - Uncertain at this time, will start with a very simple text-based interface, which can be later replaced by a more advanced text-based one or a graphic one
