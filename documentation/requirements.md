@@ -16,7 +16,7 @@ Some ideas for more advanced properties
 > - locating from a given time frame a highest burst window, meaning an 8 second window in which the dmg dealt was the hightest
 > - Average, highest and lowest uptime for each ability used (uptime meaning time player could have used a specfic abilty but chose not to)
 > - Time the player spent stunned, and dmg taken while stunned
-> - Estitamting the players usage of defensive cooldowns, by studying the player's dmg taken, and seeing which defensive abilities the player had active at a certain time  
+> - Estitamting the player's usage of defensive cooldowns, by studying the player's dmg taken, and seeing which defensive abilities the player had active at a certain time  
 > - Same for offensive cooldowns
 
 User Interace
