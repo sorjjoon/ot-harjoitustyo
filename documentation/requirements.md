@@ -9,8 +9,8 @@ Basic properities
  > - Also this information can be divided between targets (meaning for example dmg done to a specfic target, in the event that multiple enemies have been dealt dmg in a fight)  
  > - Statistics regarding the usage of specific abilities, such as the average damage dealt by a specfic ability  
  
- > -Breakdown of dmg and healing dealt in a single fight by ability
- > - Storage of analyzed logs
+ > -Breakdown of dmg and healing dealt in a single fight by ability  
+> - Storage of analyzed logs
 
 Some ideas for more advanced properties
 > - locating from a given time frame a highest burst window, meaning an 8 second window in which the dmg dealt was the hightest
