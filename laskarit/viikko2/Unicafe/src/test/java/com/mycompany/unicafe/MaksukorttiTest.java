@@ -19,7 +19,60 @@ public class MaksukorttiTest {
     }
     
     @Test
-    public void syoEdullisestiEiVieSaldoaNegatiiviseksi(){
-        
+    public void kortinArvoAlussa() {
+        assertTrue(kortti.saldo()==10);      
     }
+    
+    @Test
+    public void kortinLataus() {
+        kortti.lataaRahaa(20);
+        assertTrue(kortti.saldo()==30);      
+    }
+ 
+    
+    @Test
+    public void rahanOttoVahentaaSaldoaOikein() {
+        
+        kortti.otaRahaa(5);
+
+        assertTrue(kortti.saldo()==5);
+}
+    
+     
+    @Test
+    public void rahanOttoLiianIsolla() {
+        
+        kortti.otaRahaa(50);
+
+        assertTrue(kortti.saldo()==10);
+}
+    
+    
+     
+    @Test
+    public void rahanOttoPalauttaaFalseLiianIsolla() {
+        
+        
+
+        assertFalse(kortti.otaRahaa(50));
+}
+    
+    @Test
+    public void rahanOttoPalauttaaTrue() {
+        
+        
+
+        assertTrue(kortti.otaRahaa(5));
+}
+    
+    
+    @Test
+    public void toStringMetodiToimiiOikein(){
+        assertEquals("saldo: "+0+"."+10,kortti.toString());
+    }
+    
+    
+    
+    
+    
 }
