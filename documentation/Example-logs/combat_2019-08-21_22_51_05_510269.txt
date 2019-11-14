@@ -9279,7 +9279,7 @@
 [23:22:52.981] [@Firaksîan] [@Firaksîan] [Guard {1780032015958016}] [RemoveEffect {836045448945478}: Rule of Two {1780032015958335}] ()
 [23:22:53.091] [@Alec] [@Firaksîan] [Awe {1596834480914432}] [RemoveEffect {836045448945478}: Damage Reduced (Mental) {1596834480914799}] ()
 [23:22:53.384] [@Alec] [@Firaksîan] [Challenging Call {812079531425792}] [ApplyEffect {836045448945477}: Taunt {812079531426137}] ()
-[23:22:53.484] [@Firaksîan] [@Firaksîan] [Chilling Scream {3436051146211328}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()
+[23:22:53.484] [@Firaksîan] [@Firaksîan] [Chilling Scream {343605114621132ent8}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()
 [23:22:53.485] [@Firaksîan] [@Firaksîan] [] [Spend {836045448945473}: rage point {836045448938497}] (2)
 [23:22:53.485] [@Firaksîan] [@Firaksîan] [Piercing Chill {3909511161053184}] [ApplyEffect {836045448945477}: Chilling Speed {3909511161053500}] ()
 [23:22:53.486] [@Firaksîan] [@Who ?¶wintrader] [Chilling Scream {3436051146211328}] [ApplyEffect {836045448945477}: Slow (Force) {3436051146211588}] ()
