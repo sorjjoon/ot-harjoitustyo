@@ -9,4 +9,6 @@ See [Example logs](documentation/Example-logs) for some sample logs
 
 [Requirements](documentation/requirements.md)
 
+[Time Usage](documentation/timeusage.md)
+
 
