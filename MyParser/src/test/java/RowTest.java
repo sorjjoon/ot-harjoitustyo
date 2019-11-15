@@ -45,7 +45,7 @@ public class RowTest {
     
     
     @Test
-    public void timeStamp(){
+    public void timeStamp()throws Exception{
         Row row = new Row("[23:06:40.498] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )","2019-01-01 ");
         assertEquals(row.getTimestamp().toString(),"2019-01-01 23:06:40.498");
     }

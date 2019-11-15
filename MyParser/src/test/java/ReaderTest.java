@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+import myparser.myparser.Reader;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,6 +42,9 @@ public class ReaderTest {
     // @Test
     // public void hello() {}
 //    
-//    @Test
-//    public void 
+    @Test
+    public void dateFromFile()throws Exception{
+        String date=Reader.dateFromPath("/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-21_22_51_05_510269.txt");
+            assertEquals("2019-08-21",date);
+    }
 }

@@ -9,14 +9,11 @@ package myparser.myparser;
  *
  * @author joona
  */
-public enum Eventtype {
-    
-    Death,
-    Revived,
+public enum Effecttype {
+    Damage,
+    Heal,
+    AbilityActivate,
     ModifyThreat,
-    EnterCombat,
-    AbilityInterrupt,
-    ExitCombat,
-    AbilityActivate
     
+    AbilityDeactivate,
 }
