@@ -5,22 +5,16 @@
  */
 package myparser.myparser;
 
-
 /**
  *
  * @author joona
  */
-public enum Eventtype {
-    
-    Death,
-    Revived,
-    ModifyThreat,
-    EnterCombat,
-    AbilityInterrupt,
-    ExitCombat,
-    AbilityActivate,
-    AbilityDeactivate,
-    FallingDamage
+public enum Damagetype {
+    internal,
+    energy,
+    kinetic,
+    elemental,
+    miss
     
     
 }

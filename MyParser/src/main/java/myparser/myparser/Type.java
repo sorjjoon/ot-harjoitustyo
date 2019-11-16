@@ -12,6 +12,7 @@ package myparser.myparser;
 public enum Type {
     ApplyEffect,
     RemoveEffect,
-    Event
-    
+    Event,
+    Restore,
+    Spend
 }

@@ -45,6 +45,6 @@ public class ReaderTest {
     @Test
     public void dateFromFile()throws Exception{
         String date=Reader.dateFromPath("/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-21_22_51_05_510269.txt");
-            assertEquals("2019-08-21",date);
+            assertEquals("2019-08-21 ",date);
     }
 }
