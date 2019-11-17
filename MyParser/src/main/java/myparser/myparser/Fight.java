@@ -14,15 +14,15 @@ public class Fight {
 
     public Fight(ArrayList<Row> rows) throws NoOwnerException {
         this.rows = rows;
-        //Determine the "owner" of the log, this method doesn't work if you haven't activated a single ability but come on, what's the point of the log then?
+        //Determine the "owner" of the log, this method should work everytime?
         for(Row r:rows){
-            if(r.getEventtype()==Eventtype.AbilityActivate){
+            if(r.getEventtype()==Eventtype.EnterCombat||r.getEventtype()==Eventtype.ExitCombat){
                 this.owner=r.getSource();
                 return;
             }
         }
         //If we can't determine an owner for the log, we raise an exception
-        throw new NoOwnerException();
+        throw new NoOwnerException("NoOwnerException");
     }
         //In case we don't need to determine the owner
         public Fight(ArrayList<Row> rows, String Owner) throws NoOwnerException {

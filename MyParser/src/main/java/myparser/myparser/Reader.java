@@ -93,9 +93,11 @@ public class Reader {
                     Row row=new Row(rawline);
                     if(row.getEventtype()==Eventtype.EnterCombat){
                         in_fight=true;
+                        
                     }
                     else if(row.getEventtype()==Eventtype.ExitCombat){
                         in_fight=false;
+                        lines.add(row); //adding the exitcombat line (to get exit time)
                         if(!lines.isEmpty()){
                             Fight fight=new Fight(lines);
                             fights.add(fight);
@@ -111,6 +113,11 @@ public class Reader {
                         lines.add(row);
                         }
                    
+                }catch(NoOwnerException e){
+                    //TODO no owner exception
+                    
+                    
+                    
                 }catch(Exception e){
                     System.out.println("Rivin "+i+" luku ei onnistunut"+e.getMessage());
                     list.add(i);
