@@ -4,4 +4,5 @@
 | 13.11. | 4    | started working on reading the log file|
 | 14.11  | 3    | More file reading|
 | 16.11 | 5 | row class mostly done
-| yht   | 28   | | 
+| 17.11 | 1 | fight class basic methods
+
