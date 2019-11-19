@@ -141,16 +141,17 @@ public class Reader {
                 
         }
         //this is for debuging
-            for(Integer z : list){
-                System.out.println(z);
-            }
-            System.out.println(list.size());
+//            for(Integer z : list){
+//                System.out.println(z);
+//            }
+//            System.out.println(list.size());
         return fights;
     }
     
     
     
-    
+    //this is an old method you could use to get a date from the logfile name,( log files have default names which contain the date)
+    //It is not used in the current version, but I'm not yet sure if it is completelly unnecessary
     public static String dateFromPath(String path) throws IllegalFormatException,IndexOutOfBoundsException{
         String file_name = path.substring(path.lastIndexOf("/")+1);
         int index=file_name.indexOf("_");

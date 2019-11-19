@@ -34,7 +34,7 @@ public class Main {
                 System.out.println("----------------------------------");
                 System.out.println("Fight "+k);
                 System.out.println("Total dmg done "+Stats.getAllDamageByOwner(f));
-                System.out.println("dps" +Stats.dps(f));
+                System.out.println("dps " +Stats.dps(f));
                 System.out.println("Total dmg taken "+Stats.getAllDamageToOwner(f));
                 System.out.println("dtps "+Stats.dtps(f));
                 System.out.println("Total healing done "+Stats.getAllHealingByOwner(f));
