@@ -20,7 +20,9 @@ public enum Eventtype {
     ExitCombat,
     AbilityActivate,
     AbilityDeactivate,
-    FallingDamage
+    FallingDamage,
+    AbilityCancel,
+    FailedEffect
     
     
 }

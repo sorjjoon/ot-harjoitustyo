@@ -47,7 +47,7 @@ public class Row {
         this.miss =false;
         this.crit=false;
         this.shielded=false;
-        
+//        System.out.println("Row");
         String[] parts=rawline.split("\\] \\[");
 
         //removing useless chars from input String and storing the values from input String into the row object

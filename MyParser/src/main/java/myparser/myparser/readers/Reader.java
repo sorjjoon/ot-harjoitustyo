@@ -80,8 +80,8 @@ public class Reader {
                     //TODO find out if really weird names (like in arabic letters) break this reader
     
     public static ArrayList<Fight> readFile(String path)throws FileNotFoundException{
-        Scanner reader=new Scanner(new File(path));
-        
+        Scanner reader=new Scanner(new File(path),"ISO-8859-1");
+        //System.out.println("moi");
         ArrayList<Row> lines = new ArrayList();
         ArrayList<Fight> fights = new ArrayList();
         
@@ -90,7 +90,6 @@ public class Reader {
         int i=0;
         ArrayList<Integer> list=new ArrayList();
         while(reader.hasNext()){
-            
             String rawline=reader.nextLine();
             i++;
             
@@ -100,6 +99,7 @@ public class Reader {
             
             
                     Row row=new Row(rawline);
+//                    System.out.println(row.getEventtype());
                     if(row.getEventtype()==Eventtype.EnterCombat){
                         in_fight=true;
                         
@@ -134,7 +134,7 @@ public class Reader {
                     //in either case we can freely discard the single line, and it shouldn't affect
                     
                     
-                    ///System.out.println("Rivin "+i+" luku ei onnistunut"+e.getMessage());
+                    System.out.println("Rivin "+i+" luku ei onnistunut"+e.getMessage());
                     list.add(i);
                 }
                 
