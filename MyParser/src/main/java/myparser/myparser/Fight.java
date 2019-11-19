@@ -1,9 +1,10 @@
 
 package myparser.myparser;
 
-import java.time.LocalTime;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *contains all the rows to a specific fight
@@ -147,5 +148,53 @@ public class Fight {
             this.rows.add(r);
         }
     }
+    
+    public HashMap<String,Integer> divideDamageTakenByOwner(){
+        HashMap<String,Integer> results=new HashMap();
+        for(Row r : this.rows){
+            if(r.getEffecttype()!=null && r.getEffecttype().equals("Damage")&&r.getTarget().equals(this.owner)){
+                if(results.get(r.getSource())==null){
+                    results.put(r.getSource(), r.getDmg_heal());
+                }else{
+                    Integer helper =results.get(r.getSource());
+                    results.put(r.getSource(), helper+r.getDmg_heal());
+                }
+            }
+                
+            }
+        return results;
+    }
+    
+    public HashMap<String,Integer> divideDamageDealtByTarget(){
+        HashMap<String,Integer> results=new HashMap();
+        for(Row r : this.rows){
+            if(r.getEffecttype()!=null && r.getEffecttype().equals("Damage")&&r.getSource().equals(this.owner)){
+                if(results.get(r.getTarget())==null){
+                    results.put(r.getTarget(), r.getDmg_heal());
+                }else{
+                    Integer helper =results.get(r.getTarget());
+                    results.put(r.getTarget(), helper+r.getDmg_heal());
+                }
+            }
+                
+            }
+        return results;
+    }
+    
+    public ArrayList<Row> rowsInTimeFrame(LocalTime start, LocalTime end){
+        ArrayList<Row> specfic_rows =new ArrayList();
+        for(Row r:this.rows){
+            if(r.getTimestamp().isAfter(start)){
+                if(r.getTimestamp().isBefore(end)){
+                    break;
+                }else{
+                    specfic_rows.add(r);
+                }
+                
+            }
+        }
+        return specfic_rows;
+    }
+    
         
 }
