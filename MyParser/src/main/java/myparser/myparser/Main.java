@@ -5,13 +5,12 @@
  */
 package myparser.myparser;
 
+import java.io.FileNotFoundException;
 import myparser.myparser.readers.Reader;
 import myparser.myparser.domain.Fight;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
-import static myparser.myparser.stats.Stats.*;
 import java.util.Scanner;
 import myparser.myparser.stats.Stats;
 
@@ -22,8 +21,9 @@ import myparser.myparser.stats.Stats;
 public class Main {
 
     public static void main(String[] args) {
+        while(true){
         try{
-            System.out.println("Hi, this currently a really bad ui (and it's the main method cause I'm lazy), but haven't had time to work on a proper ui yet, and I'm not sure if this week we needed this so you can test the project");
+            System.out.println("Hi, this currently a really bad ui (and it's the main method cause I'm lazy, because this ui is basicly a placeholder), but haven't had time to work on a proper ui yet, and I'm not sure if this week we needed this so you can test the project");
             System.out.println("Give me the path to a log file and I'll print out some sample stats for it (you can find example logs in documentation)");
             Scanner reader = new Scanner(System.in);
             String path=reader.nextLine();
@@ -47,10 +47,15 @@ public class Main {
                 k++;
             }
             System.out.println("-------------------------------");
-            System.out.println("Note, these are not all the stats I can generate atm, but just the ones I can show you in a nice way :)");
+            System.out.println("Note, these are not all the stats I can generate atm, but just the ones I can show you in a nice way in my terrible ui :)");
+                break;
             
-            
-}
+        }catch(FileNotFoundException e){
+            System.out.println("File not found, give a proper path");
+            System.out.println("");
+            System.out.println("");
+        }
+
         catch(Exception e){
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -59,6 +64,6 @@ public class Main {
             System.out.println(sStackTrace);
 
         }
-    
+        }   
 }
 }
