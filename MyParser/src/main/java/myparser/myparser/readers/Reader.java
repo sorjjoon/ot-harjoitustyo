@@ -1,6 +1,10 @@
 
-package myparser.myparser;
+package myparser.myparser.readers;
 
+import myparser.myparser.domain.Fight;
+import myparser.myparser.domain.Row;
+import myparser.myparser.domain.NoOwnerException;
+import myparser.myparser.types.Eventtype;
 import java.io.File;
 import java.io.FileNotFoundException;
 //import java.sql.Timestamp;
@@ -13,6 +17,8 @@ import java.util.Scanner;
  * and returning an ArrayList containing the rows it has read
  */
 public class Reader {
+    //This is an old version of reader, which also used a date when reading. I'll probably remove it later when I'm certain I don't need it
+    
     
 //    public static ArrayList<Fight> readFile(String path, String date)throws FileNotFoundException{
 //        Scanner reader=new Scanner(new File(path));
@@ -70,6 +76,9 @@ public class Reader {
 //        return fights;
 //    }
     
+    
+                    //TODO find out if really weird names (like in arabic letters) break this reader
+    
     public static ArrayList<Fight> readFile(String path)throws FileNotFoundException{
         Scanner reader=new Scanner(new File(path));
         
@@ -119,13 +128,19 @@ public class Reader {
                     
                     
                 }catch(Exception e){
-                    System.out.println("Rivin "+i+" luku ei onnistunut"+e.getMessage());
+                    //for debuging
+                    //in case we fail to read a row, it's because the log owner has changed it for some reason, or it's a very rare kind
+                    //entry, which in a diffrent kind of format (shouldn't happen)
+                    //in either case we can freely discard the single line, and it shouldn't affect
+                    
+                    
+                    ///System.out.println("Rivin "+i+" luku ei onnistunut"+e.getMessage());
                     list.add(i);
                 }
                 
                 
         }
-        
+        //this is for debuging
             for(Integer z : list){
                 System.out.println(z);
             }

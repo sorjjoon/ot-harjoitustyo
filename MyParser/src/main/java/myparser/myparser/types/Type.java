@@ -3,17 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package myparser.myparser;
+package myparser.myparser.types;
 
 /**
  *
  * @author joona
  */
-public enum Effecttype {
-    Damage,
-    Heal,
-    AbilityActivate,
-    ModifyThreat,
-    
-    AbilityDeactivate,
+public enum Type {
+    ApplyEffect,
+    RemoveEffect,
+    Event,
+    Restore,
+    Spend
 }

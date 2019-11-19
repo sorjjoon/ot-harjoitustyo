@@ -5,10 +5,15 @@
  */
 package myparser.myparser;
 
+import myparser.myparser.readers.Reader;
+import myparser.myparser.domain.Fight;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import static myparser.myparser.stats.Stats.*;
+import java.util.Scanner;
+import myparser.myparser.stats.Stats;
 
 /**
  *
@@ -18,37 +23,34 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            //Type moi=Type.valueOf("name");
-            //ArrayList<Integer> moi = new ArrayList();
-//            Row row=new Row("[23:06:43.047] [@Blonde'kate] [@Firaksîan] [Recuperative Nanotech {815232037421056}] [ApplyEffect {836045448945477}: Heal {836045448945500}] (1014) <456>");
-            String date=Reader.dateFromPath("/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-21_22_51_05_510269.txt");
-//      //  String date=Reader.dateFromPath("/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_201oadiljk.txt");
-//            Row row=new Row("[23:06:35.017] [@Firaksîan] [@Shâløm Kappa] [Force Charge {807750204391424}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1147* energy {836045448940874} -shield {836045448945509} (3148 absorbed {836045448945511})) <2867>");
-//            System.out.println(row.getDmg_heal());
-//            System.out.println(row.isCrit());
-            ArrayList<Fight> fights=Reader.readFile("/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-21_22_51_05_510269.txt");
-            int sum=0;
-            for(Fight f : fights){
-                HashMap<String,Integer> moi=f.divideDamageTakenByOwner();
-                for(String s:moi.keySet()){
-//                    System.out.println(moi.get(s));
-                    sum+=moi.get(s);
-                }
-                System.out.println(sum-f.getAllDamageToOwner());
-                sum=0;
+            System.out.println("Hi, this currently a really bad ui, but haven't had time to work on it, and I'm not sure if this week we needed this so you can test the project");
+            System.out.println("Give me the path to a log file and I'll print out some sample stats for it (you can find example logs in documentation)");
+            Scanner reader = new Scanner(System.in);
+            String path=reader.nextLine();
+            ArrayList<Fight> fights_in_the_log = Reader.readFile(path);
+            System.out.println("There were "+fights_in_the_log.size()+" different fights in this log, I'll print some stats for you");
+            int k=1;
+            for(Fight f:fights_in_the_log){
+                System.out.println("----------------------------------");
+                System.out.println("Fight "+k);
+                System.out.println("Total dmg done "+Stats.getAllDamageByOwner(f));
+                System.out.println("dps" +Stats.dps(f));
+                System.out.println("Total dmg taken "+Stats.getAllDamageToOwner(f));
+                System.out.println("dtps "+Stats.dtps(f));
+                System.out.println("Total healing done "+Stats.getAllHealingByOwner(f));
+                System.out.println("hps "+Stats.hps(f));
+                System.out.println("");
+                k++;
             }
-//            for(int i=0;i<50;i++){
-//                System.out.println("---------------------------");
-//                
-//            }
-//                
-//            }
+            
+            ;
+            
 }
         catch(Exception e){
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            String sStackTrace = sw.toString(); // stack trace as a string
+            String sStackTrace = sw.toString(); 
             System.out.println(sStackTrace);
 
         }

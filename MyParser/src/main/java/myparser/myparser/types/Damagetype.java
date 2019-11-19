@@ -3,24 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package myparser.myparser;
-
+package myparser.myparser.types;
 
 /**
  *
  * @author joona
  */
-public enum Eventtype {
-    
-    Death,
-    Revived,
-    ModifyThreat,
-    EnterCombat,
-    AbilityInterrupt,
-    ExitCombat,
-    AbilityActivate,
-    AbilityDeactivate,
-    FallingDamage
+public enum Damagetype {
+    internal,
+    energy,
+    kinetic,
+    elemental,
+    miss
     
     
 }

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-import myparser.myparser.Row;
+import myparser.myparser.domain.Row;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertEquals;

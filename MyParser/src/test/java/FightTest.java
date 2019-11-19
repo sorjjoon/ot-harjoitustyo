@@ -5,8 +5,9 @@
  */
 
 import java.util.ArrayList;
-import myparser.myparser.Fight;
-import myparser.myparser.Row;
+import myparser.myparser.domain.Fight;
+import myparser.myparser.domain.Row;
+import myparser.myparser.stats.Stats;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,7 +55,7 @@ public class FightTest {
          test.add(row2);
          Fight fight=new Fight(test);
          assertEquals("@Firaksîan",fight.getOwner());
-         assertEquals(fight.getDuration(),(long)1);
+         assertEquals(Stats.getDuration(fight),(long)1);
          
      }
      
@@ -70,7 +71,7 @@ public class FightTest {
          test.add(row2);
          Fight fight=new Fight(test);
          assertEquals("@Firaksîan",fight.getOwner());
-         assertTrue(fight.getDuration()==(long)1+3.66e+6);
+         assertTrue(Stats.getDuration(fight)==(long)1+3.66e+6);
          
      }
      
@@ -88,7 +89,7 @@ public class FightTest {
          
          
          
-         assertEquals((long)1+7.26e+6,fight.getDuration(),0);
+         assertEquals((long)1+7.26e+6,Stats.getDuration(fight),0);
          assertEquals("@Firaksîan",fight.getOwner());
      }
      

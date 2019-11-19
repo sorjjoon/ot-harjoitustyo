@@ -3,8 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package myparser.myparser;
+package myparser.myparser.domain;
 
+import myparser.myparser.types.Type;
+import myparser.myparser.types.Eventtype;
+import myparser.myparser.types.Damagetype;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalTime;
