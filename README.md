@@ -7,6 +7,8 @@ See [Example logs](documentation/Example-logs) for some sample logs
 -----------------------------------------------------------------  
 **Documentation**
 
+[Instructions](documentation/instructions.md)
+
 [Requirements](documentation/requirements.md)
 
 [Time Usage](documentation/timeusage.md)

@@ -1,0 +1,1 @@
+Currently the project works with the green button in NetBeans (I don't know if it works on the university machines via the command line)
