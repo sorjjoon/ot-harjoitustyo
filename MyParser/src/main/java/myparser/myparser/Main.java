@@ -5,8 +5,16 @@
  */
 package myparser.myparser;
 
-import ui.Textui;
-import ui.ui;
+import database.Database;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+import myparser.myparser.domain.Fight;
+import myparser.myparser.domain.Row;
+import myparser.myparser.readers.Reader;
+import myparser.myparser.stats.Stats;
+import myparser.myparser.ui.Textui;
+import myparser.myparser.ui.ui;
 
 /**
  *
@@ -14,10 +22,25 @@ import ui.ui;
  */
 public class Main {
 
-    public static void main(String[] args) {
-            ui textui=new Textui();
-            textui.run();
+    public static void main(String[] args)throws Exception {
+        Database moi=new Database();
         
+//        moi.reset();
+        
+        String path="/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-18_22_33_23_136322.txt";
+        ArrayList<Fight> fights = Reader.readFile(path);
+        Fight fight=fights.get(0);
+        moi.addFight(fight, Reader.dateFromPath(path), "test","combat_2019-08-18_22_33_23_136322.txt");
+////    
+        ArrayList<String> hei=moi.getSavedLogs();
+        for(String s:hei){
+            System.out.println(s);
+        }
+        moi.close();
+//        Test.main(args);
+//            ui textui=new Textui();
+//            textui.run();
+//        
         
         
 //        while(true){
@@ -30,6 +53,13 @@ public class Main {
 //            System.out.println("There were "+fights_in_the_log.size()+" different fights in this log, I'll print some stats for you");
 //            int k=1;
 //            for(Fight f:fights_in_the_log){
+//                ArrayList<Row> rows =f.getRows();
+//                for(Row r:rows){
+//                    if(r.getEventtype()==null&&r.getEffecttype()==null){
+//                        System.out.println(r);
+//                    }
+//                }
+//            }
 //                System.out.println("----------------------------------");
 //                System.out.println("Fight "+k);
 //                long duration=Stats.getDuration(f)/1000;
@@ -47,7 +77,7 @@ public class Main {
 //            }
 //            System.out.println("-------------------------------");
 //            System.out.println("Note, these are not all the stats I can generate atm, but just the ones I can show you in a nice way in my terrible ui :)");
-//                break;
+//                
 //            
 //        }catch(FileNotFoundException e){
 //            System.out.println("File not found, give a proper path");

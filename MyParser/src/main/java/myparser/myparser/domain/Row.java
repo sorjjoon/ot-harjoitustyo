@@ -172,6 +172,9 @@ public class Row {
                 output+=", "+this.dmg_heal;
                 }
         }
+        if(this.crit){
+            output+=", *";
+        }
         return output;
     }
     
