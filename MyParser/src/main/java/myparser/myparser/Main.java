@@ -25,7 +25,7 @@ public class Main {
     public static void main(String[] args)throws Exception {
         Database moi=new Database();
         
-//        moi.reset();
+        moi.reset();
         
         String path="/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-18_22_33_23_136322.txt";
         ArrayList<Fight> fights = Reader.readFile(path);
