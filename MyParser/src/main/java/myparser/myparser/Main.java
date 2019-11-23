@@ -27,15 +27,24 @@ public class Main {
         
 //        moi.reset();
         
-        String path="/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-18_22_33_23_136322.txt";
-        ArrayList<Fight> fights = Reader.readFile(path);
-        Fight fight=fights.get(0);
-        moi.addFight(fight, Reader.dateFromPath(path), "test","combat_2019-08-18_22_33_23_136322.txt");
-////    
-        ArrayList<String> hei=moi.getSavedLogs();
-        for(String s:hei){
-            System.out.println(s);
+        String path="/home/joona/ohjelmointi/ot-harjoitustyo-master/MyParser/src/test/test.txt";
+//        ArrayList<Fight> fights = Reader.readFile(path);
+        int sum=0;
+        ArrayList<Integer> fights=moi.getFightIds(1);
+        System.out.println(fights.size());
+        for(Integer f :fights){
+            System.out.println(f);
+//            sum+=f.getSize();
+//            System.out.println(sum);
         }
+        System.out.println(sum);
+//        Fight fight=fights.get(0);
+//        moi.addFight(fights, Reader.dateFromPath(path), "test","combat_2019-08-18_22_33_23_136322.txt");
+////    
+//        ArrayList<String> hei=moi.getSavedLogs();
+//        for(String s:hei){
+//            System.out.println(s);
+//        }
         moi.close();
 //        Test.main(args);
 //            ui textui=new Textui();

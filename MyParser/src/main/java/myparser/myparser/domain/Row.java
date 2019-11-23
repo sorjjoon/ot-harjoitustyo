@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalTime;
 import java.util.IllegalFormatException;
+import java.util.Objects;
 
 /**
  *
@@ -35,7 +36,20 @@ public class Row {
     public boolean isMiss() {
         return miss;
     }
-    
+
+    public Row(LocalTime timestamp, String source, String target, Type type, String effecttype, Eventtype eventtype, String ability_name, int dmg_heal, boolean crit, boolean shielded, boolean miss) {
+        this.timestamp = timestamp;
+        this.source = source;
+        this.target = target;
+        this.type = type;
+        this.effecttype = effecttype;
+        this.eventtype = eventtype;
+        this.ability_name = ability_name;
+        this.dmg_heal = dmg_heal;
+        this.crit = crit;
+        this.shielded = shielded;
+        this.miss = miss;
+    }
     
     
  
@@ -87,44 +101,22 @@ public class Row {
                 try{
 
                     String rivi=after_type.substring(after_type.indexOf("(")+1, after_type.substring(after_type.indexOf("("),after_type.length()-1).indexOf(" ")+after_type.indexOf("(")+1);
-                    //String rivi=rawline.substring(rawline.lastIndexOf("(")+1, rawline.lastIndexOf(")"));
-//                    String[] rivi_split=after_type.split(" ");
-//                    for(String s:rivi_split){
-//                        System.out.println(s);
-//                    }
-////
-//                      System.out.println(rivi);
-//                    if(rivi.contains(")")){
+                  
                         rivi=rivi.replace(")", "");
 //                    }
                     if(rivi.contains("*")){
-//                        this.crit=true;
+
                         rivi=rivi.trim();
                         this.crit=true;
                         rivi=rivi.substring(0,rivi.length()-1);
                     }else{
                         this.crit=false;
                     }
-                    
-////                    rivi_split[3].replaceFirst("(", "");
-////                        System.out.println(rivi_split[3]);
                     this.dmg_heal=Integer.valueOf(rivi.trim());
-//                    
-////                    System.out.println(rivi_split[1]);
-//                    this.dmg_type=Damagetype.valueOf(rivi_split[1]);
-                    
-                    
+//                  
                 }catch(IndexOutOfBoundsException |  NumberFormatException e){  
-                   
-//                        String rivi=after_type.substring(after_type.indexOf("(")+1, after_type.substring(after_type.indexOf("("),after_type.length()-1).indexOf(" ")+after_type.indexOf("(")+1);
-//                        System.out.println();
-////                    System.out.println(after_type);
-//                    String rivi=after_type.substring(after_type.indexOf("(")+1, after_type.length());
-
+                  
                     String rivi=rawline.substring(rawline.lastIndexOf("(")+1, rawline.lastIndexOf(")"));
-                    
-//                    System.out.println(after_type.length());
-//                    System.out.println(after_type.charAt(after_type.length()-1));
                     index=rivi.indexOf(")");
                     if(index>1){
                         rivi=rivi.substring(0, index);
@@ -146,7 +138,7 @@ public class Row {
             this.miss=true;
         }
         }else{
-            //this shouldn't happen tho...
+            //this shouldn happen only with resource lines. We could do something with these, but it would be very complicated
             this.eventtype=null;
             this.effecttype=null; 
             }
@@ -227,5 +219,61 @@ public class Row {
     public boolean isShielded() {
         return shielded;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Row other = (Row) obj;
+        if (this.dmg_heal != other.dmg_heal) {
+            return false;
+        }
+        if (this.threat != other.threat) {
+            return false;
+        }
+        if (this.crit != other.crit) {
+            return false;
+        }
+        if (this.shielded != other.shielded) {
+            return false;
+        }
+        if (this.miss != other.miss) {
+            return false;
+        }
+        if (!Objects.equals(this.source, other.source)) {
+            return false;
+        }
+        if (!Objects.equals(this.target, other.target)) {
+            return false;
+        }
+        if (!Objects.equals(this.effecttype, other.effecttype)) {
+            return false;
+        }
+        if (!Objects.equals(this.ability_name, other.ability_name)) {
+            return false;
+        }
+        if (!Objects.equals(this.timestamp, other.timestamp)) {
+            return false;
+        }
+        if (this.type != other.type) {
+            return false;
+        }
+        if (this.eventtype != other.eventtype) {
+            return false;
+        }
+        if (this.dmg_type != other.dmg_type) {
+            return false;
+        }
+        return true;
+    }
+    
     
 }

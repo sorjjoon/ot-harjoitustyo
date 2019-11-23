@@ -6,6 +6,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  *contains all the rows to a specific fight
@@ -81,5 +82,25 @@ public class Fight {
             this.rows.add(r);
         }
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Fight other = (Fight) obj;
+        if (!Objects.equals(this.rows, other.rows)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
 }

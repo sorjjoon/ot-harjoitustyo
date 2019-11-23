@@ -45,7 +45,90 @@ public class RowTest {
     // @Test
     // public void hello() {}
     
+    @Test
+    public void rowEquals1(){
+        Row row1 = new Row("[23:03:45.393] [@Blonde'kate] [@Firaksîan] [Kolto Infusion {1014376786034688}] [ApplyEffect {836045448945477}: Heal {836045448945500}] (629*)");
+        Row row2 = new Row("[23:03:45.393] [@Blonde'kate] [@Firaksîan] [Kolto Infusion {1014376786034688}] [ApplyEffect {836045448945477}: Heal {836045448945500}] (629*)");
+        assertEquals(row1,row2);
+    }
     
+    @Test
+    public void rowNotEquals1(){
+        Row row1 = new Row("[23:06:40.498] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )");
+        Row row2 = new Row("[23:03:45.393] [@Blonde'kate] [@Firaksîan] [Kolto Infusion {1014376786034688}] [ApplyEffect {836045448945477}: Heal {836045448945500}] (629*)");
+        assertFalse(row1.equals(row2));
+    }
+    @Test
+    public void rowEquals2(){
+        Row row1=new Row("[22:52:09.959] [@Firaksîan] [@Firaksîan] [Chilling Scream {3436051146211328}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()");
+        Row row2=new Row("[22:52:09.959] [@Firaksîan] [@Firaksîan] [Chilling Scream {3436051146211328}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()");
+        assertEquals(row1,row2);
+    }
+    
+    
+     @Test
+    public void rowEqualsdmgCritShield()throws Exception{
+        Row row1 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertEquals(row1,row2);
+        
+    }
+     @Test
+    public void rowNotEqualsdmgCritShieldTimeStampChange()throws Exception{
+        //changed timestamp on row1
+        Row row1 = new Row("[23:22:32.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertFalse(row1.equals(row2));
+        
+    }
+     @Test
+    public void rowNotEqualsdmgCritShieldNameChange()throws Exception{
+        //changed name on row1
+        Row row1 = new Row("[23:22:31.876] [@Mamalookiamamagiian] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertFalse(row1.equals(row2));
+        
+    }
+    @Test
+    public void rowNotEqualsdmgCritShieldAbilityNameChange()throws Exception{
+        //changed ability name on row1
+        Row row1 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Foce Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertFalse(row1.equals(row2));
+        
+    }
+    @Test
+    public void rowNotEqualsdmgCritShieldDmgChange()throws Exception{
+        //changed damage on row1
+        Row row1 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (42* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertFalse(row1.equals(row2));
+        
+    }
+    @Test
+    public void rowNotEqualsdmgCritShieldTargetChange()throws Exception{
+        //changed target from row 1 (note changed the î to i) 
+        Row row1 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksian] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertFalse(row1.equals(row2));
+        
+    }
+    
+    @Test
+    public void rowNotEqualsdmgCritShieldShieldedChange()throws Exception{
+        //changed target from row 1 (note changed the î to i) 
+        Row row1 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} {836045448945509} (515 absorbed {836045448945511})) <742>");
+        Row row2 = new Row("[23:22:31.876] [@Mamalookiamamagician] [@Firaksîan] [Force Lightning {808252715565056}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (742* energy {836045448940874} -shield {836045448945509} (515 absorbed {836045448945511})) <742>");
+        
+        assertFalse(row1.equals(row2));
+        
+    }
     @Test
     public void timeStamp()throws Exception{
         Row row = new Row("[23:06:40.498] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )");

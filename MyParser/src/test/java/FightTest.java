@@ -7,9 +7,11 @@
 import java.util.ArrayList;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.Row;
+import myparser.myparser.readers.Reader;
 import myparser.myparser.stats.Stats;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,6 +110,19 @@ public class FightTest {
          test.add(row3);
          Fight fight=new Fight(test);
          assertEquals("@Firaksîan",fight.getOwner());
+     }
+     
+     @Test
+     public void notEqualsFight()throws Exception{
+         Fight fight1=Reader.readFile("src/test/test2.txt").get(0);
+         Fight fight2=Reader.readFile("src/test/test2.txt").get(1);
+                 assertFalse(fight1.equals(fight2));
+     }
+     @Test
+     public void equalsFight()throws Exception{
+         Fight fight1=Reader.readFile("src/test/test2.txt").get(0);
+         Fight fight2=Reader.readFile("src/test/test2.txt").get(0);
+                 assertEquals(fight1,fight2);
      }
      
      

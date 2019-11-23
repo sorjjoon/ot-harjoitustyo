@@ -9,9 +9,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.Row;
+import myparser.myparser.types.Effecttype;
+import myparser.myparser.types.Eventtype;
+import myparser.myparser.types.Type;
 
 /**
  *
@@ -57,14 +62,81 @@ public class Database {
            createTables();
        }
        
+       public Integer getLogid(String logname)throws SQLException{
+           String sql ="SELECT id FROM Log WHERE log_file_name LIKE ?";
+           PreparedStatement stmnt=con.prepareStatement(sql);
+           stmnt.setString(1, logname);
+           ResultSet rs=stmnt.executeQuery();
+           Integer id=null;
+           //This is excepting that there is only one log of a specfic name in the database, TODO add functionality that you can't add the same log into the database
+           if(rs.next()){
+               id=rs.getInt(1);
+           }
+           //if not found id is null
+           return id;
+       }
        
-       public void addFight(Fight fight, String date, String type,String log_file_name)throws SQLException{
-           ArrayList<Row> rows=fight.getRows();
+       public ArrayList<Integer> getFightIds(Integer log_id)throws SQLException{
+           ArrayList<Integer> ids=new ArrayList();
+           String sql="SELECT id FROM Fight WHERE log_id=?";
+           PreparedStatement stmnt=con.prepareStatement(sql);
+           stmnt.setInt(1, log_id);
+           ResultSet rs=stmnt.executeQuery();
+           while(rs.next()){
+               ids.add(rs.getInt(1));
+           }
+           
+           
+           return ids;
+       }
+       
+       public ArrayList<Row> getRowsFromFight(Integer id)throws SQLException{
+           String sql="SELECT * FROM Row WHERE Fight_id = ?";
+           PreparedStatement stmnt=con.prepareStatement(sql);
+           stmnt.setInt(1, id);
+           ResultSet rs=stmnt.executeQuery();
+           ArrayList<Row> rows=new ArrayList();
+           while(rs.next()){
+               
+               LocalTime timestamp=rs.getTime("Timestamp").toLocalTime();
+               String source =rs.getString("Source");
+               String target=rs.getString("Target");
+               String ablity_name=rs.getString("Ability_name");
+               Type type =Type.valueOf(rs.getString("Type"));
+               
+                Eventtype eventtype=null;
+                String effecttype =null;
+               if(type==Type.Event){
+                   eventtype=Eventtype.valueOf(rs.getString("Event_effect_type"));
+                   effecttype =null;    //not needed ofc, but here for clarity
+               }else if(type==Type.ApplyEffect||type==Type.RemoveEffect){
+                   eventtype=null;
+                   effecttype=rs.getString("Event_effect_type");
+               }
+               int dmg_heal=rs.getInt("Dmg_heal");
+               boolean crit=rs.getBoolean("Crit");
+               boolean shielded=rs.getBoolean("Shield");
+               //seting miss
+               boolean miss=false;
+               if(effecttype.equals("Damage")&&dmg_heal==0){
+                   miss=true;
+               }
+               Row row=new Row(timestamp,source,target,type,effecttype,eventtype,ablity_name,dmg_heal, crit,shielded,miss);
+               rows.add(row);
+           }
+           return rows;
+       }
+       
+       
+       public void addListOfFights(ArrayList<Fight> fights, String date, String type,String log_file_name)throws SQLException{
+           if(fights.isEmpty()){
+               throw new IllegalArgumentException("list can't be empty");
+           }
            String sql="INSERT INTO Log (date,type,owner,log_file_name) VALUES (?,?,?,?)";
            PreparedStatement stmnt=con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
            stmnt.setString(1, date);
            stmnt.setString(2, type);
-           stmnt.setString(3, fight.getOwner());
+           stmnt.setString(3, fights.get(0).getOwner());        //All fights have the same owner so doesn't matter which one we use
            stmnt.setString(4, log_file_name);
            stmnt.executeUpdate();
 
@@ -74,39 +146,44 @@ public class Database {
                 key_log = rs.getInt(1);
 //                System.out.println(key);
             }
-           sql="INSERT INTO Fight (log_id) VALUES (?)";
-           stmnt=con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-           stmnt.setInt(1, key_log);
-           stmnt.executeUpdate();
+            
+            for(Fight f:fights){
+                ArrayList<Row> rows=f.getRows();
+                sql="INSERT INTO Fight (log_id) VALUES (?)";
+                stmnt=con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+                stmnt.setInt(1, key_log);
+                stmnt.executeUpdate();
 
-           rs = stmnt.getGeneratedKeys();
-           int key_fight=0;
-            if (rs.next()) {
-                key_fight = rs.getInt(1);
-//                System.out.println(key);
+                rs = stmnt.getGeneratedKeys();
+                int key_fight=0;
+                if (rs.next()) {
+                    key_fight = rs.getInt(1);
+    //                System.out.println(key);
+                }
+
+                sql="INSERT INTO Row (fight_id, timestamp, source,target, ability_name, type, event_effect_type, dmg_heal , crit, shield) VALUES (?,?,?,?,?,?,?,?,?,?)";
+                stmnt=con.prepareStatement(sql);
+                stmnt.setInt(1,key_fight);            
+               for(Row r:rows){
+                   stmnt.setString(2, r.getTimestamp().toString());
+                   stmnt.setString(3,r.getSource());
+                   stmnt.setString(4,r.getTarget());
+                   stmnt.setString(5,r.getAbility_name());
+                   stmnt.setString(6, r.getType().toString());
+                   if(r.getEffecttype()!=null){
+                       stmnt.setString(7, r.getEffecttype());
+
+                   }else{
+                       //If both are null, we could choose to not put the row in at all (these rows are energy management rows), but we could theoretically use those some day (tho it would be really complicated), so at least in this version we are putting them in
+                       stmnt.setString(7, String.valueOf(r.getEventtype()));
+                   }
+                   stmnt.setString(8, String.valueOf(r.getDmg_heal()));
+                   stmnt.setBoolean(9, r.isCrit());
+                   stmnt.setBoolean(10, r.isShielded());
+                   stmnt.execute();
+               }
             }
             
-            sql="INSERT INTO Row (fight_id, timestamp, source,target, ability_name, type, event_effect_type, dmg_heal , crit, shield) VALUES (?,?,?,?,?,?,?,?,?,?)";
-            stmnt=con.prepareStatement(sql);
-            stmnt.setInt(1,key_fight);            
-           for(Row r:rows){
-               stmnt.setString(2, r.getTimestamp().toString());
-               stmnt.setString(3,r.getSource());
-               stmnt.setString(4,r.getTarget());
-               stmnt.setString(5,r.getAbility_name());
-               stmnt.setString(6, r.getType().toString());
-               if(r.getEffecttype()!=null){
-                   stmnt.setString(7, r.getEffecttype());
-               
-               }else{
-                   //If both are null, we could choose to not put the row in at all (these rows are energy management rows), but we could theoretically use those some day (tho it would be really complicated), so at least in this version we are putting them in
-                   stmnt.setString(7, String.valueOf(r.getEventtype()));
-               }
-               stmnt.setString(8, String.valueOf(r.getDmg_heal()));
-               stmnt.setBoolean(9, r.isCrit());
-               stmnt.setBoolean(10, r.isShielded());
-               stmnt.execute();
-           }
            
        }
        

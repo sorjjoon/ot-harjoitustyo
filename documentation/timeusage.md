@@ -8,4 +8,5 @@
 | 19.11 | 2 | added packages to the file structure, made the fight class simpler and created a Stats class for all stats, added a really bad ui as well |
 | 20.11 | 1 | replaced placeholder ui |
 | 22.11 | 7 | Saving logs to a database |
-| total | 24 |
+| 23.11 | 4 | Reading logs from database. Found bug on Reader, apparenly combat logs don't always track exitCombat event correctly |
+| total | 28 |

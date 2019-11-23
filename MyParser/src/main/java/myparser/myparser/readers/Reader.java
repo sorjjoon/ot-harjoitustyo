@@ -87,32 +87,36 @@ public class Reader {
         
         boolean in_fight=false; //variable to determine the end and start of fights, and to read only necessary lines
         
+        //variable i is used for debugging, to find out which rows are not being read
         int i=0;
-        ArrayList<Integer> list=new ArrayList();
         while(reader.hasNext()){
             String rawline=reader.nextLine();
             i++;
             
                 try{
                     
-            //this doesn't work if logging is turned on while in a fight. (tho this should be super rare...) 
-            
-            
+                    //Remove empty rows
+                    if(rawline.isEmpty()){
+                       continue; 
+                    }
                     Row row=new Row(rawline);
-//                    System.out.println(row.getEventtype());
+                    
                     if(row.getEventtype()==Eventtype.EnterCombat){
                         in_fight=true;
                         
                     }
-                    else if(row.getEventtype()==Eventtype.ExitCombat){
+                    //for some reason, death events seem to not always register the exitCombat effect correctly (they sometimes do), so we had to add some work arounds for that
+                    //&&in_fight is there to check, if the exitCombat trigger has already been handled (and the in_fight variable has been set to false)
+                    else if((row.getEventtype()==Eventtype.ExitCombat||row.getEventtype()==Eventtype.Death)&&in_fight){
+                        
                         in_fight=false;
                         lines.add(row); //adding the exitcombat line (to get exit time)
-                        if(!lines.isEmpty()){
-                            Fight fight=new Fight(lines);
-                            fights.add(fight);
-                        }
                         
-                        //lines.clear();
+                        Fight fight=new Fight(lines);
+                        fights.add(fight);
+                        
+                        
+                        //lines.clear();    idk why, but clear doesn't work here
                         lines=new ArrayList(); 
 
                     }
@@ -130,21 +134,16 @@ public class Reader {
                 }catch(Exception e){
                     //for debuging
                     //in case we fail to read a row, it's because the log owner has changed it for some reason, or it's a very rare kind
-                    //entry, which in a diffrent kind of format (shouldn't happen)
-                    //in either case we can freely discard the single line, and it shouldn't affect
+                    //entry, which is in a diffrent kind of format (shouldn't happen)
+                    //in either case we can freely discard the single line, and it shouldn't affect the result that much
                     
                     
                     System.out.println("Rivin "+i+" luku ei onnistunut"+e.getMessage());
-                    list.add(i);
+                    
                 }
                 
                 
         }
-        //this is for debuging
-//            for(Integer z : list){
-//                System.out.println(z);
-//            }
-//            System.out.println(list.size());
         return fights;
     }
     
