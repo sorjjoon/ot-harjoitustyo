@@ -15,7 +15,7 @@ public class Fight {
     private ArrayList<Row> rows;
     private final String owner;
 
-    public Fight(ArrayList<Row> rows) throws NoOwnerException {
+    public Fight(ArrayList<Row> rows)throws NoOwnerException{
         this.rows = rows;
         //Determine the "owner" of the log, this method should work everytime?
         for(Row r:rows){
@@ -30,7 +30,7 @@ public class Fight {
         throw new NoOwnerException("NoOwnerException");
     }
         //In case we can't determine the owner automatically this constructor can be used
-        public Fight(ArrayList<Row> rows, String Owner) throws NoOwnerException {
+        public Fight(ArrayList<Row> rows, String Owner) {
         this.rows = rows;
         this.owner=Owner;
     }

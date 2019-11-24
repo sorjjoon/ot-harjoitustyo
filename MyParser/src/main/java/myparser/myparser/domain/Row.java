@@ -32,12 +32,13 @@ public class Row {
     private Damagetype dmg_type;
     private boolean shielded;
     private boolean miss;
+    private final int row_number;
 
     public boolean isMiss() {
         return miss;
     }
 
-    public Row(LocalTime timestamp, String source, String target, Type type, String effecttype, Eventtype eventtype, String ability_name, int dmg_heal, boolean crit, boolean shielded, boolean miss) {
+    public Row(LocalTime timestamp, String source, String target, Type type, String effecttype, Eventtype eventtype, String ability_name, int dmg_heal, boolean crit, boolean shielded, boolean miss, int row_number) {
         this.timestamp = timestamp;
         this.source = source;
         this.target = target;
@@ -49,19 +50,19 @@ public class Row {
         this.crit = crit;
         this.shielded = shielded;
         this.miss = miss;
+        this.row_number=row_number;
     }
     
     
  
     
-    public Row(String rawline) throws IndexOutOfBoundsException, NumberFormatException, IllegalArgumentException, EnumConstantNotPresentException{
-        
+    public Row(String rawline,int row_number) throws IndexOutOfBoundsException, NumberFormatException, IllegalArgumentException, EnumConstantNotPresentException{
+        this.row_number=row_number;
         //TODO threat, dmg_type
-        //these values changed later if needed
+        //these are values changed later if needed
         this.miss =false;
         this.crit=false;
         this.shielded=false;
-//        System.out.println("Row");
         String[] parts=rawline.split("\\] \\[");
 
         //removing useless chars from input String and storing the values from input String into the row object
@@ -113,7 +114,7 @@ public class Row {
                         this.crit=false;
                     }
                     this.dmg_heal=Integer.valueOf(rivi.trim());
-//                  
+                  
                 }catch(IndexOutOfBoundsException |  NumberFormatException e){  
                   
                     String rivi=rawline.substring(rawline.lastIndexOf("(")+1, rawline.lastIndexOf(")"));
@@ -138,7 +139,7 @@ public class Row {
             this.miss=true;
         }
         }else{
-            //this shouldn happen only with resource lines. We could do something with these, but it would be very complicated
+            //this should happen only with resource lines (energy/rage/heat etc usage). We could do something with these, but it would be very complicated (we'd have to take in account owner's ala, spec etc.)
             this.eventtype=null;
             this.effecttype=null; 
             }
@@ -273,6 +274,10 @@ public class Row {
             return false;
         }
         return true;
+    }
+
+    public int getRow_number() {
+        return row_number;
     }
     
     

@@ -7,6 +7,7 @@ import myparser.myparser.domain.NoOwnerException;
 import myparser.myparser.types.Eventtype;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.time.LocalDate;
 //import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.IllegalFormatException;
@@ -97,9 +98,10 @@ public class Reader {
                     
                     //Remove empty rows
                     if(rawline.isEmpty()){
+                        i--;
                        continue; 
                     }
-                    Row row=new Row(rawline);
+                    Row row=new Row(rawline,i);
                     
                     if(row.getEventtype()==Eventtype.EnterCombat){
                         in_fight=true;
@@ -148,18 +150,33 @@ public class Reader {
     }
     
     
+    //this is an old method you could use to get a date from the logfile name,( log files have default names which contain the date)
+    public static LocalDate dateFromName(String file_name) throws IllegalFormatException,IndexOutOfBoundsException{
+        int index=file_name.indexOf("_");
+        String date=file_name.substring(index+1,index+11)+" ";
+        //If this fails, date not in a valid format
+        
+        
+        return LocalDate.parse(date);
+    }
     
     //this is an old method you could use to get a date from the logfile name,( log files have default names which contain the date)
     //It is not used in the current version, but I'm not yet sure if it is completelly unnecessary
-    public static String dateFromPath(String path) throws IllegalFormatException,IndexOutOfBoundsException{
+    public static LocalDate dateFromPath(String path) throws IllegalFormatException,IndexOutOfBoundsException{
         String file_name = path.substring(path.lastIndexOf("/")+1);
         int index=file_name.indexOf("_");
-        String date=file_name.substring(index+1,index+11)+" ";
-        //TODO Check that resulting date is in a valid format
+        String date=file_name.substring(index+1,index+11);
+        LocalDate.parse(date);
         
         
         
-        return date;
+        return LocalDate.parse(date);
+    }
+    
+    
+    public static String nameFromPath(String path) throws IllegalFormatException,IndexOutOfBoundsException{        
+        return path.substring(path.lastIndexOf("/")+1);
+       
     }
     
 }

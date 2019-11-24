@@ -7,6 +7,7 @@ package myparser.myparser.ui;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import myparser.myparser.domain.Fight;
 
 /**
@@ -15,7 +16,7 @@ import myparser.myparser.domain.Fight;
  */
 public interface ui {
     
-    public void run();
+    public void run(Scanner reader);
     
     public ArrayList<Fight> readLog(String path)throws FileNotFoundException;
     

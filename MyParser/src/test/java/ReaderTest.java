@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.time.LocalDate;
 import java.util.ArrayList;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.Row;
@@ -47,8 +48,8 @@ public class ReaderTest {
 //    
     @Test
     public void dateFromFile()throws Exception{
-        String date=Reader.dateFromPath("/home/joona/ohjelmointi/ot-harjoitustyo-master/documentation/Example-logs/combat_2019-08-21_22_51_05_510269.txt");
-            assertEquals("2019-08-21 ",date);
+        LocalDate date=Reader.dateFromName("combat_2019-08-21_22_51_05_510269.txt");
+            assertEquals("2019-08-21 ",date.toString());
     }
     
     @Test
@@ -61,25 +62,51 @@ public class ReaderTest {
     }
     
     @Test
+    public void rowNumberingWithEmptyRows()throws Exception{
+        String path="src/test/test.txt";
+        ArrayList<Fight> fights=Reader.readFile(path);
+        int i=149;
+        for(Row r:fights.get(0).getRows()){
+            
+            assertEquals(i,r.getRow_number());
+            i++;
+        }
+        i=3576;
+        for(Row r:fights.get(1).getRows()){
+            
+            assertEquals(i,r.getRow_number());
+            i++;
+        }
+        
+        i=3648;
+        for(Row r:fights.get(2).getRows()){
+            
+            assertEquals(i,r.getRow_number());
+            i++;
+        }
+        
+    }
+    
+    @Test
     public void readRowsAreCorrect()throws Exception{
         String path="src/test/test2.txt";
         ArrayList<Fight> fights=Reader.readFile(path);
         ArrayList<Row> correct_rows=new ArrayList();
-        correct_rows.add(new Row("[23:01:05.706] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: EnterCombat {836045448945489}] (Mandalorian Battle Ring)"));
-        correct_rows.add(new Row("[23:01:05.727] [@Firaksîan] [@Firaksîan] [Force Charge {807750204391424}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()"));
-        correct_rows.add(new Row("[23:01:05.727] [@Firaksîan] [@Firaksîan] [Unstoppable {3585722166542336}] [ApplyEffect {836045448945477}: Unstoppable {3585722166542336}] ()"));
-        correct_rows.add(new Row("[23:01:05.727] [@Firaksîan] [@Firaksîan] [Trauma (PVP) {632919265640448}] [ApplyEffect {836045448945477}: Trauma (PVP) {632919265640448}] ()"));
-        correct_rows.add(new Row("[23:01:05.728] [@Firaksîan] [@Firaksîan] [Sprint {810670782152704}] [RemoveEffect {836045448945478}: Sprint {810670782152704}] ()"));
-        correct_rows.add(new Row("[23:01:05.728] [@Firaksîan] [] [Recharge and Reload {814287144615936}] [Event {836045448945472}: AbilityInterrupt {836045448945482}] ()"));
-        correct_rows.add(new Row("[23:06:39.670] [@Firaksîan] [@Shâløm Kappa] [Ravage {1261367470325760}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (3340* energy {836045448940874}) <8351>"));
-        correct_rows.add(new Row("[23:06:39.910] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: ExitCombat {836045448945490}] (Mandalorian Battle Ring)"));
-        correct_rows.add(new Row("[23:06:40.493] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: EnterCombat {836045448945489}] (Mandalorian Battle Ring)"));
-        correct_rows.add(new Row("[23:06:40.497] [@Firaksîan] [@Firaksîan] [Sprint {810670782152704}] [RemoveEffect {836045448945478}: Sprint {810670782152704}] ()"));
-        correct_rows.add(new Row("[23:06:40.497] [@Firaksîan] [@Firaksîan] [] [Restore {836045448945476}: rage point {836045448938497}] (1)"));
-        correct_rows.add(new Row("[23:06:40.498] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )"));
-        correct_rows.add(new Row("[23:06:41.492] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )"));
-        correct_rows.add(new Row("[23:06:42.474] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )"));
-        correct_rows.add(new Row("[23:06:42.987] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: ExitCombat {836045448945490}] (Mandalorian Battle Ring)"));
+        correct_rows.add(new Row("[23:01:05.706] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: EnterCombat {836045448945489}] (Mandalorian Battle Ring)",1));
+        correct_rows.add(new Row("[23:01:05.727] [@Firaksîan] [@Firaksîan] [Force Charge {807750204391424}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()",2));
+        correct_rows.add(new Row("[23:01:05.727] [@Firaksîan] [@Firaksîan] [Unstoppable {3585722166542336}] [ApplyEffect {836045448945477}: Unstoppable {3585722166542336}] ()",3));
+        correct_rows.add(new Row("[23:01:05.727] [@Firaksîan] [@Firaksîan] [Trauma (PVP) {632919265640448}] [ApplyEffect {836045448945477}: Trauma (PVP) {632919265640448}] ()",4));
+        correct_rows.add(new Row("[23:01:05.728] [@Firaksîan] [@Firaksîan] [Sprint {810670782152704}] [RemoveEffect {836045448945478}: Sprint {810670782152704}] ()",5));
+        correct_rows.add(new Row("[23:01:05.728] [@Firaksîan] [] [Recharge and Reload {814287144615936}] [Event {836045448945472}: AbilityInterrupt {836045448945482}] ()",6));
+        correct_rows.add(new Row("[23:06:39.670] [@Firaksîan] [@Shâløm Kappa] [Ravage {1261367470325760}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (3340* energy {836045448940874}) <8351>",7));
+        correct_rows.add(new Row("[23:06:39.910] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: ExitCombat {836045448945490}] (Mandalorian Battle Ring)",8));
+        correct_rows.add(new Row("[23:06:40.493] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: EnterCombat {836045448945489}] (Mandalorian Battle Ring)",9));
+        correct_rows.add(new Row("[23:06:40.497] [@Firaksîan] [@Firaksîan] [Sprint {810670782152704}] [RemoveEffect {836045448945478}: Sprint {810670782152704}] ()",10));
+        correct_rows.add(new Row("[23:06:40.497] [@Firaksîan] [@Firaksîan] [] [Restore {836045448945476}: rage point {836045448938497}] (1)",11));
+        correct_rows.add(new Row("[23:06:40.498] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )",12));
+        correct_rows.add(new Row("[23:06:41.492] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )",13));
+        correct_rows.add(new Row("[23:06:42.474] [] [@Firaksîan] [Sudden Death Toxic Contamination {3291448187289600}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (1382 )",14));
+        correct_rows.add(new Row("[23:06:42.987] [@Firaksîan] [@Firaksîan] [] [Event {836045448945472}: ExitCombat {836045448945490}] (Mandalorian Battle Ring)",15));
         int i=0;
         for(Fight f:fights){
             for(Row r:f.getRows()){

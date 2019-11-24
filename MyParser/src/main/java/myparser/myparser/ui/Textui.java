@@ -5,70 +5,183 @@
  */
 package myparser.myparser.ui;
 
+import database.Database;
 import java.io.FileNotFoundException;
+import java.sql.SQLException;
 import myparser.myparser.readers.Reader;
 import myparser.myparser.domain.Fight;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Scanner;
+import myparser.myparser.domain.NoOwnerException;
 import myparser.myparser.stats.Stats;
 
 
 //This ui is a placeholder for when/if I learn to make a graphical one
 
 public class Textui implements ui{
-    ArrayList<Fight> fights;
+    ArrayList<Fight> fights;    //List and name of the current logs being analyzed
     private String name;
-    
+    private Database data;
+    private LocalDate date; 
     public Textui(){
         }
     
     @Override
-    public void run(){
+    //TODO make each command into their own method, cause this is currently confusing asf
+    public void run(Scanner reader){
         while(true){
-            
-            Scanner reader=new Scanner(System.in);
-            System.out.println("-----------------------------------");
+            if(this.data!=null){
+                try{
+                    data.close();
+                }catch(SQLException e){ //I don't know why this would happen
+                    System.out.println("Can not close database connection");
+                    System.out.println(e);
+                }
+                
+            }
+            System.out.println("---------------------------");
             System.out.println("Hi, welcome to MyParser!");
             if(this.fights!=null){
-                System.out.println("Currently analyzing a log from "+this.name);
+                System.out.println("Currently analyzing log "+this.name);
             }
             System.out.println("List of commands ");
-            System.out.println("0 - analyze a new log");
-            System.out.println("1 - Basic stats (dps,hps,dtps etc.)");    
-            System.out.println("x - exit");
+            System.out.println("0 - Analyze a new log");
+            System.out.println("1 - Basic stats (dps,hps,dtps etc.)");
+            System.out.println("s - Save the currently analyzed log into storage");
+            System.out.println("x - Exit");
             String command=reader.nextLine();
             if(command.equals("0")){
-                System.out.println("1 - load a previously analyzed log");
+                System.out.println("-----------------------------");
+                System.out.println("1 - load a previously analyzed log from storage");
                 System.out.println("2 - analyze a new log");
                 System.out.println("x - cancel");
                 command=reader.nextLine();
                 if(command.equals("1")){
-                    System.out.println("todo");
-                    //TODO
-                }else if(command.equals("2")){
                     
-                    System.out.println("Give a path to the file");
                     try{
-                        String path=reader.nextLine();
-                        ArrayList<Fight> helper=readLog(path);
-                        if(helper.isEmpty()){
-                            System.out.println("No fights found inside the log.");
-                            continue;
+                        this.data=new Database();
+               
+                    }catch(SQLException e){
+                        System.out.println("Error connecting");
+                        e.printStackTrace();
+                    }
+                    while(true){
+                        System.out.println("----------------------------------");
+                        System.out.println("Give the name of a log from the database.");    //TODO make it so you can't add logs named x and 1 to the database
+                        System.out.println("1 - print the names of all logs in the database");
+                        System.out.println("x return to start");
+                        command=reader.nextLine();
+                        if(command.equals(("x"))){
+                            break;
+                        }else if(command.equals("1")){
+                            try{
+                                ArrayList<String> names=this.data.getSavedLogs();
+                                if(names!=null){
+                                    for(String s :names){
+                                    System.out.println(s);
+                                    }
+                                    continue;
+                                }else{
+                                    System.out.println("No logs found");
+                                    break;
+                                }
+                                
+                        
+                            }catch(SQLException e){
+                                System.out.println("Error with geting saved logs");
+                                System.out.println(e.getMessage());
+                                e.printStackTrace();
+                                break;
+                            }
+                            }else{
+                            System.out.println("Loading log form storage, this may take a few seconds");
+                            try{
+                                this.name=command;
+                                this.fights=data.getFightsFromLog(command);
+                                System.out.println("Log loaded succesfully");
+                                break;
+                            }catch(SQLException | NoOwnerException e){
+                                System.out.println("Error with geting saved logs");
+                                System.out.println(e.getMessage());
+                                e.printStackTrace();
+                                break;
+                            }
                         }
-                        this.name=Reader.dateFromPath(path);
-                        this.fights=helper;
-                    }catch(FileNotFoundException e){
-                        System.out.println("File not found");
-                        continue;
                         
                     }
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                     }else if(command.equals("2")){
+                    
+                        System.out.println("Give a path to the file");
+                        try{
+                            String path=reader.nextLine();
+                            ArrayList<Fight> helper=readLog(path);
+                            if(helper.isEmpty()){
+                                System.out.println("No fights found inside the log.");
+                                continue;
+                            }
+                            this.name=Reader.nameFromPath(path);
+                            try{
+                                this.date=Reader.dateFromPath(path);
+                            }catch(Exception e){
+                                System.out.println("Couldn't determine the date from the log file name (you have changed the name?)");
+                                    
+                                while(true){
+                                    System.out.println("Input the date for the log (format yyyy-mm-dd)");
+                                    
+                                    try{
+                                        this.date=LocalDate.parse(reader.nextLine());
+                                        break;
+                                    }catch(Exception x){
+                                        System.out.println("Date not in a valid format");
+                                    }
+                                }
+                            }
+                            this.fights=helper;
+                        }catch(FileNotFoundException e){
+                            System.out.println("File not found");
+                            continue;
+
+                        }
                 }
                 
             }else if(command.equals("1")){
                 basicStats();
             }else if(command.equals("x")){
                 break;
+            }else if(command.equals("s")){
+                //TODO make it so you can't save the same log twice (or at least give a warning if you are about to)
+                try{
+                    this.data=new Database();
+                    System.out.println("What type of log is this? (dummy, pvp, op etc.)");
+                    String type=reader.nextLine();
+                    System.out.println("Saving log. This might take a few seconds");
+                    this.data.addListOfFights(this.fights, date, type, name);
+                    System.out.println("Log saved succesfully!");
+                }catch(SQLException e){
+                        System.out.println("Can't save file to datbase");
+                        System.out.println(e);
+                        }
+                
+            
+            
+            
+            
+            
+            
+            
+            
+            }else{
+                System.out.println("Unknown command");
             }
              }
     }
@@ -95,6 +208,7 @@ public class Textui implements ui{
         int k=0;
         DecimalFormat df = new DecimalFormat("#.##");
         if(this.fights==null){
+            System.out.println("Choose a log to analyze first");
             return;
         }
         for(Fight f:this.fights){
