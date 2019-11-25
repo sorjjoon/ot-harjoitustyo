@@ -49,7 +49,7 @@ public class ReaderTest {
     @Test
     public void dateFromFile()throws Exception{
         LocalDate date=Reader.dateFromName("combat_2019-08-21_22_51_05_510269.txt");
-            assertEquals("2019-08-21 ",date.toString());
+            assertEquals("2019-08-21",date.toString());
     }
     
     @Test
@@ -68,20 +68,20 @@ public class ReaderTest {
         int i=149;
         for(Row r:fights.get(0).getRows()){
             
-            assertEquals(i,r.getRow_number());
+            assertEquals(i,r.getRowNumber());
             i++;
         }
         i=3576;
         for(Row r:fights.get(1).getRows()){
             
-            assertEquals(i,r.getRow_number());
+            assertEquals(i,r.getRowNumber());
             i++;
         }
         
         i=3648;
         for(Row r:fights.get(2).getRows()){
             
-            assertEquals(i,r.getRow_number());
+            assertEquals(i,r.getRowNumber());
             i++;
         }
         

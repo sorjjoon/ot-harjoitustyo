@@ -22,7 +22,9 @@ public enum Eventtype {
     AbilityDeactivate,
     FallingDamage,
     AbilityCancel,
-    FailedEffect
+    FailedEffect,
+    Crouch,
+    LeaveCover
     
     
 }

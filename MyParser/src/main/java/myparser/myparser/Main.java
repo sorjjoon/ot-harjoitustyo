@@ -30,18 +30,18 @@ import myparser.myparser.ui.ui;
 public class Main {
 
     public static void main(String[] args){
-        try{
-            ui ui=new Textui();
+        try {
+            new Database().reset();
+            ui ui = new Textui();
             ui.run(new Scanner(System.in));
-        }
-        catch(Exception e){
+            }
+        catch (Exception e) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             String sStackTrace = sw.toString(); 
             System.out.println(sStackTrace);
 
-        }
-//        }   
-}
+        }   
+    }
 }

@@ -15,24 +15,24 @@ public class Fight {
     private ArrayList<Row> rows;
     private final String owner;
 
-    public Fight(ArrayList<Row> rows)throws NoOwnerException{
+    public Fight(ArrayList<Row> rows)throws NoOwnerException {
         this.rows = rows;
         //Determine the "owner" of the log, this method should work everytime?
-        for(Row r:rows){
-            //EnterCombat should always be the first row, so the loop is not "necessary", but there just in case, also the ExitCombat tag is here, in case we started logging midfight for some reason, 
-            //or the user deleted rows for some reason 
-            if(r.getEventtype()==Eventtype.EnterCombat||r.getEventtype()==Eventtype.ExitCombat){
-                this.owner=r.getSource();
+        for (Row r:rows) {
+            //EnterCombat should always be the first row, so the loop is not "necessary", but there just in case, also the ExitCombat tag is here, in case we started logging midfight for  some reason, 
+            //or the user deleted rows for  some reason 
+            if (r.getEventtype() ==  Eventtype.EnterCombat || r.getEventtype() ==  Eventtype.ExitCombat) {
+                this.owner = r.getSource();
                 return;
             }
         }
-        //If we can't determine an owner for the log, we raise an exception, though I don't see how this is possible, but it's here just in case
+        //If we can't determine an owner for  the log, we raise an exception, though I don't see how this is possible, but it's here just in case
         throw new NoOwnerException("NoOwnerException");
     }
         //In case we can't determine the owner automatically this constructor can be used
-        public Fight(ArrayList<Row> rows, String Owner) {
+    public Fight(ArrayList<Row> rows, String owner) {
         this.rows = rows;
-        this.owner=Owner;
+        this.owner = owner;
     }
 
     public String getOwner() {
@@ -40,9 +40,9 @@ public class Fight {
     }
     
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder output = new StringBuilder();
-        for(Row r:this.rows){
+        for (Row r:this.rows) {
             output.append(r.toString());
             output.append("\n");
         }
@@ -55,47 +55,47 @@ public class Fight {
         return rows;
     }
     
-    public int getSize(){
+    public int getSize() {
         return this.rows.size();
     }
     
     
-    public Fight rowsInTimeFrame(LocalTime start, LocalTime end) throws NoOwnerException{
-        ArrayList<Row> specfic_rows =new ArrayList();
-        for(Row r:this.rows){
-            if(r.getTimestamp().isAfter(start)){
-                if(r.getTimestamp().isBefore(end)){
+    public Fight rowsInTimeFrame(LocalTime start, LocalTime end) throws NoOwnerException {
+        ArrayList<Row> specficRows  = new ArrayList();
+        for (Row r:this.rows) {
+            if (r.getTimestamp().isAfter(start)) {
+                if (r.getTimestamp().isBefore(end)) {
                     break;
-                }else{
-                    specfic_rows.add(r);
+                } else {
+                    specficRows.add(r);
                 }
                 
             }
         }
-        return new Fight(specfic_rows,this.owner);
+        return new Fight(specficRows, this.owner);
     }
     
     
     //parameter is the later fight, this method in case we want to add pvp stats (combine all the fights of a match)
-    public void combineFights(Fight later){
-        for(Row r:later.getRows()){
+    public void combineFights(Fight later) {
+        for (Row r:later.getRows()) {
             this.rows.add(r);
         }
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if  (this   ==    obj) {
             return true;
         }
-        if (obj == null) {
+        if  (obj   ==    null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if  (getClass() !=   obj.getClass()) {
             return false;
         }
         final Fight other = (Fight) obj;
-        if (!Objects.equals(this.rows, other.rows)) {
+        if  (!Objects.equals(this.rows, other.rows)) {
             return false;
         }
         return true;

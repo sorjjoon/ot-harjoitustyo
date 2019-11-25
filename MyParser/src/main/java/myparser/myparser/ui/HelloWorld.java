@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 
 //This is my graphical ui base
- 
+ //TODO figure out how this works...
 public class HelloWorld extends Application {
     public static void main(String[] args) {
         launch(args);
