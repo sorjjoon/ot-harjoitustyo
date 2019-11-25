@@ -161,7 +161,9 @@ public class Database {
             
             for(Fight f:fights){
                 ArrayList<Row> rows=f.getRows();
+                
                 sql="INSERT INTO Fight (log_id) VALUES (?)";
+                
                 stmnt=con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
                 stmnt.setInt(1, key_log);
                 stmnt.executeUpdate();

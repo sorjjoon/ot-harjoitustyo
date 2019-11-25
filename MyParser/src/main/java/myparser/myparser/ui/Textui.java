@@ -12,7 +12,6 @@ import myparser.myparser.readers.Reader;
 import myparser.myparser.domain.Fight;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Scanner;
 import myparser.myparser.domain.NoOwnerException;
