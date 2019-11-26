@@ -23,8 +23,8 @@ public class Reader   {
     
     public static ArrayList<Fight> readFile(String path)throws FileNotFoundException  {
         Scanner reader = new Scanner(new File(path), "ISO-8859-1");
-        ArrayList<Row> lines  =  new ArrayList();
-        ArrayList<Fight> fights  =  new ArrayList();
+        ArrayList<Row> lines = new ArrayList();
+        ArrayList<Fight> fights = new ArrayList();
         
         boolean inFight = false; //variable to determine the end and start of fights,  and to read only necessary lines
         
@@ -47,6 +47,7 @@ public class Reader   {
                     inFight = true;
 
                 }
+                
                 //for some reason,  death events seem to not always register the exitCombat effect correctly (they sometimes do),  so had to add some work arounds for that
                 // && in_fight is there to check,  if  the exitCombat trigger has already been handled (and the in_fight variable has been set to false)
                 else if ((row.getEventtype() == Eventtype.ExitCombat || row.getEventtype() == Eventtype.Death) && inFight)  {

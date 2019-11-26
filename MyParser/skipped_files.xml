@@ -5,6 +5,7 @@
     "http://www.puppycrawl.com/dtds/suppressions_1_1.dtd">
 
 <suppressions>
+    <suppress files="myparser.myparser.Main.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="myparser.myparser.ui.Textui.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="myparser.myparser.ui.HelloWorld.java" checks="[a-zA-Z0-9]*"/>
     <suppress files="myparser.myparser.ui.ui.java" checks="[a-zA-Z0-9]*"/>

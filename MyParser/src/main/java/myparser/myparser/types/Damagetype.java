@@ -6,8 +6,7 @@
 package myparser.myparser.types;
 
 /**
- *
- * @author joona
+ *this is not used atm, but we could expand Rows to use this
  */
 public enum Damagetype {
     internal,

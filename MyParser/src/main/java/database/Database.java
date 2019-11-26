@@ -36,6 +36,7 @@ public class Database  {
 
         } 
         this.con =  DriverManager.getConnection("jdbc:h2:./data/saved_logs",  "sa",  "");
+        this.createTables();
 
     } 
 
@@ -43,7 +44,7 @@ public class Database  {
     //Note we are not puting boolean miss here, because we can get it from dmg (it's 0 for  miss, null for  non attacks)
 
     public void createTables()throws SQLException {
-        con.prepareStatement("CREATE TABLE IF NOT EXISTS Log (id int NOT NULL AUTO_INCREMENT,date date, type varchar(20),owner varchar(30),logFileName varchar(60))").executeUpdate();
+        con.prepareStatement("CREATE TABLE IF NOT EXISTS Log (id int NOT NULL AUTO_INCREMENT,date date, type varchar(20),owner varchar(30),log_name varchar(60))").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Fight (id int NOT NULL AUTO_INCREMENT primary key,logId int NOT NULL,FOREIGN KEY(logId) REFERENCES Log(id),  PRIMARY KEY (id));").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,rowNumber int, timestamp time, Source varchar(50),  Target varchar(50),  Ability_name varchar(60),  type varchar (20),  Event_effect_type varchar (50),  Dmg_heal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Stats (fightId int NOT NULL, dps int, hps int,FOREIGN KEY(fightId) REFERENCES Fight(id));").executeUpdate();
@@ -76,7 +77,7 @@ public class Database  {
     } 
 
     public Integer getLogId(String logname)throws SQLException {
-        String sql = "SELECT id FROM Log WHERE logFileName LIKE ?";
+        String sql = "SELECT id FROM Log WHERE log_name LIKE ?";
         PreparedStatement stmnt = con.prepareStatement(sql);
         stmnt.setString(1, logname);
         ResultSet rs = stmnt.executeQuery();
@@ -145,7 +146,7 @@ public class Database  {
         if (fights.isEmpty()) {
             throw new IllegalArgumentException("list can't be empty");
         } 
-        String sql = "INSERT INTO Log (date,type,owner,logFileName) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Log (date,type,owner,log_name) VALUES (?, ?, ?, ?)";
         PreparedStatement stmnt = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         stmnt.setObject(1, date);
         stmnt.setString(2, type);
@@ -204,7 +205,7 @@ public class Database  {
 
     public ArrayList<String> getSavedLogs()throws SQLException {
         ArrayList<String> files = new ArrayList();
-        String sql = "SELECT logFileName FROM Log ORDER BY date DESC";
+        String sql = "SELECT log_name FROM Log ORDER BY date DESC";
         PreparedStatement stmnt = con.prepareStatement(sql);
 
         ResultSet rs = stmnt.executeQuery();
