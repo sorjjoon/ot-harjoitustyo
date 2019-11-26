@@ -22,7 +22,8 @@ import myparser.myparser.types.Type;
 
 /**
  *
- * @author joona
+ * pls don't look too closely at the column nates.. I know they are inconsistent, but I caused some problems fixing this project to fit checkstyle...
+ * I'll fix them later
  */
 public class Database  {
     
@@ -33,7 +34,8 @@ public class Database  {
             Class.forName("org.h2.Driver");
 
         } catch  (ClassNotFoundException e) {
-            System.out.println("reeeeeeeeeee");
+            System.out.println("Can't locate h2 driver");
+            System.out.println(e);
         } 
         this.con =  DriverManager.getConnection("jdbc:h2:./data/saved_logs",  "sa",  "");
 //        this.createTables();
