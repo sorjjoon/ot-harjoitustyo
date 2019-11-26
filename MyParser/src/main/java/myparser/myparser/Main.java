@@ -5,6 +5,8 @@
  */
 package myparser.myparser;
 
+
+//These are useless atm, but here for testing
 import database.Database;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -35,11 +37,13 @@ public class Main {
             ui.run(new Scanner(System.in));
             }
         catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            String sStackTrace = sw.toString(); 
-            System.out.println(sStackTrace);
+            System.out.println(e.getMessage());
+            System.exit(0);
+//            StringWriter sw = new StringWriter();
+//            PrintWriter pw = new PrintWriter(sw);
+//            e.printStackTrace(pw);
+//            String sStackTrace = sw.toString(); 
+//            System.out.println(sStackTrace);
 
         }   
     }

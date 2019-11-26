@@ -8,7 +8,7 @@ package myparser.myparser.types;
 
 /**
  *
- * @author joona
+ * Diffrent possible Event types
  */
 public enum Eventtype {
     

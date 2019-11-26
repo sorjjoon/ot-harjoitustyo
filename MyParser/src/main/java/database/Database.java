@@ -160,8 +160,6 @@ public class Database  {
         int logKey = 0;
         if (rs.next())  {
             logKey =  rs.getInt(1);
-            System.out.println("moi");
-            System.out.println(logKey);
         } 
 
         for (Fight f:fights) {

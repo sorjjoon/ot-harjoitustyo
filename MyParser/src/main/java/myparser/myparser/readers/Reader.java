@@ -22,7 +22,7 @@ public class Reader   {
     //TODO find out if  really weird names (like in arabic letters) break this reader
     
     public static ArrayList<Fight> readFile(String path)throws FileNotFoundException  {
-        Scanner reader = new Scanner(new File(path), "ISO-8859-1");
+        Scanner reader = new Scanner(new File(path), "ISO-8859-1"); 
         ArrayList<Row> lines = new ArrayList();
         ArrayList<Fight> fights = new ArrayList();
         
@@ -49,7 +49,7 @@ public class Reader   {
                 }
                 
                 //for some reason,  death events seem to not always register the exitCombat effect correctly (they sometimes do),  so had to add some work arounds for that
-                // && in_fight is there to check,  if  the exitCombat trigger has already been handled (and the in_fight variable has been set to false)
+                // && in_fight is there to check  if  the exitCombat trigger has already been handled (and the in_fight variable has been set to false)
                 else if ((row.getEventtype() == Eventtype.ExitCombat || row.getEventtype() == Eventtype.Death) && inFight)  {
 
                     inFight = false;
@@ -79,7 +79,7 @@ public class Reader   {
                     //in case we fail to read a row,  it's because the log owner has changed it for some reason, 
                     
                     
-                System.out.println("Rivin " + i + " luku ei onnistunut" + e.getMessage());
+//                System.out.println("Rivin " + i + " luku ei onnistunut" + e.getMessage());
 
             }
                 
@@ -95,11 +95,10 @@ public class Reader   {
         String date = fileName.substring(index + 1, index + 11);
         //If this fails,  date not in a valid format
         
-        
         return LocalDate.parse(date);
     }
     
-    //this is an old method you could use to get a date from the logfile name, ( log files have default names which contain the date)
+    //this is an old method you could use to get a date from the logfile path, ( log files have default names which contain the date)
     //It is not used in the current version,  but I'm not yet sure if  it is completelly unnecessary
     public static LocalDate dateFromPath(String path) throws IllegalFormatException, IndexOutOfBoundsException  {
         String fileName  =  path.substring(path.lastIndexOf("/") + 1);
@@ -112,7 +111,7 @@ public class Reader   {
         return LocalDate.parse(date);
     }
     
-    
+    //Get the log file name from the path name
     public static String nameFromPath(String path) throws IllegalFormatException, IndexOutOfBoundsException  {        
         return path.substring(path.lastIndexOf("/") + 1);
        

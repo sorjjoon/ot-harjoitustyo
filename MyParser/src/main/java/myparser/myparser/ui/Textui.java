@@ -128,7 +128,7 @@ public class Textui implements ui{
                     
                     
                      }else if(command.equals("2")){
-                    
+                        
                         System.out.println("Give a path to the file");
                         try{
                             String path=reader.nextLine();
