@@ -70,7 +70,7 @@ public class Textui implements ui{
                
                     }catch(SQLException e){
                         System.out.println("Error connecting");
-                        e.printStackTrace();
+                        System.out.println(e);
                     }
                     while(true){
                         System.out.println("----------------------------------");
@@ -200,7 +200,7 @@ public class Textui implements ui{
                     System.out.println("What type of log is this? (dummy, pvp, op etc.)");
                     String type=reader.nextLine();
                     System.out.println("Saving log. This might take a few seconds");
-                    
+                    this.data.addListOfFights(fights, date, type, name);
                     System.out.println("Log saved succesfully!");
                
                 }catch(SQLException e){

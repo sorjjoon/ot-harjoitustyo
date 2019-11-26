@@ -31,7 +31,6 @@ public class Main {
 
     public static void main(String[] args){
         try {
-            new Database().reset();
             ui ui = new Textui();
             ui.run(new Scanner(System.in));
             }

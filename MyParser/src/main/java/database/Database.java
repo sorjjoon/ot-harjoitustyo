@@ -33,10 +33,10 @@ public class Database  {
             Class.forName("org.h2.Driver");
 
         } catch  (ClassNotFoundException e) {
-
+            System.out.println("reeeeeeeeeee");
         } 
         this.con =  DriverManager.getConnection("jdbc:h2:./data/saved_logs",  "sa",  "");
-        this.createTables();
+//        this.createTables();
 
     } 
 
@@ -46,7 +46,7 @@ public class Database  {
     public void createTables()throws SQLException {
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Log (id int NOT NULL AUTO_INCREMENT,date date, type varchar(20),owner varchar(30),log_name varchar(60))").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Fight (id int NOT NULL AUTO_INCREMENT primary key,logId int NOT NULL,FOREIGN KEY(logId) REFERENCES Log(id),  PRIMARY KEY (id));").executeUpdate();
-        con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,rowNumber int, timestamp time, Source varchar(50),  Target varchar(50),  Ability_name varchar(60),  type varchar (20),  Event_effect_type varchar (50),  Dmg_heal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
+        con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,row_number int, timestamp time, Source varchar(50),  Target varchar(50),  Ability_name varchar(60),  type varchar (20),  Event_effect_type varchar (50),  Dmg_heal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Stats (fightId int NOT NULL, dps int, hps int,FOREIGN KEY(fightId) REFERENCES Fight(id));").executeUpdate();
 
 
@@ -105,7 +105,7 @@ public class Database  {
     } 
 
     public ArrayList<Row> getRowsFromFight(Integer id)throws SQLException {
-        String sql = "SELECT * FROM Row WHERE Fight_id = ? ORDER BY Row_number";
+        String sql = "SELECT * FROM Row WHERE FightId = ? ORDER BY Row_number";
         PreparedStatement stmnt = con.prepareStatement(sql);
         stmnt.setInt(1, id);
         ResultSet rs = stmnt.executeQuery();
@@ -146,7 +146,7 @@ public class Database  {
         if (fights.isEmpty()) {
             throw new IllegalArgumentException("list can't be empty");
         } 
-        String sql = "INSERT INTO Log (date,type,owner,log_name) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Log (date,type,owner,log_name) VALUES (?, ?, ?, ?)";     
         PreparedStatement stmnt = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
         stmnt.setObject(1, date);
         stmnt.setString(2, type);
@@ -158,6 +158,8 @@ public class Database  {
         int logKey = 0;
         if (rs.next())  {
             logKey =  rs.getInt(1);
+            System.out.println("moi");
+            System.out.println(logKey);
         } 
 
         for (Fight f:fights) {
@@ -176,7 +178,7 @@ public class Database  {
 //                System.out.println(key);
             } 
 
-            sql = "INSERT INTO Row (fightId, timestamp, source,target, ability_name, type, event_effect_type, Dmg_heal ,  crit, shield,rowNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO Row (fightId, timestamp, source,target, ability_name, type, event_effect_type, Dmg_heal ,  crit, shield,row_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             stmnt = con.prepareStatement(sql);
             stmnt.setInt(1, fightKey);
             for (Row r : rows) {
