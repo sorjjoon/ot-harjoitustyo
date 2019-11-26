@@ -13,4 +13,4 @@ See [Example logs](documentation/Example-logs) for some sample logs
 
 [Time Usage](documentation/timeusage.md)
 
-
+[Architecture](documentation/architecture.md)
