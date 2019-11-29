@@ -241,7 +241,7 @@ public class Textui implements ui{
         int i=1;
         DecimalFormat df = new DecimalFormat("#.##");
         for(Fight f: this.fights){
-            long duration=Stats.getDuration(f)/1000;
+            long duration=Stats.getDurationMs(f)/1000;
             System.out.println("----------------------------");
             System.out.println("Fight "+i);
             System.out.println("Duration "+duration+" seconds");
@@ -260,7 +260,7 @@ public class Textui implements ui{
         int i=1;
         DecimalFormat df = new DecimalFormat("#.##");
         for(Fight f: this.fights){
-            long duration=Stats.getDuration(f)/1000;
+            long duration=Stats.getDurationMs(f)/1000;
             System.out.println("----------------------------");
             System.out.println("Fight "+i);
             System.out.println("Duration "+duration+" seconds");
@@ -278,7 +278,7 @@ public class Textui implements ui{
         int i=1;
         DecimalFormat df = new DecimalFormat("#.##");
         for(Fight f: this.fights){
-            long duration=Stats.getDuration(f)/1000;
+            long duration=Stats.getDurationMs(f)/1000;
             System.out.println("----------------------------");
             System.out.println("Fight "+i);
             System.out.println("Duration "+duration+" seconds");
@@ -297,7 +297,7 @@ public class Textui implements ui{
         int i=1;
         DecimalFormat df = new DecimalFormat("#.##");
         for(Fight f: this.fights){
-            long duration=Stats.getDuration(f)/1000;
+            long duration=Stats.getDurationMs(f)/1000;
             System.out.println("----------------------------");
             System.out.println("Fight "+i);
             System.out.println("Duration "+duration+" seconds");
@@ -324,7 +324,7 @@ public class Textui implements ui{
         for(Fight f:this.fights){
             System.out.println("----------------------------------");
             System.out.println("Fight "+k);
-            long duration=Stats.getDuration(f)/1000;
+            long duration=Stats.getDurationMs(f)/1000;
             System.out.println("Duration "+duration+" seconds");
             System.out.println("Total dmg done "+Stats.getAllDamageByOwner(f));
             System.out.println("dps " +df.format(Stats.dps(f)));

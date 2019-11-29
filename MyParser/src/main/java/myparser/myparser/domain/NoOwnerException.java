@@ -7,7 +7,7 @@ package myparser.myparser.domain;
 
 /**
  *
- * @author joona
+ * We raise this exception in case we can't determine an owner for a specfic log (shouldn't really happen)
  */
 public class NoOwnerException extends Exception {
 

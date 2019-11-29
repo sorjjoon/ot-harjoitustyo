@@ -27,9 +27,9 @@ public class Row  {
     private Eventtype eventtype;
     private final String abilityName;
     private int dmgHeal;
-    private int threat;
+    private int threat;//this is not used in the current version
     private boolean crit;
-    private Damagetype dmgType;
+    private Damagetype dmgType; //this is not used in the current version
     private boolean shielded;
     private boolean miss;
     private final int rowNumber;
@@ -59,6 +59,7 @@ public class Row  {
     public Row(String rawline , int rowNumber) throws IndexOutOfBoundsException , NumberFormatException , IllegalArgumentException , EnumConstantNotPresentException {
         this.rowNumber = rowNumber;
         //TODO threat , dmgType
+        //TODO pve names for source/target, + tests for pve source/target
         //these are values changed later if  needed
         this.miss  = false;
         this.crit = false;
@@ -101,6 +102,7 @@ public class Row  {
             //Check if  effecttype is dmg or heal
             //For some reason heal and dmg are in diffrent formats , reflected , aborbed dmg is in a diffrent format and a few heals ( such as resurrection) are in the same format as dmg , so below testing 2 methods of reading dmg/heal and seeing which works
             if (this.effecttype.equals("Heal") || this.effecttype.equals("Damage")) {
+                
                 if (afterType.contains("shield")) {
                     this.shielded = true;
                 } else {
@@ -229,7 +231,7 @@ public class Row  {
         return shielded;
     } 
 
-
+    //Equals method mainly for unit tests
     @Override
     public boolean equals(Object obj)  {
         if  (this   ==   obj)  {

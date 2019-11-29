@@ -64,28 +64,28 @@ public class Stats {
     }
 
     public static double dps(Fight fight) {
-        long timeMs = getDuration(fight);
+        long timeMs = getDurationMs(fight);
         int dmg = getAllDamageByOwner(fight);
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
     }
 
     public static double htps(Fight fight) {
-        long timeMs = getDuration(fight);
+        long timeMs = getDurationMs(fight);
         int dmg = getAllHealingToOwner(fight);
         int timeS = (int)  timeMs / 1000;
         return (double)  dmg / timeS;
     }
 
     public static double hps(Fight fight) {
-        long timeMs = getDuration(fight);
+        long timeMs = getDurationMs(fight);
         int dmg = getAllHealingByOwner(fight);
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
     }
 
     public static double dtps(Fight fight) {
-        long timeMs = getDuration(fight);
+        long timeMs = getDurationMs(fight);
         int dmg = getAllDamageToOwner(fight);
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
@@ -100,7 +100,7 @@ public class Stats {
         return rows.get(rows.size() - 1).getTimestamp();
     }
 
-    public static long getDuration(Fight fight) {
+    public static long getDurationMs(Fight fight) {
         ArrayList<Row> rows = fight.getRows();
         LocalTime start = rows.get(0).getTimestamp();
         LocalTime end = rows.get(rows.size() - 1).getTimestamp();

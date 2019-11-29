@@ -13,23 +13,24 @@ import java.util.Objects;
  */
 public class Fight {
     private ArrayList<Row> rows;
-    private final String owner;
+    private final String owner;  
 
     public Fight(ArrayList<Row> rows)throws NoOwnerException {
         this.rows = rows;
-        //Determine the "owner" of the log, this method should work everytime?
+        //Determine the "owner" of the log, this method should work everytime
         for (Row r:rows) {
             //EnterCombat should always be the first row, so the loop is not "necessary", but there just in case, also the ExitCombat tag is here, in case we started logging midfight for  some reason, 
-            //or the user deleted rows for  some reason 
+            //or the user deleted rows for  some reason (though in the current version if the entercombat row h fight ad been deleted the fight wouldnt be saves
+            //but in case we ever do a workaround this
             if (r.getEventtype() ==  Eventtype.EnterCombat || r.getEventtype() ==  Eventtype.ExitCombat) {
                 this.owner = r.getSource();
                 return;
             }
         }
         //If we can't determine an owner for  the log, we raise an exception, though I don't see how this is possible, but it's here just in case
-        throw new NoOwnerException("NoOwnerException");
+        throw new NoOwnerException("Couldn't determine owner");
     }
-        //In case we can't determine the owner automatically this constructor can be used
+        //In case we can't determine the owner automatically this constructor can be used (mainly when reading from database)
     public Fight(ArrayList<Row> rows, String owner) {
         this.rows = rows;
         this.owner = owner;
