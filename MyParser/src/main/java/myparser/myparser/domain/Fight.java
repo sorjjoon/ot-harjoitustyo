@@ -1,18 +1,21 @@
 
 package myparser.myparser.domain;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import myparser.myparser.types.Eventtype;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
+import myparser.myparser.stats.Stats;
 
 /**
  *contains all the rows to a specific fight
  */
 public class Fight {
-    private ArrayList<Row> rows;
+    private final ArrayList<Row> rows;
     private final String owner;  
 
     public Fight(ArrayList<Row> rows)throws NoOwnerException {
@@ -60,28 +63,47 @@ public class Fight {
         return this.rows.size();
     }
     
-    
-    public Fight rowsInTimeFrame(LocalTime start, LocalTime end) throws NoOwnerException {
+    //Not used in the current version, can be used later if we want to ad more advanced statistics later
+    public Fight rowsInTimeFrame(LocalTime start, LocalTime end) {
         ArrayList<Row> specficRows  = new ArrayList();
-        for (Row r:this.rows) {
-            if (r.getTimestamp().isAfter(start)) {
-                if (r.getTimestamp().isBefore(end)) {
-                    break;
-                } else {
-                    specficRows.add(r);
-                }
-                
+        
+        //Here we are using the stats method of determening distance between two times (which works with midnight the way we want to) to make sure the time we are looking at is between end and start time
+        long durationMs=Stats.getDurationMs(this);
+        
+        for(Row r : this.rows){
+            LocalTime time=r.getTimestamp();
+            //checking distance to start and end
+            //TODO if we need to make this more effecient (probably not needed), we could make this loop stop after we have passed end
+            if (Stats.getDiffrence(start, time) <= durationMs && Stats.getDiffrence(time, end) <= durationMs) {
+                specficRows.add(r);
             }
+
         }
+    
         return new Fight(specficRows, this.owner);
     }
     
     
-    //parameter is the later fight, this method in case we want to add pvp stats (combine all the fights of a match)
+    //parameter is the later fight
     public void combineFights(Fight later) {
         for (Row r:later.getRows()) {
             this.rows.add(r);
         }
+    }
+    public LocalTime getStart() {
+        return this.rows.get(0).getTimestamp();
+    }
+
+    public LocalTime getEnd() {
+        return this.rows.get(rows.size()-1).getTimestamp();
+
+    }
+    //these are only used for testing (at least in the current version)
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(this.rows);
+        return hash;
     }
 
     @Override

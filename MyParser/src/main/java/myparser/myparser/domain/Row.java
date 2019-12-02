@@ -27,7 +27,7 @@ public class Row  {
     private Eventtype eventtype;
     private final String abilityName;
     private int dmgHeal;
-    private int threat;//this is not used in the current version
+    private int threat;//TODO test this
     private boolean crit;
     private Damagetype dmgType; //this is not used in the current version
     private boolean shielded;
@@ -51,6 +51,7 @@ public class Row  {
         this.shielded   =   shielded;
         this.miss   =   miss;
         this.rowNumber  =  rowNumber;
+        this.threat=0;
     } 
     
     
@@ -62,11 +63,23 @@ public class Row  {
         //TODO pve names for source/target, + tests for pve source/target
         //these are values changed later if  needed
         this.miss  = false;
+        this.threat=0;
         this.crit = false;
         this.shielded = false;
         String[] parts = rawline.split("\\] \\[");
 
         //removing useless chars from input String and storing the values from input String into the row object
+        
+        //Threat
+        if(rawline.contains("<")) {
+            try{
+                this.threat=Integer.valueOf(rawline.substring(rawline.lastIndexOf("<")+1, rawline.lastIndexOf(">")));
+            }catch(Exception e){
+                System.out.println(e);
+                //This should only happen if for some reason player name contains < and > (and the line being looked at doesn't contin threat
+                
+            }
+        }
         
         //removing first [
         this.timestamp = LocalTime.parse(parts[0].substring(1));
@@ -92,6 +105,7 @@ public class Row  {
        
         String afterType = parts[4].substring(index , parts[4].length() - 1);
         
+        
         if (this.type == Type.Event) {
             this.eventtype = Eventtype.valueOf(afterType.substring(2 , afterType.indexOf("{")  - 1));
             this.effecttype = null;
@@ -108,7 +122,7 @@ public class Row  {
                 } else {
                     this.shielded = false;
                 } 
-                //TODO threat , dmgType
+                //TODO dmgType
                 try {
 
                     String rivi = afterType.substring(afterType.indexOf("(")  +  1 , afterType.substring(afterType.indexOf("(") , afterType.length()  - 1).indexOf(" ") + afterType.indexOf("(") +  1);
@@ -230,6 +244,25 @@ public class Row  {
     public boolean isShielded()  {
         return shielded;
     } 
+    //Hashcode is used by the gui for making a HashMap with fight as key (not yet implemented)
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.timestamp);
+        hash = 17 * hash + Objects.hashCode(this.source);
+        hash = 17 * hash + Objects.hashCode(this.target);
+        hash = 17 * hash + Objects.hashCode(this.type);
+        hash = 17 * hash + Objects.hashCode(this.effecttype);
+        hash = 17 * hash + Objects.hashCode(this.eventtype);
+        hash = 17 * hash + Objects.hashCode(this.abilityName);
+        hash = 17 * hash + this.dmgHeal;
+        hash = 17 * hash + this.threat;
+        hash = 17 * hash + (this.crit ? 1 : 0);
+        hash = 17 * hash + Objects.hashCode(this.dmgType);
+        hash = 17 * hash + (this.shielded ? 1 : 0);
+        hash = 17 * hash + (this.miss ? 1 : 0);
+        return hash;
+    }
 
     //Equals method mainly for unit tests
     @Override

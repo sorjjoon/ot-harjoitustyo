@@ -22,6 +22,7 @@ import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.Row;
 import myparser.myparser.readers.Reader;
 import myparser.myparser.stats.Stats;
+import myparser.myparser.ui.Analysis;
 import myparser.myparser.ui.Textui;
 import myparser.myparser.ui.ui;
 
@@ -31,19 +32,17 @@ import myparser.myparser.ui.ui;
  */
 public class Main {
 
-    public static void main(String[] args){
+    public static void main(String[] args)throws Exception{
+        
         try {
-            ui ui = new Textui();
-            ui.run(new Scanner(System.in));
-            }
-        catch (Exception e) {
-            System.out.println(e.getMessage());
-            System.exit(0);
-//            StringWriter sw = new StringWriter();
-//            PrintWriter pw = new PrintWriter(sw);
-//            e.printStackTrace(pw);
-//            String sStackTrace = sw.toString(); 
-//            System.out.println(sStackTrace);
+        }catch (Exception e) {
+//            System.out.println(e.getMessage());
+//            System.exit(0);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            String sStackTrace = sw.toString(); 
+            System.out.println(sStackTrace);
 
         }   
     }

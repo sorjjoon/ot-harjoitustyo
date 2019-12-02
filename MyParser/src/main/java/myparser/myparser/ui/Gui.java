@@ -23,7 +23,6 @@ import javafx.stage.Stage;
 
 
 //This is my graphical ui base
- //TODO figure out how this works...
 public class Gui extends Application {
     public static void main(String[] args) {
         launch(args);
@@ -32,10 +31,11 @@ public class Gui extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 //        URL
-        System.out.println(getClass().getResource("/xml/MyParserGui.fxml"));
+//        System.out.println(getClass().getResource("/xml/MyParserGui.fxml"));
        Parent root = FXMLLoader.load(getClass().getResource("/xml/MyParserGui.fxml"));
-        primaryStage.setTitle("Registration Form FXML Application");
+        primaryStage.setTitle("MyParser");
         primaryStage.setScene(new Scene(root, 800, 500));
+        primaryStage.setMaximized(true);
         primaryStage.show();
     }
     

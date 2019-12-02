@@ -6,6 +6,7 @@
 package myparser.myparser.ui;
 
 import database.Database;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import myparser.myparser.readers.Reader;
@@ -231,7 +232,7 @@ public class Textui implements ui{
     @Override
     public ArrayList<Fight> readLog(String path)throws FileNotFoundException{
           
-                    ArrayList<Fight> fights=Reader.readFile(path);
+                    ArrayList<Fight> fights=Reader.readFile(new File(path));
                     return fights;
       
              

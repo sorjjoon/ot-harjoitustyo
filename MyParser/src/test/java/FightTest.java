@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+import java.io.File;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.Row;
@@ -65,15 +67,22 @@ public class FightTest {
      
      @Test
      public void notEqualsFight()throws Exception{
-         Fight fight1=Reader.readFile("src/test/test2.txt").get(0);
-         Fight fight2=Reader.readFile("src/test/test2.txt").get(1);
+         Fight fight1=Reader.readFile(new File("src/test/test2.txt")).get(0);
+         Fight fight2=Reader.readFile(new File("src/test/test2.txt")).get(1);
                  assertFalse(fight1.equals(fight2));
      }
      @Test
      public void equalsFight()throws Exception{
-         Fight fight1=Reader.readFile("src/test/test2.txt").get(0);
-         Fight fight2=Reader.readFile("src/test/test2.txt").get(0);
+         Fight fight1=Reader.readFile(new File("src/test/test2.txt")).get(0);
+         Fight fight2=Reader.readFile(new File("src/test/test2.txt")).get(0);
                  assertEquals(fight1,fight2);
+     }
+     
+     @Test
+     public void simpleTimeFrame() throws Exception{
+          Fight fight1=Reader.readFile(new File("src/test/test2.txt")).get(0);
+          Fight shorter=fight1.rowsInTimeFrame(LocalTime.parse("23:01:05.706"), LocalTime.parse("23:01:06.706"));
+          assertEquals(6,shorter.getSize());
      }
      
      
