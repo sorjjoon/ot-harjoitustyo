@@ -1,4 +1,4 @@
-## Application Logic
+# Application Logic
 
 There are 2 classes which form most of the functionality of the application, Row and Fight, shown below.  
 ![architecture](/documentation/images/architecture.png)
@@ -20,7 +20,7 @@ The class Stats contains numerous static methods for calculating different metri
 
 Seperate from these is the Database class which can store the information in a Row object into an sql database, and create Row objects based on the information stored inside a database.
 
-# Core Functionility  
+## Core Functionility  
 
 Below is shown as a sequence diagram how the application reads data in a give log file and then displays it to the user.
 
