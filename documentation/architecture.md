@@ -6,7 +6,7 @@ There are 2 classes which form most of the functionality of the application, Row
 In addition to these two, classes Reader and Stats contain static methods for the diffrent services provided by the application
 
 Reader provides the static method  
-  * readFile(String path) : ArrayList<Fight>  
+  * readFile(File file) : ArrayList<Fight>  
  
 Which is responsible for reading a given log file (Reader also contain static methods for determining the name of a file from it's absolute path, and a date from the name of a log. As logs have default names which contain the date)
 
