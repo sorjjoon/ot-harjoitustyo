@@ -36,6 +36,7 @@ public class Main {
     public static void main(String[] args)throws Exception{
         
         try {
+//            System.out.println("moi");
             Gui.main(args);
             
         }catch (Exception e) {
