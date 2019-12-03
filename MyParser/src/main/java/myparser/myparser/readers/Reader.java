@@ -16,9 +16,7 @@ import java.util.Scanner;
 import myparser.myparser.stats.Stats;
 
 /**
- * This class is responsible for reading the file passed to it as an argument
- * (meaning path to the file), and creating Row objects based on read rows and
- * returning an ArrayList containing the rows it has read
+ 
  */
 public class Reader {
 
