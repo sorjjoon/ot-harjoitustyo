@@ -14,3 +14,5 @@ See [Example logs](documentation/Example-logs) for some sample logs
 [Time Usage](documentation/timeusage.md)
 
 [Architecture](documentation/architecture.md)
+
+[Release 1] (https://github.com/sorjjoon/ot-harjoitustyo/releases/tag/Viikko5)
