@@ -63,7 +63,6 @@ public class Fight {
         return this.rows.size();
     }
 
-    //Not used in the current version, can be used later if we want to ad more advanced statistics later
     public Fight rowsInTimeFrame(LocalTime start, LocalTime end) {
         ArrayList<Row> specficRows = new ArrayList();
 
