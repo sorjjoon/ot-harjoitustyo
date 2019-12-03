@@ -8,7 +8,7 @@ In addition to these two, classes Reader and Stats contain static methods for th
 Reader provides the static method  
   * readFile(File file) : ArrayList<Fight>  
  
-Which is responsible for reading a given log file (Reader also contain static methods for determining the name of a file from it's absolute path, and a date from the name of a log. As logs have default names which contain the date)
+Which is responsible for reading a given log file (Reader also contain statics methods for determining the name of a file from it's absolute path, and a date from the name of a log. As logs have default names which contain the date)
 
 The class Stats contains numerous static methods for calculating different metrics about a specfic fight, such as
   * getAllDamageByOwner(Fight fight) : int
