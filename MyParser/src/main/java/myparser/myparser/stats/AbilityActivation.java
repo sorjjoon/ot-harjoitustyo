@@ -11,6 +11,7 @@ import myparser.myparser.domain.Row;
 /**
  *
  * This class provides a way to deal with ability activations, and helps track ends and starts of effects
+ * Current version doesn't use this yet
  */
 public class AbilityActivation {
     private Row activate;
