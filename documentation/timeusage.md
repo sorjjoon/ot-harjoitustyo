@@ -16,6 +16,4 @@
 | 1.12 | 5 | More Gui. Added Analysis class to support Gui information. Added numerous methods to Stats for tracking dmg done by a specfic target |
 | 2.12 | 5 | Gui and Analysic class support showing all stats regarding dmg, will work on making graphs a bit more presentable |
 | 3.12 | 5 | Checkstyle... Split a few methods in Database and Row equals method to smaller parts. pom.xml configurations, can not get the project to run on latest java version |
-
-
 |Total | 58 |
