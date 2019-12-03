@@ -12,4 +12,10 @@
 | 24.11 | 2 | Placeholder text ui finalized, small fixes in database (Dropped usage of sql.time) |
 | 25.11 | 3 | Checkstyle... Also fixed Reader regarding pve entity names (they still had ids) |
 | 26.11 | 3 | Ability breakdowns to the placeholder ui. Fixed issue with database saving. Cleaned up some parts and added more comments |
-|Total | 38 |
+| 30.11 | 6 | Started Gui |
+| 1.12 | 5 | More Gui. Added Analysis class to support Gui information. Added numerous methods to Stats for tracking dmg done by a specfic target |
+| 2.12 | 5 | Gui and Analysic class support showing all stats regarding dmg, will work on making graphs a bit more presentable |
+| 3.12 | 5 | Checkstyle... Split a few methods in Database and Row equals method to smaller parts. pom.xml configurations, can not get the project to run on latest java version |
+
+
+|Total | 58 |
