@@ -1,4 +1,4 @@
-# Application Logic
+## Application Logic
 
 There are 2 classes which form most of the functionality of the application, Row and Fight, shown below.  
 ![architecture](/documentation/images/architecture.png)
