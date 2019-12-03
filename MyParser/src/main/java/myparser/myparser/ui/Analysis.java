@@ -22,6 +22,7 @@ import myparser.myparser.stats.Tuple;
  * this class generates all the data shown on the gui
  */
 public class Analysis {
+
     private final String owner;
     private final String allDmgDone;
     private final String allHealDone;
@@ -55,158 +56,147 @@ public class Analysis {
     private final String takenHealCritPrecentage;
     private final String totalThreat;
     private final String tps;
-    private final HashMap<String,Integer> dmgBreakdownByTarget;
-    
-    
-    private  HashMap<String,String> dmgAvgBreakdownByTarget;
-    private  HashMap<String,String> dpsBreakdownByTarget;
-    private HashMap<String,String> dmgHitPrecentageAgainstTarget;
-    private  HashMap<String,String> dmgCritBreakdownByTarget;
-    private  HashMap<String,String> dmgBigBreakdownByTarget;
-    private  HashMap<String,String> dmgHitsDoneAgainstTarget;
-    private HashMap<String,String> dmgTotalPrecentageByTarget;
-    
-    
-    private HashMap<String,Integer> dmgAbilityBreakdown;
-    
-    private HashMap<String,HashMap<String,Integer>> dmgAbilityBreakdownByTarget;
-    
-    
-    private HashMap<LocalTime,Integer> dmgCumulative;
-    
-    private HashMap<String,HashMap<LocalTime,Integer>> dmgCumulativeBreakdownByTarget;
-    
+    private final HashMap<String, Integer> dmgBreakdownByTarget;
+
+    private HashMap<String, String> dmgAvgBreakdownByTarget;
+    private HashMap<String, String> dpsBreakdownByTarget;
+    private HashMap<String, String> dmgHitPrecentageAgainstTarget;
+    private HashMap<String, String> dmgCritBreakdownByTarget;
+    private HashMap<String, String> dmgBigBreakdownByTarget;
+    private HashMap<String, String> dmgHitsDoneAgainstTarget;
+    private HashMap<String, String> dmgTotalPrecentageByTarget;
+
+    private HashMap<String, Integer> dmgAbilityBreakdown;
+
+    private HashMap<String, HashMap<String, Integer>> dmgAbilityBreakdownByTarget;
+
+    private HashMap<LocalTime, Integer> dmgCumulative;
+
+    private HashMap<String, HashMap<LocalTime, Integer>> dmgCumulativeBreakdownByTarget;
+
     private final ArrayList<Tuple> totalDpsByTime;
-    private HashMap<String,ArrayList<Tuple>> totaldpsByTimeBreakdownByTarget;
-    
+    private HashMap<String, ArrayList<Tuple>> totaldpsByTimeBreakdownByTarget;
+
     private final DecimalFormat df;
     private final ArrayList<Tuple<LocalTime, Double>> momentaryDpsByTime;
-    private HashMap<String,ArrayList<Tuple<LocalTime,Double>>> momentarydpsByTimeBreakdownByTarget;
-    
-  
-    public Analysis(Fight f){
+    private HashMap<String, ArrayList<Tuple<LocalTime, Double>>> momentarydpsByTimeBreakdownByTarget;
+
+    public Analysis(Fight f) {
         //Overview
         this.df = new DecimalFormat("#.##");
-        this.owner=f.getOwner().substring(1, f.getOwner().length());    //Removing @ from char name
-        this.start=f.getStart().toString();
-        this.end=f.getEnd().toString();
-        this.APM=df.format(Stats.APM(f));
-        this.duration=String.valueOf((double)Stats.getDurationMs(f)/1000);
+        this.owner = f.getOwner().substring(1, f.getOwner().length());    //Removing @ from char name
+        this.start = f.getStart().toString();
+        this.end = f.getEnd().toString();
+        this.APM = df.format(Stats.apm(f));
+        this.duration = String.valueOf((double) Stats.getDurationMs(f) / 1000);
         //Damage
-        this.allDmgDone=String.valueOf(Stats.getAllDamageByOwner(f));
-        this.dps=df.format(Stats.dps(f));
-        this.hitPrecentage=df.format((1-Stats.missPrecentage(f))*100);
-        this.dmgCritPrecentage=df.format(Stats.dmgCritPrecentage(f)*100);
-        this.biggestHit=df.format(Stats.biggestHit(f));
-        this.averageDmg=df.format(Stats.averageHit(f));
-        this.hits=String.valueOf(Stats.numberOfHits(f));
-        
+        this.allDmgDone = String.valueOf(Stats.getAllDamageByOwner(f));
+        this.dps = df.format(Stats.dps(f));
+        this.hitPrecentage = df.format((1 - Stats.missPrecentage(f)) * 100);
+        this.dmgCritPrecentage = df.format(Stats.dmgCritPrecentage(f) * 100);
+        this.biggestHit = df.format(Stats.biggestHit(f));
+        this.averageDmg = df.format(Stats.averageHit(f));
+        this.hits = String.valueOf(Stats.numberOfHits(f));
+
         //dmg taken
-        this.dtps=df.format(Stats.dtps(f));
-        this.allDmgTaken=String.valueOf(Stats.getAllDamageToOwner(f));
-        this.hitsTaken=String.valueOf(Stats.numberOfTakenHits(f));
-        this.avgTakenHit=df.format(Stats.averageTakenHit(f));
-        this.bigTakenHit=String.valueOf(Stats.biggestTakenHit(f));
-        this.takenCrits=df.format(Stats.takenCritPrecentage(f)*100);
-        this.takenHitPrecentage=df.format((1-Stats.takenMissPrecentage(f))*100);
-        
+        this.dtps = df.format(Stats.dtps(f));
+        this.allDmgTaken = String.valueOf(Stats.getAllDamageToOwner(f));
+        this.hitsTaken = String.valueOf(Stats.numberOfTakenHits(f));
+        this.avgTakenHit = df.format(Stats.averageTakenHit(f));
+        this.bigTakenHit = String.valueOf(Stats.biggestTakenHit(f));
+        this.takenCrits = df.format(Stats.takenCritPrecentage(f) * 100);
+        this.takenHitPrecentage = df.format((1 - Stats.takenMissPrecentage(f)) * 100);
+
         //healing done
-        
-        this.allHealDone=String.valueOf(Stats.getAllHealingByOwner(f));
-        this.hps=df.format(Stats.hps(f));
-        this.healCount=String.valueOf(Stats.numberOfHeals(f));
-        this.avgHeal=df.format(Stats.averageHeal(f));
-        this.bigHeal=String.valueOf(Stats.biggestHeal(f));
-        this.healCritPrecentage=df.format(Stats.healCritPrecentage(f)*100);
+        this.allHealDone = String.valueOf(Stats.getAllHealingByOwner(f));
+        this.hps = df.format(Stats.hps(f));
+        this.healCount = String.valueOf(Stats.numberOfHeals(f));
+        this.avgHeal = df.format(Stats.averageHeal(f));
+        this.bigHeal = String.valueOf(Stats.biggestHeal(f));
+        this.healCritPrecentage = df.format(Stats.healCritPrecentage(f) * 100);
 
         //Healing recieved
-         this.allHealTaken=String.valueOf(Stats.getAllHealingToOwner(f));
-         this.htps=df.format(Stats.htps(f));
-         this.bigTakenHeal=String.valueOf(Stats.biggestTakenHeal(f));
-         this.takenHealCritPrecentage=df.format(Stats.takenHealCritPrecentage(f)*100);
-         this.averageHealTaken=df.format(Stats.averageTakenHeal(f));
-         this.healTakenCount=String.valueOf(Stats.numberOfHealsTaken(f));
-         
-         //Threat
-         this.totalThreat=String.valueOf(Stats.totalThreat(f));
-         this.tps=df.format(Stats.tps(f));
-         
-         
-         //Dmg Tab, creating hashmaps for all targets
-         this.dmgBreakdownByTarget=Stats.divideDamageDealtByTarget(f);
-         this.dpsBreakdownByTarget=dpsHashMap(f, dmgBreakdownByTarget, df);
-         
-         this.dmgBigBreakdownByTarget=new HashMap();         
-         
-         for(String s :this.dmgBreakdownByTarget.keySet()){
-             this.dmgBigBreakdownByTarget.put(s, Stats.biggestHitAgainstTarget(f, s).toString());
-         }
-         
-         dmgAvgBreakdownByTarget=new HashMap();
-         for(String s :this.dmgBreakdownByTarget.keySet()){
-             this.dmgAvgBreakdownByTarget.put(s, df.format(Stats.averageHitAgainstTarget(f,s)));
-         }
-         
-         dmgCritBreakdownByTarget=new HashMap();
-         for(String s : dmgBreakdownByTarget.keySet()){
-            this.dmgCritBreakdownByTarget.put(s, df.format(Stats.dmgCritPrecentageAgainstTarget(f,s)*100));
-         
-         }
-         
-         dmgHitsDoneAgainstTarget=new HashMap();
-         for(String s : dmgBreakdownByTarget.keySet()){
+        this.allHealTaken = String.valueOf(Stats.getAllHealingToOwner(f));
+        this.htps = df.format(Stats.htps(f));
+        this.bigTakenHeal = String.valueOf(Stats.biggestTakenHeal(f));
+        this.takenHealCritPrecentage = df.format(Stats.takenHealCritPrecentage(f) * 100);
+        this.averageHealTaken = df.format(Stats.averageTakenHeal(f));
+        this.healTakenCount = String.valueOf(Stats.numberOfHealsTaken(f));
+
+        //Threat
+        this.totalThreat = String.valueOf(Stats.totalThreat(f));
+        this.tps = df.format(Stats.tps(f));
+
+        //Dmg Tab, creating hashmaps for all targets
+        this.dmgBreakdownByTarget = Stats.divideDamageDealtByTarget(f);
+        this.dpsBreakdownByTarget = dpsHashMap(f, dmgBreakdownByTarget, df);
+
+        this.dmgBigBreakdownByTarget = new HashMap();
+
+        for (String s : this.dmgBreakdownByTarget.keySet()) {
+            this.dmgBigBreakdownByTarget.put(s, Stats.biggestHitAgainstTarget(f, s).toString());
+        }
+
+        dmgAvgBreakdownByTarget = new HashMap();
+        for (String s : this.dmgBreakdownByTarget.keySet()) {
+            this.dmgAvgBreakdownByTarget.put(s, df.format(Stats.averageHitAgainstTarget(f, s)));
+        }
+
+        dmgCritBreakdownByTarget = new HashMap();
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            this.dmgCritBreakdownByTarget.put(s, df.format(Stats.dmgCritPrecentageAgainstTarget(f, s) * 100));
+
+        }
+
+        dmgHitsDoneAgainstTarget = new HashMap();
+        for (String s : dmgBreakdownByTarget.keySet()) {
             this.dmgHitsDoneAgainstTarget.put(s, String.valueOf(Stats.numberOfHitsAgainstTarget(f, s)));
-         
-         }
-         
-        dmgHitPrecentageAgainstTarget=new HashMap();
-         for(String s : dmgBreakdownByTarget.keySet()){
-            this.dmgHitPrecentageAgainstTarget.put(s, df.format((1-Stats.missPrecentageAgainstTarget(f, s))*100));
-         
-         }
-         
-         dmgTotalPrecentageByTarget=new HashMap();
-         for(String s : dmgBreakdownByTarget.keySet()){
-             double precentage = (double) dmgBreakdownByTarget.get(s)/Integer.valueOf(allDmgDone);
-             precentage*=100;
-             dmgTotalPrecentageByTarget.put(s,df.format(precentage));
-         }
-         
-         
-         dmgAbilityBreakdown=Stats.divideDamageDealtByAbility(f);
-         
-         dmgAbilityBreakdownByTarget=new HashMap();
-         for(String s :dmgBreakdownByTarget.keySet()){
-             dmgAbilityBreakdownByTarget.put(s, Stats.divideDamageDealtAgainstTargetByAbility(f, s));
-         }
-         
-         dmgCumulative=Stats.cumulativeDmgDone(f);
-         
-         dmgCumulativeBreakdownByTarget=new HashMap();
-         
-         for(String s :dmgBreakdownByTarget.keySet()){
-             dmgCumulativeBreakdownByTarget.put(s, Stats.cumulativeDmgDoneAgainstTarget(f, s));
-         }
-         
-         totalDpsByTime=Stats.getTotalDpsByTime(f);
-         
-         
-         
-         totaldpsByTimeBreakdownByTarget=new HashMap();
-                  for(String s :dmgBreakdownByTarget.keySet()){
-             totaldpsByTimeBreakdownByTarget.put(s, Stats.getTotalDpsByTimeAgainstTarget(f, s));
-         }
-                  
-        momentaryDpsByTime=Stats.momentaryDps(f);
-         
-         
-         momentarydpsByTimeBreakdownByTarget=new HashMap();
-         
-         for(String s :dmgBreakdownByTarget.keySet()){
-             momentarydpsByTimeBreakdownByTarget.put(s, Stats.momentaryDpsAgainstTarget(f, s));
-         }
-         
-        
+
+        }
+
+        dmgHitPrecentageAgainstTarget = new HashMap();
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            this.dmgHitPrecentageAgainstTarget.put(s, df.format((1 - Stats.missPrecentageAgainstTarget(f, s)) * 100));
+
+        }
+
+        dmgTotalPrecentageByTarget = new HashMap();
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            double precentage = (double) dmgBreakdownByTarget.get(s) / Integer.valueOf(allDmgDone);
+            precentage *= 100;
+            dmgTotalPrecentageByTarget.put(s, df.format(precentage));
+        }
+
+        dmgAbilityBreakdown = Stats.divideDamageDealtByAbility(f);
+
+        dmgAbilityBreakdownByTarget = new HashMap();
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            dmgAbilityBreakdownByTarget.put(s, Stats.divideDamageDealtAgainstTargetByAbility(f, s));
+        }
+
+        dmgCumulative = Stats.cumulativeDmgDone(f);
+
+        dmgCumulativeBreakdownByTarget = new HashMap();
+
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            dmgCumulativeBreakdownByTarget.put(s, Stats.cumulativeDmgDoneAgainstTarget(f, s));
+        }
+
+        totalDpsByTime = Stats.getTotalDpsByTime(f);
+
+        totaldpsByTimeBreakdownByTarget = new HashMap();
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            totaldpsByTimeBreakdownByTarget.put(s, Stats.getTotalDpsByTimeAgainstTarget(f, s));
+        }
+
+        momentaryDpsByTime = Stats.momentaryDps(f);
+
+        momentarydpsByTimeBreakdownByTarget = new HashMap();
+
+        for (String s : dmgBreakdownByTarget.keySet()) {
+            momentarydpsByTimeBreakdownByTarget.put(s, Stats.momentaryDpsAgainstTarget(f, s));
+        }
+
     }
 
     public ArrayList<Tuple<LocalTime, Double>> getMomentaryDpsByTime() {
@@ -228,8 +218,6 @@ public class Analysis {
     public DecimalFormat getDf() {
         return df;
     }
-    
-    
 
     public HashMap<LocalTime, Integer> getDmgCumulative() {
         return dmgCumulative;
@@ -238,8 +226,7 @@ public class Analysis {
     public HashMap<String, HashMap<LocalTime, Integer>> getDmgCumulativeBreakdownByTarget() {
         return dmgCumulativeBreakdownByTarget;
     }
-    
-    
+
     public HashMap<String, Integer> getDmgAbilityBreakdown() {
         return dmgAbilityBreakdown;
     }
@@ -251,24 +238,23 @@ public class Analysis {
     public HashMap<String, String> getDmgTotalPrecentageByTarget() {
         return dmgTotalPrecentageByTarget;
     }
-    
 
     public HashMap<String, String> getDmgHitPrecentageAgainstTarget() {
         return dmgHitPrecentageAgainstTarget;
     }
-    
-    private static HashMap<String,String> dpsHashMap(Fight f,HashMap<String,Integer> dmgBreakDown,DecimalFormat df){
-        HashMap<String,String> dpsMap=new HashMap();
-        int durationS= (int) Stats.getDurationMs(f)/1000;
-        for(String s:dmgBreakDown.keySet()){
+
+    private static HashMap<String, String> dpsHashMap(Fight f, HashMap<String, Integer> dmgBreakDown, DecimalFormat df) {
+        HashMap<String, String> dpsMap = new HashMap();
+        int durationS = (int) Stats.getDurationMs(f) / 1000;
+        for (String s : dmgBreakDown.keySet()) {
 //            System.out.println(durationS);
-            double dps=(double) dmgBreakDown.get(s) / durationS;
+            double dps = (double) dmgBreakDown.get(s) / durationS;
 //            System.out.println(dps);
             dpsMap.put(s, df.format(dps));
         }
         return dpsMap;
     }
-    
+
     public String getHps() {
         return hps;
     }
@@ -297,7 +283,7 @@ public class Analysis {
         return bigHeal;
     }
 
-    public HashMap<String,Integer> getDmgBreakdownByTarget() {
+    public HashMap<String, Integer> getDmgBreakdownByTarget() {
         return dmgBreakdownByTarget;
     }
 
@@ -344,7 +330,6 @@ public class Analysis {
     public String getTps() {
         return tps;
     }
-    
 
     public String getHits() {
         return hits;
@@ -369,8 +354,7 @@ public class Analysis {
     public String getBiggestHit() {
         return biggestHit;
     }
-    
-    
+
     public String getOwner() {
         return owner;
     }
@@ -402,8 +386,8 @@ public class Analysis {
     public String getDuration() {
         return duration;
     }
-    
-      public String getDtps() {
+
+    public String getDtps() {
         return dtps;
     }
 
@@ -426,7 +410,5 @@ public class Analysis {
     public String getTakenHitPrecentage() {
         return takenHitPrecentage;
     }
-    
-    
-    
+
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package myparser.myparser;
+package myparser.myparser.ui;
 
 
 //These are useless atm, but here for testing
@@ -23,6 +23,7 @@ import myparser.myparser.domain.Row;
 import myparser.myparser.readers.Reader;
 import myparser.myparser.stats.Stats;
 import myparser.myparser.ui.Analysis;
+import myparser.myparser.ui.Gui;
 import myparser.myparser.ui.Textui;
 import myparser.myparser.ui.ui;
 
@@ -35,6 +36,8 @@ public class Main {
     public static void main(String[] args)throws Exception{
         
         try {
+            Gui.main(args);
+            
         }catch (Exception e) {
 //            System.out.println(e.getMessage());
 //            System.exit(0);

@@ -22,6 +22,7 @@ import myparser.myparser.types.Type;
  * fight
  */
 //TODO could make effective healing precentage (by comparing threat generated to healing done), but as it's only possible for pve, probably not worth the effort
+
 public class Stats {
 
     public static HashSet<String> getDmgTargets(Fight fight) {
@@ -94,7 +95,7 @@ public class Stats {
     }
 
     //TODO when ability activation class is done, redo this
-    public static double APM(Fight fight) {
+    public static double apm(Fight fight) {
         int i = 0; //counter for ability activations
         for (Row r : fight.getRows()) {
             if (r.getEventtype() == Eventtype.AbilityActivate) {
@@ -192,7 +193,9 @@ public class Stats {
     public static int totalThreat(Fight fight) {
         int sum = 0;
         for (Row r : fight.getRows()) {
-            sum += r.getThreat();
+            if (r.getSource().equals(fight.getOwner())) {
+                sum += r.getThreat();
+            }
         }
         return sum;
     }
@@ -613,6 +616,7 @@ public class Stats {
         return dmgDone;
 
     }
+
     public static Fight getRowsWithSpecficEffectFromOwnerAgainstTarget(Fight fight, String effect, String target) {
         ArrayList<Row> specficRows = new ArrayList();
         for (Row r : fight.getRows()) {
@@ -624,6 +628,7 @@ public class Stats {
 
         return new Fight(specficRows, fight.getOwner());
     }
+
     /*
     Used to make dps and hps Stats a bit more efficient by cutting down the amount of rows needed
      */
@@ -650,31 +655,33 @@ public class Stats {
         ArrayList<Tuple> list = new ArrayList();
         for (Row r : rows) {
             sum += r.getDmgHeal();
-            int durationS = (int) getDiffrence(start, r.getTimestamp())/1000;
-            double dps = (double) sum/durationS;
-            Tuple<LocalTime, Double> tuple=new Tuple(r.getTimestamp(), dps);
-            
+            int durationS = (int) getDiffrence(start, r.getTimestamp()) / 1000;
+            double dps = (double) sum / durationS;
+            Tuple<LocalTime, Double> tuple = new Tuple(r.getTimestamp(), dps);
+
             list.add(tuple);
         }
-        
+
         return list;
     }
-    public static ArrayList<Tuple> getTotalDpsByTimeAgainstTarget(Fight fight , String target) {
+
+    public static ArrayList<Tuple> getTotalDpsByTimeAgainstTarget(Fight fight, String target) {
         LocalTime start = fight.getStart();
         ArrayList<Row> rows = getRowsWithSpecficEffectFromOwnerAgainstTarget(fight, "Damage", target).getRows(); //Getting only rows with dmg in them to take this a little simpler
         int sum = 0;
         ArrayList<Tuple> list = new ArrayList();
         for (Row r : rows) {
             sum += r.getDmgHeal();
-            int durationS = (int) getDiffrence(start, r.getTimestamp())/1000;
-            double dps = (double) sum/durationS;
-            Tuple<LocalTime, Double> tuple=new Tuple(r.getTimestamp(), dps);
-            
+            int durationS = (int) getDiffrence(start, r.getTimestamp()) / 1000;
+            double dps = (double) sum / durationS;
+            Tuple<LocalTime, Double> tuple = new Tuple(r.getTimestamp(), dps);
+
             list.add(tuple);
         }
-        
+
         return list;
     }
+
     /*
     splits the given fight to timeframes. (Used by the gui for dps map)
     return start times for timeframes
@@ -735,62 +742,63 @@ public class Stats {
         double precentage = (double) crits / all;
         return precentage;
     }
+
     /**
-     * Returns a list of Tuples containing momentary dps at a given time (meaning dps in last 10 seconds)
-     * 
+     * Returns a list of Tuples containing momentary dps at a given time
+     * (meaning dps in last 10 seconds)
+     *
      * @param fight
      * @return <Tuple<LocalTime, Double>>
      */
-    
     //TODO check what happens with Fight shorter than 10 seconds
     public static ArrayList<Tuple<LocalTime, Double>> momentaryDps(Fight fight) {
         ArrayList<Tuple<LocalTime, Double>> list = new ArrayList();
-        Fight onlyDmgRows=getRowsWithSpecficEffectFromOwner(fight, "Damage"); //To make this a little more simple, get only rows regarding dmg
-        
-        ArrayList<Row> rows=onlyDmgRows.getRows(); 
-        
+        Fight onlyDmgRows = getRowsWithSpecficEffectFromOwner(fight, "Damage"); //To make this a little more simple, get only rows regarding dmg
+
+        ArrayList<Row> rows = onlyDmgRows.getRows();
+
         //This currently a very inefficient way of doing this, but atm it's not necessary to make this faster
-        for(Row r : rows){
-            int sum=0;
+        for (Row r : rows) {
+            int sum = 0;
             LocalTime currentTime = r.getTimestamp();
             //get all the rows in a 10 second window
-            ArrayList<Row> rowsInTimeFrame =onlyDmgRows.rowsInTimeFrame(currentTime.minusSeconds(10), currentTime).getRows();
+            ArrayList<Row> rowsInTimeFrame = onlyDmgRows.rowsInTimeFrame(currentTime.minusSeconds(10), currentTime).getRows();
             //sum the dmg for rows in the 10 s window
-            for(Row x :rowsInTimeFrame){
-                sum+=x.getDmgHeal();
+            for (Row x : rowsInTimeFrame) {
+                sum += x.getDmgHeal();
             }
-            list.add(new Tuple(currentTime,(double)sum/10));
-            
+            list.add(new Tuple(currentTime, (double) sum / 10));
+
         }
         return list;
     }
-    
+
     /**
-     * Returns a list of Tuples containing momentary dps at a given time against a target (meaning dps in last 10 seconds)
-     * 
+     * Returns a list of Tuples containing momentary dps at a given time against
+     * a target (meaning dps in last 10 seconds)
+     *
      * @param fight
      * @return <Tuple<LocalTime, Double>>
      */
-    
     //TODO check what happens with Fight shorter than 10 seconds
-    public static ArrayList<Tuple<LocalTime, Double>> momentaryDpsAgainstTarget(Fight fight,String target) {
+    public static ArrayList<Tuple<LocalTime, Double>> momentaryDpsAgainstTarget(Fight fight, String target) {
         ArrayList<Tuple<LocalTime, Double>> list = new ArrayList();
-        Fight onlyDmgRows=getRowsWithSpecficEffectFromOwnerAgainstTarget(fight, "Damage", target); //To make this a little more simple, get only rows regarding dmg
-        
-        ArrayList<Row> rows=onlyDmgRows.getRows(); 
-        
+        Fight onlyDmgRows = getRowsWithSpecficEffectFromOwnerAgainstTarget(fight, "Damage", target); //To make this a little more simple, get only rows regarding dmg
+
+        ArrayList<Row> rows = onlyDmgRows.getRows();
+
         //This currently a very inefficient way of doing this, but atm it's not necessary to make this faster
-        for(Row r : rows){
-            int sum=0;
+        for (Row r : rows) {
+            int sum = 0;
             LocalTime currentTime = r.getTimestamp();
             //get all the rows in a 10 second window
-            ArrayList<Row> rowsInTimeFrame =onlyDmgRows.rowsInTimeFrame(currentTime.minusSeconds(10), currentTime).getRows();
+            ArrayList<Row> rowsInTimeFrame = onlyDmgRows.rowsInTimeFrame(currentTime.minusSeconds(10), currentTime).getRows();
             //sum the dmg for rows in the 10 s window
-            for(Row x :rowsInTimeFrame){
-                sum+=x.getDmgHeal();
+            for (Row x : rowsInTimeFrame) {
+                sum += x.getDmgHeal();
             }
-            list.add(new Tuple(currentTime,(double)sum/10));
-            
+            list.add(new Tuple(currentTime, (double) sum / 10));
+
         }
         return list;
     }

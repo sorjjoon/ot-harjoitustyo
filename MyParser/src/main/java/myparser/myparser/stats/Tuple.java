@@ -9,24 +9,23 @@ package myparser.myparser.stats;
  *
  * Just a simple tuple class for usage in Stats
  */
-public class Tuple<A,B> {
+public class Tuple<A, B> {
 
-  private final A First;
-  private final B second;
+    private final A first;
+    private final B second;
 
-  public Tuple(A first, B second) {
-    this.First = first;
-    this.second = second;
-  }
+    public Tuple(A first, B second) {
+        this.first = first;
+        this.second = second;
+    }
 
-  public A getFirst() { 
-      return First; 
-  }
-  public B getSecond() { 
-      
-      return second; 
-  }
-  
-  
-  
+    public A getFirst() {
+        return first;
+    }
+
+    public B getSecond() {
+
+        return second;
+    }
+
 }

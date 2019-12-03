@@ -40,9 +40,7 @@ public class Gui extends Application {
     }
     
     
-    public void test(){
-        System.out.println("test");
-    }
+
 }
     
 
