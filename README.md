@@ -16,6 +16,5 @@ See [Example logs](documentation/Example-logs) for some sample logs
 [Architecture](documentation/architecture.md)
 
 [Release 1](https://github.com/sorjjoon/ot-harjoitustyo/releases/tag/Viikko5)  
-Note: Release 1 needs java version 8 to work, so for example on the university computer use command
-/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java -jar MyParser-1.0.jar
-to run it
+Note: Release 1 needs java version 8 to work, so for example on the university computer use command  
+/usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java -jar MyParser-1.0.jar  
