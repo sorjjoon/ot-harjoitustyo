@@ -23,7 +23,7 @@ public class Fight {
         //Determine the "owner" of the log, this method should work everytime
         for (Row r : rows) {
             //EnterCombat should always be the first row, so the loop is not "necessary", but there just in case, also the ExitCombat tag is here, in case we started logging midfight for  some reason, 
-            //or the user deleted rows for  some reason (though in the current version if the entercombat row h fight ad been deleted the fight wouldnt be saves
+            //or the user deleted rows for  some reason (though in the current version if the entercombat row had been deleted the fight wouldn't be read
             //but in case we ever do a workaround this
             if (r.getEventtype() == Eventtype.EnterCombat || r.getEventtype() == Eventtype.ExitCombat) {
                 this.owner = r.getSource();
@@ -63,7 +63,6 @@ public class Fight {
         return this.rows.size();
     }
 
-    //Not used in the current version, can be used later if we want to ad more advanced statistics later
     public Fight rowsInTimeFrame(LocalTime start, LocalTime end) {
         ArrayList<Row> specficRows = new ArrayList();
 
