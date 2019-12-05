@@ -20,7 +20,10 @@ import myparser.myparser.stats.Tuple;
 /**
  *
  * this class generates all the data shown on the gui
+ * 
  */
+
+//TODO rewrite Analysis and Stats to be more readable
 public class Analysis {
 
     private final String owner;
@@ -80,6 +83,30 @@ public class Analysis {
     private final DecimalFormat df;
     private final ArrayList<Tuple<LocalTime, Double>> momentaryDpsByTime;
     private HashMap<String, ArrayList<Tuple<LocalTime, Double>>> momentarydpsByTimeBreakdownByTarget;
+    
+        private final HashMap<String, Integer> healBreakdownByTarget;
+
+    private HashMap<String, String> healAvgBreakdownByTarget;
+    private HashMap<String, String> hpsBreakdownByTarget;
+    private HashMap<String, String> healHitPrecentageAgainstTarget;
+    private HashMap<String, String> healCritBreakdownByTarget;
+    private HashMap<String, String> healBigBreakdownByTarget;
+    private HashMap<String, String> healHitsDoneAgainstTarget;
+    private HashMap<String, String> healTotalPrecentageByTarget;
+
+    private HashMap<String, Integer> healAbilityBreakdown;
+
+    private HashMap<String, HashMap<String, Integer>> healAbilityBreakdownByTarget;
+
+    private HashMap<LocalTime, Integer> healCumulative;
+
+    private HashMap<String, HashMap<LocalTime, Integer>> healCumulativeBreakdownByTarget;
+
+    private final ArrayList<Tuple> totalHpsByTime;
+    private HashMap<String, ArrayList<Tuple>> totalHpsByTimeBreakdownByTarget;
+
+    private final ArrayList<Tuple<LocalTime, Double>> momentaryHpsByTime;
+    private HashMap<String, ArrayList<Tuple<LocalTime, Double>>> momentaryHpsByTimeBreakdownByTarget;
 
     public Analysis(Fight f) {
         //Overview
@@ -196,8 +223,142 @@ public class Analysis {
         for (String s : dmgBreakdownByTarget.keySet()) {
             momentarydpsByTimeBreakdownByTarget.put(s, Stats.momentaryDpsAgainstTarget(f, s));
         }
+        
+        //Heal tab
+            this.healBreakdownByTarget = Stats.divideEffectSumByAbilityF(f, "Heal", f.getOwner(), null);
+        this.hpsBreakdownByTarget = hpsHashMap(f, healBreakdownByTarget, df);
+
+        this.healBigBreakdownByTarget = new HashMap();
+
+        for (String s : this.healBreakdownByTarget.keySet()) {
+            this.healBigBreakdownByTarget.put(s, String.valueOf(Stats.getBigOfEffectFromSourceAgainstTarget(f,"Heal",f.getOwner(),s)));
+        }
+
+        healAvgBreakdownByTarget = new HashMap();
+        for (String s : this.healBreakdownByTarget.keySet()) {
+            this.healAvgBreakdownByTarget.put(s, df.format(Stats.getAverageOfEffectFromSourceAgainstTarget(f, "Heal",f.getOwner(),s)));
+        }
+
+        healCritBreakdownByTarget = new HashMap();
+        for (String s : healBreakdownByTarget.keySet()) {
+            this.healCritBreakdownByTarget.put(s, df.format(Stats.getCritOfEffectFromSourceAgainstTarget(f, "Heal", f.getOwner(), s) * 100));
+
+        }
+
+        healHitsDoneAgainstTarget = new HashMap();
+        for (String s : healBreakdownByTarget.keySet()) {
+            this.healHitsDoneAgainstTarget.put(s, String.valueOf(Stats.getNumberOfEffectsFromSourceAgainstTarget(f, "Heal", f.getOwner(), s)));
+
+        }
+
+
+
+        healTotalPrecentageByTarget = new HashMap();
+        for (String s : healBreakdownByTarget.keySet()) {
+            double precentage = (double) healBreakdownByTarget.get(s) / Integer.valueOf(allHealDone);
+            precentage *= 100;
+            healTotalPrecentageByTarget.put(s, df.format(precentage));
+        }
+
+        healAbilityBreakdown = Stats.divideEffectSumByAbilityF(f,"Heal",f.getOwner(),null);
+
+        healAbilityBreakdownByTarget = new HashMap();
+        for (String s : healBreakdownByTarget.keySet()) {
+            healAbilityBreakdownByTarget.put(s, Stats.divideEffectSumByAbilityF(f, "Heal",f.getOwner(),s));
+        }
+
+        healCumulative = Stats.cumulativeDmgDone(f);
+
+        healCumulativeBreakdownByTarget = new HashMap();
+
+        for (String s : healBreakdownByTarget.keySet()) {
+            healCumulativeBreakdownByTarget.put(s, Stats.cumulativeEffectDoneAgainstTarget(f, "Heal",f.getOwner(),s));
+        }
+
+        totalHpsByTime = Stats.getTotalHpsByTimeAgainstTarget(f,null);
+
+        totalHpsByTimeBreakdownByTarget = new HashMap();
+        for (String s : healBreakdownByTarget.keySet()) {
+            totalHpsByTimeBreakdownByTarget.put(s, Stats.getTotalHpsByTimeAgainstTarget(f, s));
+        }
+
+        momentaryHpsByTime = Stats.momentaryHpsAgainstTarget(f, null);
+
+        momentaryHpsByTimeBreakdownByTarget = new HashMap();
+
+        for (String s : healBreakdownByTarget.keySet()) {
+            momentaryHpsByTimeBreakdownByTarget.put(s, Stats.momentaryHpsAgainstTarget(f, s));
+        }
+        
+        
 
     }
+
+    public HashMap<String, Integer> getHealBreakdownByTarget() {
+        return healBreakdownByTarget;
+    }
+
+    public HashMap<String, String> getHealAvgBreakdownByTarget() {
+        return healAvgBreakdownByTarget;
+    }
+
+    public HashMap<String, String> getHpsBreakdownByTarget() {
+        return hpsBreakdownByTarget;
+    }
+
+    public HashMap<String, String> getHealHitPrecentageAgainstTarget() {
+        return healHitPrecentageAgainstTarget;
+    }
+
+    public HashMap<String, String> getHealCritBreakdownByTarget() {
+        return healCritBreakdownByTarget;
+    }
+
+    public HashMap<String, String> getHealBigBreakdownByTarget() {
+        return healBigBreakdownByTarget;
+    }
+
+    public HashMap<String, String> getHealHitsDoneAgainstTarget() {
+        return healHitsDoneAgainstTarget;
+    }
+
+    public HashMap<String, String> getHealTotalPrecentageByTarget() {
+        return healTotalPrecentageByTarget;
+    }
+
+    public HashMap<String, Integer> getHealAbilityBreakdown() {
+        return healAbilityBreakdown;
+    }
+
+    public HashMap<String, HashMap<String, Integer>> getHealAbilityBreakdownByTarget() {
+        return healAbilityBreakdownByTarget;
+    }
+
+    public HashMap<LocalTime, Integer> getHealCumulative() {
+        return healCumulative;
+    }
+
+    public HashMap<String, HashMap<LocalTime, Integer>> getHealCumulativeBreakdownByTarget() {
+        return healCumulativeBreakdownByTarget;
+    }
+
+    public ArrayList<Tuple> getTotalHpsByTime() {
+        return totalHpsByTime;
+    }
+
+    public HashMap<String, ArrayList<Tuple>> getTotalHpsByTimeBreakdownByTarget() {
+        return totalHpsByTimeBreakdownByTarget;
+    }
+
+    public ArrayList<Tuple<LocalTime, Double>> getMomentaryHpsByTime() {
+        return momentaryHpsByTime;
+    }
+
+    public HashMap<String, ArrayList<Tuple<LocalTime, Double>>> getMomentaryHpsByTimeBreakdownByTarget() {
+        return momentaryHpsByTimeBreakdownByTarget;
+    }
+    
+    
 
     public ArrayList<Tuple<LocalTime, Double>> getMomentaryDpsByTime() {
         return momentaryDpsByTime;
@@ -242,7 +403,19 @@ public class Analysis {
     public HashMap<String, String> getDmgHitPrecentageAgainstTarget() {
         return dmgHitPrecentageAgainstTarget;
     }
+private static HashMap<String, String> hpsHashMap(Fight f, HashMap<String, Integer> dmgBreakDown, DecimalFormat df) {
+        HashMap<String, String> dpsMap = new HashMap();
+        int durationS = (int) Stats.getDurationMs(f) / 1000;
+        for (String s : dmgBreakDown.keySet()) {
+//            System.out.println(durationS);
+            double dps = (double) dmgBreakDown.get(s) / durationS;
+//            System.out.println(dps);
+            dpsMap.put(s, df.format(dps));
+        }
+        return dpsMap;
+    }
 
+    
     private static HashMap<String, String> dpsHashMap(Fight f, HashMap<String, Integer> dmgBreakDown, DecimalFormat df) {
         HashMap<String, String> dpsMap = new HashMap();
         int durationS = (int) Stats.getDurationMs(f) / 1000;

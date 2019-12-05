@@ -34,7 +34,7 @@ public class Stats {
         return getSumOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
     }
 
-    private static Double getAverageOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static Double getAverageOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int sum = 0;
         int i = 0;
         for (Row r : fight.getRows()) {
@@ -59,7 +59,7 @@ public class Stats {
      * @param source, for example owner
      * @return
      */
-    private static int getSumOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static int getSumOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int sum = 0;
         for (Row r : fight.getRows()) {
             if (r.getEffecttype() != null && r.getEffecttype().equals(effect) && (r.getSource().equals(source) || source == null) && (r.getTarget().equals(target) || target == null)) {
@@ -193,7 +193,7 @@ public class Stats {
 
     }
 
-    private static int getNumberOfEffectsFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static int getNumberOfEffectsFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
 
         int i = 0;
         for (Row r : fight.getRows()) {
@@ -239,7 +239,7 @@ public class Stats {
      * @param target
      * @return
      */
-    private static int getBigOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static int getBigOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int big = 0;
         for (Row r : fight.getRows()) {
             if (r.getEffecttype() != null && r.getEffecttype().equals(effect) && (r.getSource().equals(source) || source == null) && (r.getTarget().equals(target) || target == null)) {
@@ -313,7 +313,7 @@ public class Stats {
         return precentage;
     }
 
-    private static Double getCritOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static Double getCritOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int crit = 0;
         int i = 0;
         for (Row r : fight.getRows()) {
@@ -380,7 +380,7 @@ public class Stats {
      * @param target
      * @return
      */
-    private static HashMap<String, Integer> divideEffectSumByAbilityF(Fight fight, String effect, String source, String target) {
+    public static HashMap<String, Integer> divideEffectSumByAbilityF(Fight fight, String effect, String source, String target) {
         HashMap<String, Integer> results = new HashMap();
         for (Row r : fight.getRows()) {
             if (r.getEffecttype() != null && r.getEffecttype().equals(effect) && (source == null || r.getSource().equals(source)) && (target == null || r.getTarget().equals(target))) {
@@ -489,7 +489,7 @@ public class Stats {
      * @param target
      * @return
      */
-    private static HashMap<LocalTime, Integer> cumulativeEffectDoneAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static HashMap<LocalTime, Integer> cumulativeEffectDoneAgainstTarget(Fight fight, String effect, String source, String target) {
         int sum = 0;
         HashMap<LocalTime, Integer> totalDone = new HashMap();
 
@@ -525,7 +525,7 @@ public class Stats {
      * @param target
      * @return
      */
-    private static Fight getRowsWithSpecficEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
+    public static Fight getRowsWithSpecficEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         ArrayList<Row> specficRows = new ArrayList();
         for (Row r : fight.getRows()) {
             if (r.getEffecttype() != null && r.getEffecttype().equals(effect) && (source == null || r.getSource().equals(source)) && (target == null || r.getTarget().equals(target))) {
@@ -536,7 +536,31 @@ public class Stats {
 
         return new Fight(specficRows, fight.getOwner());
     }
+    
+    
+    /**
+     * Returns an arraylist with tuples of LocalTime, Double For hps by moment
+     * for all targets use null
+     * @param fight
+     * @param target
+     * @return
+     */
+    public static ArrayList<Tuple> getTotalHpsByTimeAgainstTarget(Fight fight,String target) {
+        LocalTime start = fight.getStart();
+        ArrayList<Row> rows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), target).getRows(); //Getting only rows with dmg in them to take this a little simpler
+        int sum = 0;
+        ArrayList<Tuple> list = new ArrayList();
+        for (Row r : rows) {
+            sum += r.getDmgHeal();
+            int durationS = (int) getDiffrence(start, r.getTimestamp()) / 1000;
+            double dps = (double) sum / durationS;
+            Tuple<LocalTime, Double> tuple = new Tuple(r.getTimestamp(), dps);
 
+            list.add(tuple);
+        }
+
+        return list;
+    }
     /**
      * Returns an arraylist with tuples of LocalTime, Double For dps by moment
      *
@@ -590,9 +614,22 @@ public class Stats {
         return getCritOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), target);
 
     }
-
     /**
-     * Returns a list of Tuples containing momentary dps at a given time
+     * Returns a list of Tuples containing momentary Hps at a given time
+     * (meaning dps in last 10 seconds)
+     * for all targets use null
+     * @param fight
+     * @return <Tuple<LocalTime, Double>>
+     */
+    //TODO check what happens with Fight shorter than 10 seconds
+    public static ArrayList<Tuple<LocalTime, Double>> momentaryHpsAgainstTarget(Fight fight, String target) {
+        Fight onlyDmgRows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), target); //To make this a little more simple, get only rows regarding dmg
+
+        return momentaryEffect(onlyDmgRows);
+
+    }
+    /**
+     * Returns a list of Tuples containing momentary Dps at a given time
      * (meaning dps in last 10 seconds)
      *
      * @param fight
@@ -613,7 +650,7 @@ public class Stats {
      * @param rows
      * @return
      */
-    private static ArrayList<Tuple<LocalTime, Double>> momentaryEffect(Fight onlyEffectRows) {
+    public static ArrayList<Tuple<LocalTime, Double>> momentaryEffect(Fight onlyEffectRows) {
         ArrayList<Tuple<LocalTime, Double>> list = new ArrayList();
         ArrayList<Row> rows = onlyEffectRows.getRows();
         //This currently a very inefficient way of doing this, but atm it's not necessary to make this faster
