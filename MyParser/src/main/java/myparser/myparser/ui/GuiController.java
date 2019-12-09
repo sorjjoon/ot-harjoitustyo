@@ -155,6 +155,36 @@ public class GuiController implements Initializable {
     private LineChart<LocalTime, Double> MomentDpsChart;
     @FXML
     private NumberAxis dpsChartYAxis;
+    @FXML
+    private ChoiceBox<String> healChoiceBox;
+    @FXML
+    private Text totalHealTab;
+    @FXML
+    private Text hpsHealTab;
+    @FXML
+    private Text hitsHealTab;
+    @FXML
+    private Text avgHealTab;
+    @FXML
+    private Text bigHealeTab;
+    @FXML
+    private Text critsHealTab;
+    @FXML
+    private Text totalPrecentageHealTab;
+    @FXML
+    private PieChart healPieChart;
+    @FXML
+    private LineChart<?, ?> healLineChart;
+    @FXML
+    private NumberAxis yAxis1;
+    @FXML
+    private CategoryAxis xAxis1;
+    @FXML
+    private LineChart<?, ?> hpsChart;
+    @FXML
+    private NumberAxis hpsChartYAxis;
+    @FXML
+    private LineChart<?, ?> momentHpsChart;
 
     /**
      * Initializes the controller class.
@@ -183,6 +213,7 @@ public class GuiController implements Initializable {
         });
         //set listener for dmgTab choice box
         this.dmgChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> dmgTabSelection(newSelect));
+                this.healChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> healTabSelection(newSelect));
 
     }
 
@@ -281,7 +312,20 @@ public class GuiController implements Initializable {
 
         //set the dmg tab selection boxx
         updateDmgTabChoiceBox();
+        updateHealTabChoiceBox();
 
+    }
+    public void updateHealTabChoiceBox() {
+        ObservableList targets = FXCollections.observableArrayList();
+
+        targets.add("All");
+        for (String s : currentView.getHealBreakdownByTarget().keySet()) {
+            targets.add(s);
+        }
+        this.healChoiceBox.getItems().clear();
+        this.healChoiceBox.getItems().addAll(targets);
+
+        this.healChoiceBox.setValue("All");
     }
 
     public void updateDmgTabChoiceBox() {
@@ -415,4 +459,127 @@ public class GuiController implements Initializable {
         }
 
     }
+    
+    public void healTabSelection(String newValue) {
+        //ignore nulls
+        if (newValue == null) {
+            return;
+        }
+        //set overview texts
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+        healLineChart.getData().clear();
+        hpsChart.getData().clear();
+        momentHpsChart.getData().clear();
+
+        //note, even char name "All" is not an issue (@ at start)
+        if (newValue.equals("All")) {
+            totalHealTab.setText(currentView.getAllHealDone());
+            hpsHealTab.setText(currentView.getHps());
+            avgHealTab.setText(currentView.getAvgHeal());
+            hitsHealTab.setText(currentView.getHealCount());
+            bigHealeTab.setText(currentView.getBigHeal());
+            critsHealTab.setText(currentView.getHealCritPrecentage());
+            totalPrecentageHealTab.setText("100");
+
+            for (String s : currentView.getHealAbilityBreakdown().keySet()) {
+                pieChartData.add(new PieChart.Data(s, currentView.getHealAbilityBreakdown().get(s)));
+
+            }
+            healPieChart.setData(pieChartData);
+
+            HashMap<LocalTime, Integer> lineData = currentView.getHealCumulative();
+            XYChart.Series data = new XYChart.Series();
+
+            //TODO make this look pretty
+            LocalTime[] sortedLineData = lineData.keySet().stream().sorted().toArray(LocalTime[]::new);
+            for (LocalTime l : sortedLineData) {
+                data.getData().add(new XYChart.Data(l.toString(), lineData.get(l)));
+            }
+
+            healLineChart.getData().add(data);
+
+            ArrayList<Tuple> hpsChartData = currentView.getTotalHpsByTime();
+            XYChart.Series hpsData = new XYChart.Series();
+            for (Tuple<LocalTime, Double> t : hpsChartData) {
+
+                //We are rounding here because I can't get the linechart to work with doubles
+                //TODO make linechart work with doubles
+                int rounded = (int) Math.round(t.getSecond());
+                hpsData.getData().add(new XYChart.Data(t.getFirst().toString(), rounded));
+            }
+            hpsChart.getData().add(hpsData);
+
+            ArrayList<Tuple<LocalTime, Double>> momentChartData = currentView.getMomentaryHpsByTime();
+            XYChart.Series momentData = new XYChart.Series();
+            for (Tuple<LocalTime, Double> t : momentChartData) {
+//                System.out.println(t);
+
+                //We are rounding here because I can't get the linechart to work with doubles
+                //TODO make linechart work with doubles
+                int rounded = (int) Math.round(t.getSecond());
+                momentData.getData().add(new XYChart.Data(t.getFirst().toString(), rounded));
+            }
+
+            momentHpsChart.getData().add(momentData);
+
+//             
+     
+     
+
+        } else {
+            totalHealTab.setText(String.valueOf(currentView.getHealBreakdownByTarget().get(newValue)));
+            hpsHealTab.setText(currentView.getHpsBreakdownByTarget().get(newValue));
+            avgHealTab.setText(currentView.getHealAvgBreakdownByTarget().get(newValue));
+            hitsHealTab.setText(currentView.getHealHitsDoneAgainstTarget().get(newValue));
+            bigHealeTab.setText(currentView.getHealBigBreakdownByTarget().get(newValue));
+            critsHealTab.setText(currentView.getHealCritBreakdownByTarget().get(newValue));
+            totalPrecentageHealTab.setText(currentView.getHealTotalPrecentageByTarget().get(newValue));
+
+            HashMap<String, Integer> breakdown = currentView.getHealAbilityBreakdownByTarget().get(newValue);
+            for (String s : breakdown.keySet()) {
+                pieChartData.add(new PieChart.Data(s, breakdown.get(s)));
+
+            }
+
+            healPieChart.setData(pieChartData);
+
+            HashMap<LocalTime, Integer> lineData = currentView.getHealCumulativeBreakdownByTarget().get(newValue);
+            XYChart.Series data = new XYChart.Series();
+
+            //TODO make this look pretty
+            LocalTime[] sortedLineData = lineData.keySet().stream().sorted().toArray(LocalTime[]::new);
+            for (LocalTime l : sortedLineData) {
+                data.getData().add(new XYChart.Data(l.toString(), lineData.get(l)));
+            }
+
+            healLineChart.getData().add(data);
+
+            ArrayList<Tuple> hpsChartData = currentView.getTotalHpsByTimeBreakdownByTarget().get(newValue);
+            XYChart.Series hpsData = new XYChart.Series();
+            for (Tuple<LocalTime, Double> t : hpsChartData) {
+
+                //We are rounding here because I can't get the linechart to work with doubles
+                //TODO make linechart work with doubles
+                int rounded = (int) Math.round(t.getSecond());
+                hpsData.getData().add(new XYChart.Data(t.getFirst().toString(), rounded));
+            }
+            hpsChart.getData().add(hpsData);
+
+            ArrayList<Tuple<LocalTime, Double>> momentChartData = currentView.getMomentaryHpsByTimeBreakdownByTarget().get(newValue);
+            XYChart.Series momentData = new XYChart.Series();
+            for (Tuple<LocalTime, Double> t : momentChartData) {
+//                System.out.println(t);
+
+                //We are rounding here because I can't get the linechart to work with doubles
+                //TODO make linechart work with doubles
+                int rounded = (int) Math.round(t.getSecond());
+                momentData.getData().add(new XYChart.Data(t.getFirst().toString(), rounded));
+            }
+
+            momentHpsChart.getData().add(momentData);
+
+        }
+
+    }
+    
 }
