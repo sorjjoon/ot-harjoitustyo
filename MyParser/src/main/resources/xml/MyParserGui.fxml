@@ -29,6 +29,7 @@
                 <Menu mnemonicParsing="false" text="File">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#chooseFile" text="Open file" />
+                    <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save file" />
                   </items>
                 </Menu>
 

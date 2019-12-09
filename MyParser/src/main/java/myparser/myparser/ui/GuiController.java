@@ -5,9 +5,12 @@
  */
 package myparser.myparser.ui;
 
+import database.Database;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.sql.SQLException;
+import java.time.LocalDate;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -26,7 +29,10 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
@@ -47,10 +53,12 @@ import myparser.myparser.stats.Tuple;
  * @author joona
  */
 public class GuiController implements Initializable {
-
+    private ArrayList<Fight> fights;
     private ArrayList<Analysis> analysis;
     private Analysis currentView;
-
+    private String fileName;
+    private Database database;
+    
     @FXML
     private ListView fight_list;
 
@@ -191,10 +199,17 @@ public class GuiController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.analysis=new ArrayList();
         dmgLineChart.setCreateSymbols(false);
         dpsChart.setCreateSymbols(false);
         dpsChartYAxis.setLowerBound(0);
+        hpsChart.setCreateSymbols(false);
+        healLineChart.setCreateSymbols(false);
 
+        hpsChart.getXAxis().setTickLabelsVisible(false);
+        healLineChart.getXAxis().setTickLabelsVisible(false);
+        momentHpsChart.setCreateSymbols(false);
+        momentHpsChart.getXAxis().setTickLabelsVisible(false);
         dpsChart.getXAxis().setTickLabelsVisible(false);
         dmgLineChart.getXAxis().setTickLabelsVisible(false);
         MomentDpsChart.setCreateSymbols(false);
@@ -213,10 +228,37 @@ public class GuiController implements Initializable {
         });
         //set listener for dmgTab choice box
         this.dmgChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> dmgTabSelection(newSelect));
-                this.healChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> healTabSelection(newSelect));
+        this.healChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> healTabSelection(newSelect));
 
     }
+    //TODO add a way to create an empty database
+    @FXML
+    public void saveFile() {
+        if(this.analysis.isEmpty()){
+            return;
+        }
+        
+        
+        if(database==null){
+            setDatabase();
+            
+        }
+        try{
+            Alert alert = new Alert(AlertType.CONFIRMATION, "Delete  ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
+            alert.show();
+            //TODO add file type selection
+            database.addListOfFights(fights, LocalDate.now(),"",fileName);
 
+            for(String s:database.getSavedLogs()){
+                System.out.println(s);
+            }
+        }catch(SQLException e){
+            System.out.println("Saving failed");
+            System.out.println(e.getMessage());
+        }
+        
+        
+    }
     //TODO check ListView with a big log (if it fits on the screen)
     @FXML
     public void chooseFile() {
@@ -227,15 +269,16 @@ public class GuiController implements Initializable {
         try {
 
             file = fileChooser.showOpenDialog(null);
-        } catch (NullPointerException e) {
+        } catch (NullPointerException e) {  //Happens if user closes the selection window without choosing anything
             return;
         }
         try {
-            ArrayList<Fight> fights = Reader.readFile(file);
+            fights = Reader.readFile(file);
             this.analysis = new ArrayList();
             for (Fight f : fights) {
                 this.analysis.add(new Analysis(f));
             }
+            this.fileName=file.getName();
             createListView(fights);
         } catch (FileNotFoundException e) {
             //TODO, I don't know why this would happen
@@ -315,6 +358,7 @@ public class GuiController implements Initializable {
         updateHealTabChoiceBox();
 
     }
+
     public void updateHealTabChoiceBox() {
         ObservableList targets = FXCollections.observableArrayList();
 
@@ -459,7 +503,7 @@ public class GuiController implements Initializable {
         }
 
     }
-    
+
     public void healTabSelection(String newValue) {
         //ignore nulls
         if (newValue == null) {
@@ -523,9 +567,6 @@ public class GuiController implements Initializable {
             momentHpsChart.getData().add(momentData);
 
 //             
-     
-     
-
         } else {
             totalHealTab.setText(String.valueOf(currentView.getHealBreakdownByTarget().get(newValue)));
             hpsHealTab.setText(currentView.getHpsBreakdownByTarget().get(newValue));
@@ -582,4 +623,24 @@ public class GuiController implements Initializable {
 
     }
     
+    private void setDatabase(){
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(" (*.mv.db)", "*.mv.db");
+        fileChooser.getExtensionFilters().add(extFilter);
+        File file;
+        try {
+
+            file = fileChooser.showOpenDialog(null);
+        } catch (NullPointerException e) {  //Happens if user closes the selection window without choosing anything
+            return;
+        }
+        try{
+            this.database=new Database(file.getPath());
+        }catch(SQLException e ){
+            System.out.println("Connection failed");
+            System.out.println(e.getMessage());
+        }
+        
+    }
+
 }

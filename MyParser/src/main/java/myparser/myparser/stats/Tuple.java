@@ -27,9 +27,10 @@ public class Tuple<A, B> {
 
         return second;
     }
+
     @Override
-    public String toString(){
-        return first.toString()+", "+second.toString();
+    public String toString() {
+        return first.toString() + ", " + second.toString();
     }
 
 }

@@ -21,15 +21,14 @@ import myparser.myparser.types.Type;
 
 /**
  *
- * pls don't look too closely at the column nates.. I know they are
- * inconsistent, but I caused some problems fixing this project to fit
- * checkstyle... I'll fix them later
+ *Contains all the necessary methods for interacting with the database
+ * Atm database needs to be contained at /data/saved_logs
  */
 public class Database {
 
     private final Connection con;
 
-    public Database() throws SQLException {
+    public Database(String location) throws SQLException {
         try {
             Class.forName("org.h2.Driver");
 
@@ -37,17 +36,24 @@ public class Database {
             System.out.println("Can't locate h2 driver");
             System.out.println(e);
         }
-        this.con = DriverManager.getConnection("jdbc:h2:./data/saved_logs", "sa", "");
+        //removing .mv.db extension from file name
+        location=location.substring(0, location.lastIndexOf('.'));
+        location=location.substring(0, location.lastIndexOf('.'));
+        this.con = DriverManager.getConnection("jdbc:h2:"+location, "sa", "");
 //        this.createTables();
 
     }
 
-    //Calling this method will create the tables needed for  the database to function (in case the file gets deleted for  some reason)
-    //Note we are not puting boolean miss here, because we can get it from dmg (it's 0 for  miss, null for  non attacks)
-    public void createTables() throws SQLException {
+    /**
+     * Calling this method will create the tables needed for  the database to function (in case the file gets deleted for  some reason)
+        Note we are boolean miss deoesn't have a column, because we can get it from dmg (it's 0 for  miss, null for  non attacks)
+    
+     * @throws SQLException 
+     */
+     private void createTables() throws SQLException {
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Log (id int NOT NULL AUTO_INCREMENT,date date, type varchar(20),owner varchar(30),log_name varchar(60))").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Fight (id int NOT NULL AUTO_INCREMENT primary key,logId int NOT NULL,FOREIGN KEY(logId) REFERENCES Log(id),  PRIMARY KEY (id));").executeUpdate();
-        con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,row_number int, timestamp time, Source varchar(50),  Target varchar(50),  Ability_name varchar(60),  type varchar (20),  Event_effect_type varchar (50),  Dmg_heal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
+        con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,rowNumber int, timestamp time, Source varchar(50),  Target varchar(50),  AbilityName varchar(60),  type varchar (20),  EventEffectType varchar (50),  DmgHeal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Stats (fightId int NOT NULL, dps int, hps int,FOREIGN KEY(fightId) REFERENCES Fight(id));").executeUpdate();
 
     }
@@ -55,8 +61,11 @@ public class Database {
     public void close() throws SQLException {
         this.con.close();
     }
-
-    //Deletes all data in the database and recreates tables
+    /**
+     * 
+    Deletes all data in the database and recreates tables
+     * @throws SQLException 
+     */
     public void reset() throws SQLException {
         con.prepareStatement("DROP TABLE Row IF EXISTS ").executeUpdate();
         con.prepareStatement("DROP TABLE Stats IF EXISTS").executeUpdate();
@@ -64,7 +73,13 @@ public class Database {
         con.prepareStatement("DROP TABLE Log IF EXISTS").executeUpdate();
         createTables();
     }
-
+    /**
+     * the original ArrayList<Fight> of a given logId
+     * @param logName
+     * @return
+     * @throws SQLException
+     * @throws NoOwnerException 
+     */
     public ArrayList<Fight> getFightsFromLog(String logName) throws SQLException, NoOwnerException {
         Integer id = getLogId(logName);
         ArrayList<Integer> fightIds = getFightIds(id);
@@ -75,7 +90,12 @@ public class Database {
         return fights;
 
     }
-
+    /**
+     * get the log id of a saved log
+     * @param logname
+     * @return
+     * @throws SQLException 
+     */
     public Integer getLogId(String logname) throws SQLException {
         String sql = "SELECT id FROM Log WHERE log_name LIKE ?";
         PreparedStatement stmnt = con.prepareStatement(sql);
@@ -89,7 +109,12 @@ public class Database {
         //if not found id is null
         return id;
     }
-
+    /**
+     * get all fightId from a log id
+     * @param logId
+     * @return
+     * @throws SQLException 
+     */
     public ArrayList<Integer> getFightIds(Integer logId) throws SQLException {
         ArrayList<Integer> ids = new ArrayList();
         String sql = "SELECT id FROM Fight WHERE logId = ?";
@@ -122,11 +147,11 @@ public class Database {
         Eventtype eventtype = null;
         String effecttype = null;
         if (type == Type.Event) {
-            eventtype = Eventtype.valueOf(rs.getString("Event_effect_type"));
+            eventtype = Eventtype.valueOf(rs.getString("EventEffectType"));
             effecttype = null;    //not needed ofc, but here for  clarity
         } else if (type == Type.ApplyEffect || type == Type.RemoveEffect) {
             eventtype = null;
-            effecttype = rs.getString("Event_effect_type");
+            effecttype = rs.getString("EventEffectType");
         }
         int dmgHeal = rs.getInt("Dmg_heal");
         boolean crit = rs.getBoolean("Crit");
@@ -139,7 +164,12 @@ public class Database {
         return new Row(timestamp, source, target, type, effecttype, eventtype, abilityName, dmgHeal, crit, shielded, miss, rowNumber);
 
     }
-
+    /**
+     * get all rows of a specfic fight
+     * @param id
+     * @return
+     * @throws SQLException 
+     */
     public ArrayList<Row> getRowsFromFight(Integer id) throws SQLException {
         String sql = "SELECT * FROM Row WHERE FightId = ? ORDER BY Row_number";
         PreparedStatement stmnt = con.prepareStatement(sql);
@@ -147,12 +177,12 @@ public class Database {
         ResultSet rs = stmnt.executeQuery();
         ArrayList<Row> rows = new ArrayList();
         while (rs.next()) {
-            //In order to fit checkstyle, had to split creating row into 2 methods (even though it's about 100 times clearer to just do everything in 1 method...)
+            //In order to fit checkstyle, had to split creating row into 2 methods 
             int rowNumber = rs.getInt("Row_number");
             LocalTime timestamp = rs.getTime("Timestamp").toLocalTime();
             String source = rs.getString("Source");
             String target = rs.getString("Target");
-            String abilityName = rs.getString("Ability_name");
+            String abilityName = rs.getString("AbilityName");
             Type type = Type.valueOf(rs.getString("Type"));
             Row row = createRow(rs, rowNumber, timestamp, source, target, abilityName, type);
             rows.add(row);
@@ -196,7 +226,7 @@ public class Database {
     }
 
     private void addRow(Row r, int fightKey) throws SQLException {
-        String sql = "INSERT INTO Row (fightId, timestamp, source,target, ability_name, type, event_effect_type, Dmg_heal ,  crit, shield,row_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Row (fightId, timestamp, source,target, abilityName, type, eventEffectType, DmgHeal ,  crit, shield,rowNumber) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement stmnt = con.prepareStatement(sql);
         stmnt.setInt(1, fightKey);
         stmnt.setObject(2, r.getTimestamp());
@@ -217,7 +247,14 @@ public class Database {
         stmnt.execute();
 
     }
-
+    /**
+     * Save a list of fights into the database
+     * @param fights
+     * @param date
+     * @param type
+     * @param logFileName
+     * @throws SQLException 
+     */
     public void addListOfFights(ArrayList<Fight> fights, LocalDate date, String type, String logFileName) throws SQLException {
         if (fights.isEmpty()) {
             throw new IllegalArgumentException("list can't be empty");
@@ -227,14 +264,18 @@ public class Database {
 
         for (Fight f : fights) {
             int fightKey = createFightEntry(f, logKey);
-            for (Row r : f.getRows()) { //This is a really stupid way to do this (we are setting fightId more times than is needed), but the only way I could get this method to pass Checkstyle
+            for (Row r : f.getRows()) {     //This is a stupid way to do this (we are setting fightId more times than is needed), but the only way I could get this method to pass Checkstyle
                 addRow(r, fightKey);
             }
 
         }
 
     }
-
+    /**
+     * Get the names of all logs in the database
+     * @return
+     * @throws SQLException 
+     */
     public ArrayList<String> getSavedLogs() throws SQLException {
         ArrayList<String> files = new ArrayList();
         String sql = "SELECT log_name FROM Log ORDER BY date DESC";
@@ -246,5 +287,7 @@ public class Database {
         }
         return files;
     }
+    
+    
 
 }

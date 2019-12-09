@@ -24,16 +24,6 @@ import myparser.myparser.types.Type;
 //TODO could make effective healing precentage (by comparing threat generated to healing done), but as it's only possible for pve, probably not worth the effort
 public class Stats {
 
-    /**
-     * get all dmg by owner
-     *
-     * @param fight
-     * @return
-     */
-    public static int getAllDamageByOwner(Fight fight) {
-        return getSumOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
-    }
-
     public static Double getAverageOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int sum = 0;
         int i = 0;
@@ -70,28 +60,16 @@ public class Stats {
         return sum;
     }
 
-    public static int getAllHealingToOwner(Fight fight) {
-        return getSumOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
-    }
-
-    public static int getAllHealingByOwner(Fight fight) {
-        return getSumOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
-    }
-
-    public static int getAllDamageToOwner(Fight fight) {
-        return getSumOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
-    }
-
     public static double dps(Fight fight) {
         long timeMs = getDurationMs(fight);
-        int dmg = getAllDamageByOwner(fight);
+        int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
     }
 
     public static double htps(Fight fight) {
         long timeMs = getDurationMs(fight);
-        int dmg = getAllHealingToOwner(fight);
+        int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
     }
@@ -110,26 +88,16 @@ public class Stats {
 
     public static double hps(Fight fight) {
         long timeMs = getDurationMs(fight);
-        int dmg = getAllHealingByOwner(fight);
+        int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
     }
 
     public static double dtps(Fight fight) {
         long timeMs = getDurationMs(fight);
-        int dmg = getAllDamageToOwner(fight);
+        int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
         int timeS = (int) timeMs / 1000;
         return (double) dmg / timeS;
-    }
-
-    public static LocalTime getStart(Fight fight) {
-        return fight.getRows().get(0).getTimestamp();
-    }
-
-    public static LocalTime getEnd(Fight fight) {
-        ArrayList<Row> rows = fight.getRows();
-        return rows.get(rows.size() - 1).getTimestamp();
-
     }
 
     /**
@@ -156,16 +124,6 @@ public class Stats {
         return getDiffrence(start, end);
     }
 
-    public static double averageTakenHit(Fight fight) {
-        return getAverageOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
-
-    }
-
-    public static double averageHeal(Fight fight) {
-        return getSumOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
-
-    }
-
     public static double tps(Fight fight) {
         int sum = totalThreat(fight);
         double duration = (double) getDurationMs(fight) / 1000;
@@ -183,16 +141,6 @@ public class Stats {
         return sum;
     }
 
-    public static double averageTakenHeal(Fight fight) {
-        return getAverageOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
-
-    }
-
-    public static double averageHit(Fight fight) {
-        return getAverageOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
-
-    }
-
     public static int getNumberOfEffectsFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
 
         int i = 0;
@@ -202,31 +150,6 @@ public class Stats {
             }
         }
         return i;
-    }
-
-    public static int numberOfTakenHits(Fight fight) {
-        return getNumberOfEffectsFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
-    }
-
-    public static int numberOfHits(Fight fight) {
-        return getNumberOfEffectsFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
-
-    }
-
-    public static int numberOfHitsAgainstTarget(Fight fight, String target) {
-
-        return getNumberOfEffectsFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), target);
-
-    }
-
-    public static int numberOfHealsTaken(Fight fight) {
-        return getNumberOfEffectsFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
-
-    }
-
-    public static int numberOfHeals(Fight fight) {
-        return getNumberOfEffectsFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
-
     }
 
     /**
@@ -252,27 +175,6 @@ public class Stats {
         }
 
         return big;
-    }
-
-    public static int biggestTakenHit(Fight fight) {
-        return getBigOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
-    }
-
-    //Doesnt count medpac as the biggest heal (or it would always be medpac)
-    public static int biggestTakenHeal(Fight fight) {
-        return getBigOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
-
-    }
-
-    //Doesnt count medpac as the biggest heal (or it would always be medpac)
-    public static int biggestHeal(Fight fight) {
-        return getBigOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
-
-    }
-
-    public static int biggestHit(Fight fight) {
-        return getBigOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
-
     }
 
     public static double missPrecentageAgainstTarget(Fight fight, String target) {
@@ -332,20 +234,6 @@ public class Stats {
         return critPre;
     }
 
-    public static double takenHealCritPrecentage(Fight fight) {
-        return getCritOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
-    }
-
-    public static double healCritPrecentage(Fight fight) {
-        return getCritOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
-
-    }
-
-    public static double dmgCritPrecentage(Fight fight) {
-        return getCritOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
-
-    }
-
     public static double takenMissPrecentage(Fight fight) {
         int all = 0;
         int misses = 0;
@@ -365,14 +253,9 @@ public class Stats {
         return precentage;
     }
 
-    public static double takenCritPrecentage(Fight fight) {
-        return getCritOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
-
-    }
-
     /**
      * returns a map where the key is ability name, and value is dmg/heal by the
-     * ability if target/source doesn't matter, use null
+     * ability. If target/source doesn't matter, use null
      *
      * @param fight
      * @param effect
@@ -396,31 +279,20 @@ public class Stats {
         return results;
     }
 
-    public static HashMap<String, Integer> divideHealingDealtByAbility(Fight fight) {
-        return divideEffectSumByAbilityF(fight, "Heal", fight.getOwner(), null);
-    }
-
-    public static HashMap<String, Integer> divideDamageDealtAgainstTargetByAbility(Fight fight, String target) {
-        return divideEffectSumByAbilityF(fight, "Damage", fight.getOwner(), target);
-
-    }
-
-    public static HashMap<String, Integer> divideDamageDealtByAbility(Fight fight) {
-        return divideEffectSumByAbilityF(fight, "Damage", fight.getOwner(), null);
-
-    }
-
     /**
-     * returns a map where the key is target, and value dmg by that ability
-     * (source is owner)
+     * returns a map where the key is target, and value is dmg/heal by the
+     * ability. If target/source doesn't matter, use null
      *
      * @param fight
+     * @param effect
+     * @param source
+     * @param target
      * @return
      */
-    public static HashMap<String, Integer> divideDamageDealtByTarget(Fight fight) {
+    public static HashMap<String, Integer> divideEffectSumByTarget(Fight fight, String effect, String source, String target) {
         HashMap<String, Integer> results = new HashMap();
         for (Row r : fight.getRows()) {
-            if (r.getEffecttype() != null && r.getEffecttype().equals("Damage") && r.getSource().equals(fight.getOwner())) {
+            if (r.getEffecttype() != null && r.getEffecttype().equals(effect) && (source == null || r.getSource().equals(source)) && (target == null || r.getTarget().equals(target))) {
                 if (results.get(r.getTarget()) == null) {
                     results.put(r.getTarget(), r.getDmgHeal());
                 } else {
@@ -460,26 +332,6 @@ public class Stats {
         return activations;
     }
 
-    public static HashMap<String, Integer> divideHealingDealtByTarget(Fight fight) {
-        HashMap<String, Integer> results = new HashMap();
-        for (Row r : fight.getRows()) {
-            if (r.getEffecttype() != null && r.getEffecttype().equals("Heal") && r.getSource().equals(fight.getOwner())) {
-                if (results.get(r.getTarget()) == null) {
-                    results.put(r.getTarget(), r.getDmgHeal());
-                } else {
-                    Integer helper = results.get(r.getTarget());
-                    results.put(r.getTarget(), helper + r.getDmgHeal());
-                }
-            }
-
-        }
-        return results;
-    }
-
-    public static Integer biggestHitAgainstTarget(Fight fight, String target) {
-        return getBigOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), target);
-    }
-
     /**
      * return a map with key timestamp, and value dmg/heal done at that point
      *
@@ -505,18 +357,6 @@ public class Stats {
     }
 
     /**
-     * return HashMap with key timestamp, and value dmg done up to that point
-     *
-     * @param fight
-     * @param target
-     * @return
-     */
-    public static HashMap<LocalTime, Integer> cumulativeDmgDoneAgainstTarget(Fight fight, String target) {
-        return cumulativeEffectDoneAgainstTarget(fight, "Damage", fight.getOwner(), target);
-
-    }
-
-    /**
      * returns a new fight wich only contains rows with a specfic effect
      * (heal/dmg) if target/source doesn't matter use null
      *
@@ -536,16 +376,16 @@ public class Stats {
 
         return new Fight(specficRows, fight.getOwner());
     }
-    
-    
+
     /**
      * Returns an arraylist with tuples of LocalTime, Double For hps by moment
      * for all targets use null
+     *
      * @param fight
      * @param target
      * @return
      */
-    public static ArrayList<Tuple> getTotalHpsByTimeAgainstTarget(Fight fight,String target) {
+    public static ArrayList<Tuple> getTotalHpsByTimeAgainstTarget(Fight fight, String target) {
         LocalTime start = fight.getStart();
         ArrayList<Row> rows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), target).getRows(); //Getting only rows with dmg in them to take this a little simpler
         int sum = 0;
@@ -561,6 +401,7 @@ public class Stats {
 
         return list;
     }
+
     /**
      * Returns an arraylist with tuples of LocalTime, Double For dps by moment
      *
@@ -601,33 +442,21 @@ public class Stats {
         return list;
     }
 
-    public static HashMap<LocalTime, Integer> cumulativeDmgDone(Fight fight) {
-        return cumulativeEffectDoneAgainstTarget(fight, "Damage", fight.getOwner(), null);
-    }
-
-    public static double averageHitAgainstTarget(Fight fight, String target) {
-        return getAverageOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), target);
-
-    }
-
-    public static double dmgCritPrecentageAgainstTarget(Fight fight, String target) {
-        return getCritOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), target);
-
-    }
     /**
      * Returns a list of Tuples containing momentary Hps at a given time
-     * (meaning dps in last 10 seconds)
-     * for all targets use null
+     * (meaning dps in last 10 seconds) for all targets use null
+     *
      * @param fight
      * @return <Tuple<LocalTime, Double>>
      */
     //TODO check what happens with Fight shorter than 10 seconds
     public static ArrayList<Tuple<LocalTime, Double>> momentaryHpsAgainstTarget(Fight fight, String target) {
-        Fight onlyDmgRows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), target); //To make this a little more simple, get only rows regarding dmg
+        Fight onlyDmgRows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), target);
 
         return momentaryEffect(onlyDmgRows);
 
     }
+
     /**
      * Returns a list of Tuples containing momentary Dps at a given time
      * (meaning dps in last 10 seconds)
@@ -637,7 +466,7 @@ public class Stats {
      */
     //TODO check what happens with Fight shorter than 10 seconds
     public static ArrayList<Tuple<LocalTime, Double>> momentaryDps(Fight fight) {
-        Fight onlyDmgRows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null); //To make this a little more simple, get only rows regarding dmg
+        Fight onlyDmgRows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
 
         return momentaryEffect(onlyDmgRows);
 
@@ -647,10 +476,13 @@ public class Stats {
      * calcluates momentary dps/hps/dtps from a list of rows containing only
      * rows of that effect (meaning effect in last 10 s)
      *
-     * @param rows
+     * NOTE given parameter must contain only rows with the wanted effect (dmg
+     * or heal)
+     *
+     * @param onlyEffectRows
      * @return
      */
-    public static ArrayList<Tuple<LocalTime, Double>> momentaryEffect(Fight onlyEffectRows) {
+    private static ArrayList<Tuple<LocalTime, Double>> momentaryEffect(Fight onlyEffectRows) {
         ArrayList<Tuple<LocalTime, Double>> list = new ArrayList();
         ArrayList<Row> rows = onlyEffectRows.getRows();
         //This currently a very inefficient way of doing this, but atm it's not necessary to make this faster

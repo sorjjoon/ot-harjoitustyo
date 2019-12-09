@@ -16,12 +16,11 @@ import java.util.Scanner;
 import myparser.myparser.stats.Stats;
 
 /**
- 
+ *
  */
 public class Reader {
 
     //TODO find out if  really weird names (like in arabic letters) break this reader
-   
     public static ArrayList<Fight> readFile(File file) throws FileNotFoundException {
         Scanner reader = new Scanner(file, "ISO-8859-1");
         ArrayList<Row> lines = new ArrayList();
@@ -29,7 +28,7 @@ public class Reader {
 
         boolean inFight = false; //variable to determine the end and start of fights,  and to read only necessary lines
         //variable i is used for numbering rows
-        String owner="";
+        String owner = "";
         int i = 0;
         while (reader.hasNext()) {
             String rawline = reader.nextLine();
@@ -48,11 +47,10 @@ public class Reader {
                     inFight = true;
                     //So we can determine owner
                     owner = row.getSource(); //Owner is only needed to check for Death event targets
-                    
-                //for some reason,  death events seem to not always register the exitCombat effect correctly (they sometimes do),  so had to add some work arounds for that
-                // && in_fight is there to check  if  the exitCombat trigger has already been handled (and the in_fight variable has been set to false)
-                //update also have to check that the targets is correct, since logs track kills as well (which are eventtype Death, but with a diffrent target)
 
+                    //for some reason,  death events seem to not always register the exitCombat effect correctly (they sometimes do),  so had to add some work arounds for that
+                    // && in_fight is there to check  if  the exitCombat trigger has already been handled (and the in_fight variable has been set to false)
+                    //update also have to check that the targets is correct, since logs track kills as well (which are eventtype Death, but with a diffrent target)
                 } else if ((row.getEventtype() == Eventtype.ExitCombat || row.getEventtype() == Eventtype.Death) && row.getTarget().equals(owner) && inFight) {
 
                     inFight = false;
