@@ -20,12 +20,16 @@ The class Stats contains numerous static methods for calculating different metri
 
 Seperate from these is the Database class which can store the information in a Row object into an sql database, and create Row objects based on the information stored inside a database.
 
+Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes, so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly Stats, which contains all methods used for the calculation of stats. All methods in Stats have been made static.
+
+
+
 ## Core Functionility  
 
 Below is shown as a sequence diagram how the application reads data in a give log file and then displays it to the user.
 
 ![file reading](/documentation/images/FileReading.JPG)
 
-First the user interface asks for the user provide the file they wish to analyze (this is not shown on the diagram, to make the diagram eaiser to read). This causes the ui to the before mentioned static readFile(File file) method from the Reader class. Now the readfile method inputs the rawlines in the logfile to the Row constructor, which returns a Row object containing all read information inside. Reader then splits these Rows into Fights, using enterCombat and exitCombat events tracked inside Rows (in adition to exitCombat also death events are used to track end of fights). Reader also combines fights starting/ending close to one another. After the entire log has been read an ArrayList containing all the Fights found inside is returned.  
-With this ArrayList, an Analysis object is created  for each fight. Analysis class calculates all stats displayed by the ui (using methods from Stats class), formats values into Strings.  
+First the user interface asks for the user provide the file they wish to analyze (this is not shown on the diagram, to make the diagram eaiser to read). This causes the ui call the before mentioned static readFile(File file) method from the Reader class. Now the readfile method inputs the rawlines in the logfile to the Row constructor, which returns a Row object containing all read information inside. Reader then splits these Rows into Fights, using enterCombat and exitCombat events tracked inside Rows (in adition to exitCombat also death events are used to track end of fights). Reader also combines fights starting/ending close to one another. After the entire log has been read an ArrayList containing all the Fights found inside is returned.  
+With this ArrayList, an Analysis object is created  for each fight. Analysis class calculates all stats displayed by the ui (using methods from Stats class), and formats values into Strings.  
 When the user wants to look at stats for a particular fight, the Ui class updates the view it provides to the user by updating elements on screen to the corresponding Analysis object (and this view is updated each time the user switches the fight they are looking at)
