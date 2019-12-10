@@ -30,7 +30,7 @@ If not, then in place of java you should use the location of the java8 installat
 
 From the application startup window, to start click File and Open File.
 From the popup, find the log you want analyzed and click ok
-On the left the log is split into fights, and on the menu you can choose a fight based on it's start time
+On the left the log is split into fights, and on the list you can choose a fight based on it's start time by double clicking
 
 Saving/loading logs is done in the same menu as opening a new file
 
