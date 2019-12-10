@@ -14,27 +14,46 @@ import myparser.myparser.domain.Row;
  * Current version doesn't use this yet
  */
 public class AbilityActivation {
+    private final String Abilityname;
     private Row activate;
     private Row applyEffect;
     private Row removeEffect;
     private int dmgHeal;    
-
+    /**
+     * use to track effect ends and starts
+     * @param applyEffect
+     * @param removeEffect 
+     */
     public AbilityActivation(Row applyEffect, Row removeEffect) {
+        this.Abilityname=applyEffect.getAbilityName();
         this.applyEffect = applyEffect;
         this.removeEffect = removeEffect;
     }
     
     
-    
+    /**
+     * used for only tracking ability activations
+     * @param activate 
+     */
     public AbilityActivation(Row activate) {
+        this.Abilityname=activate.getAbilityName();
         this.activate = activate;
         this.dmgHeal = 0;
     }
 
+    public String getAbilityname() {
+        return Abilityname;
+    }
+    
+
     public void setApplyEffect(Row applyEffect) {
         this.applyEffect = applyEffect;
     }
-
+    /**
+     * add dmg heal to the sum of this ability
+     * @param dmgHeal 
+     */
+    
     public void addDmgHeal(int dmgHeal) {
         this.dmgHeal +=  dmgHeal;
     }
@@ -43,8 +62,6 @@ public class AbilityActivation {
         this.removeEffect = removeEffect;
     }
     
-    //this is kinda pointless since the timestamp on this and effect start are the same (or really, really close)
-    //but since we could use this class for stuff other than effects, it's here
     public LocalTime getActivation() {  
         return this.activate.getTimestamp();
     }
