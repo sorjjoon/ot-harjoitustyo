@@ -1,6 +1,7 @@
 ## Application Logic
+Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes, so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly Stats, which contains all methods used for the calculation of stats. All methods in Stats have been made static.
 
-There are 2 classes which form most of the functionality of the application, Row and Fight, shown below.  
+Row and Fight, shown below.  
 ![architecture](/documentation/images/architecture.png)
 
 In addition to these two, classes Reader and Stats contain static methods for the diffrent services provided by the application
@@ -20,7 +21,7 @@ The class Stats contains numerous static methods for calculating different metri
 
 Seperate from these is the Database class which can store the information in a Row object into an sql database, and create Row objects based on the information stored inside a database.
 
-Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes, so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly Stats, which contains all methods used for the calculation of stats. All methods in Stats have been made static.
+
 
 
 
