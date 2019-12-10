@@ -1,5 +1,7 @@
 ## Application Logic
-Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes, so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly Stats, which contains all methods used for the calculation of stats. All methods in Stats have been made static.
+Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes, so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly Stats and Reader, Stats contains all methods used for the calculation of stats. Reader is responsible for turning the information in the log txt file into Fights. All methods and in Stats and Reader have been made static.
+
+The Ui package contains 2 important classes, Guicontroller and Analysis, others are classes in the package are the main class (and gui , which creates a Scene using Guicontroller). The Analysis object is a wrapper for all information shown on the Gui page, formated into Strings (in a few cases data is Integers or Doubles, such as for chart data). Guicontroller contains all the logic behind the gui page and handles all user input. (See core functionality for more details). The Columndate class is a simple wrapper for Guicontroller to use for inputing data into the Ability usage tab tableView.
 
 Row and Fight, shown below.  
 ![architecture](/documentation/images/architecture.png)
@@ -9,7 +11,7 @@ In addition to these two, classes Reader and Stats contain static methods for th
 Reader provides the static method  
   * readFile(File file) : ArrayList<Fight>  
  
-Which is responsible for reading a given log file (Reader also contain statics methods for determining the name of a file from it's absolute path, and a date from the name of a log. As logs have default names which contain the date)
+Which is responsible for reading a given log file
 
 The class Stats contains numerous static methods for calculating different metrics about a specfic fight, such as
   * getAllDamageByOwner(Fight fight) : int
