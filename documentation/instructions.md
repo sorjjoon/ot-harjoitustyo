@@ -1,7 +1,7 @@
 
 
 # Insturctions
-The project needs java8 version to work
+The project needs java8 version to work  
 Release 2 [MyParser.jar](https://github.com/sorjjoon/ot-harjoitustyo/releases/tag/week6)
 
 ## Configuration
