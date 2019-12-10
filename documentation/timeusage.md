@@ -18,4 +18,4 @@
 | 3.12 | 5 | Checkstyle... Split a few methods in Database and Row equals method to smaller parts. pom.xml configurations, can not get the project to run on latest java version |
 | 8.12 | 5 | Database integration into gui |
 | 10.12 | 7 | Release 6, documentation and testing, healing tab and Ability Usage tab |
-|Total | 58 |
+|Total | 70 |
