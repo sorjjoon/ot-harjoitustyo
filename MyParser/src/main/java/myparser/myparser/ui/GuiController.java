@@ -200,19 +200,17 @@ public class GuiController implements Initializable {
     private NumberAxis hpsChartYAxis;
     @FXML
     private LineChart<?, ?> momentHpsChart;
+    @FXML
     private TableColumn<String, Columndata> abilityColumn;
+    @FXML
     private TableColumn<String, Columndata> avgColumn;
+    @FXML
     private TableColumn<String, Columndata> minColumn;
+    @FXML
     private TableColumn<String, Columndata> maxColumn;
     @FXML
-    private Text abilityNameUsageTab;
-    @FXML
-    private Text avgUsage;
-    @FXML
-    private Text minUsage;
-    @FXML
-    private Text maxUsage;
-
+    private TableView<Columndata> tableView;
+    private ObservableList usageData;
 
     /**
      * tableView.getItems().add(new                                     
@@ -237,6 +235,8 @@ public class GuiController implements Initializable {
         MomentDpsChart.getXAxis().setTickLabelsVisible(false);
         
         
+        
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         abilityColumn.setCellValueFactory(new PropertyValueFactory<>("abilityName"));
         
         avgColumn.setCellValueFactory(new PropertyValueFactory<>("avg"));
@@ -245,7 +245,6 @@ public class GuiController implements Initializable {
         
         
         minColumn.setCellValueFactory(new PropertyValueFactory<>("min"));
-        
         
         fight_list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             //This method triggers everytime you double click the ListView
@@ -434,7 +433,10 @@ public class GuiController implements Initializable {
     }
     
     public void updateAbilityUsage(){
-
+        
+        for(String s :currentView.getMaxActivations().keySet()){    //all maps have same keyset
+            tableView.getItems().add(new Columndata(s,currentView.getAvgActivations().get(s),currentView.getMaxActivations().get(s),currentView.getMinActivations().get(s)));
+        }
     }
 
     public void updateHealTabChoiceBox() {
@@ -714,7 +716,6 @@ public class GuiController implements Initializable {
         }
         try{
             this.database=new Database(file.getPath());
-            this.database.reset();
         }catch(SQLException e ){
             System.out.println("Connection failed");
             System.out.println(e.getMessage());

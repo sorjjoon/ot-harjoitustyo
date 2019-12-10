@@ -10,64 +10,70 @@ import myparser.myparser.domain.Row;
 
 /**
  *
- * This class provides a way to deal with ability activations, and helps track ends and starts of effects
- * Current version doesn't use this yet
+ * This class provides a way to deal with ability activations, and helps track
+ * ends and starts of effects Current version doesn't use this yet
  */
 public class AbilityActivation {
-    private final String Abilityname;
+
+    private final String abilityName;
     private Row activate;
     private Row applyEffect;
     private Row removeEffect;
-    private int dmgHeal;    
+    private int dmgHeal;
+
     /**
      * use to track effect ends and starts
+     *
      * @param applyEffect
-     * @param removeEffect 
+     * @param removeEffect
      */
     public AbilityActivation(Row applyEffect, Row removeEffect) {
-        this.Abilityname=applyEffect.getAbilityName();
+        this.abilityName = applyEffect.getAbilityName();
         this.applyEffect = applyEffect;
         this.removeEffect = removeEffect;
     }
-    
-    
+
     /**
      * used for only tracking ability activations
-     * @param activate 
+     *
+     * @param activate
      */
     public AbilityActivation(Row activate) {
-        this.Abilityname=activate.getAbilityName();
+        this.abilityName = activate.getAbilityName();
         this.activate = activate;
         this.dmgHeal = 0;
     }
 
-    public String getAbilityname() {
-        return Abilityname;
+    public String getAbilityName() {
+        return abilityName;
     }
-    
 
     public void setApplyEffect(Row applyEffect) {
         this.applyEffect = applyEffect;
     }
+
     /**
      * add dmg heal to the sum of this ability
-     * @param dmgHeal 
+     *
+     * @param dmgHeal
      */
-    
+
     public void addDmgHeal(int dmgHeal) {
-        this.dmgHeal +=  dmgHeal;
+        this.dmgHeal += dmgHeal;
     }
 
     public void setRemoveEffect(Row removeEffect) {
         this.removeEffect = removeEffect;
     }
-    
-    public LocalTime getActivation() {  
+
+    public LocalTime getActivation() {
         return this.activate.getTimestamp();
     }
-    public LocalTime getEffectStart() {  
+
+    public LocalTime getEffectStart() {
         return this.applyEffect.getTimestamp();
     }
+
     public LocalTime getEffectEnd() {
         return this.removeEffect.getTimestamp();
     }
@@ -75,14 +81,11 @@ public class AbilityActivation {
     public int getDmgHeal() {
         return dmgHeal;
     }
-    
+
     //this is for testing mostly
     @Override
     public String toString() {
         return "AbilityActivation{" + "applyEffect = " + applyEffect.getTimestamp() + ", removeEffect = " + removeEffect.getTimestamp() + '}';
     }
-    
-    
-    
-    
+
 }

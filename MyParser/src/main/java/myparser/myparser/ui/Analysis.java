@@ -114,8 +114,12 @@ public class Analysis {
     private final HashMap<String, Double> maxActivations;
     
     /**
-     * Formats all data created calculated using Stats to Strings
+     * Formats all data created calculated using Stats to Strings (with 2 decimal places)
      * Creates HashMaps for target, dmg/heal pairs used by the gui
+     * Ability breakdown map values are not formated, but use Integers (because linechart and piechart can't use Strings)
+     * Momentary breakdown map values are not formated, but use Doubles (because linechart can't use Strings)
+     * activation map values are not formated here, but in Databasecolumn when inserting to tableview
+     * 
      * @param f Fight
      */
     

@@ -24,6 +24,16 @@ import myparser.myparser.types.Type;
 //TODO could make effective healing precentage (by comparing threat generated to healing done), but as it's only possible for pve, probably not worth the effort
 public class Stats {
 
+    /**
+     * average dmg/heal from source against target for all targets/sources use
+     * null
+     *
+     * @param fight
+     * @param effect
+     * @param source
+     * @param target
+     * @return
+     */
     public static Double getAverageOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int sum = 0;
         int i = 0;
@@ -60,6 +70,12 @@ public class Stats {
         return sum;
     }
 
+    /**
+     * damage per s
+     *
+     * @param fight
+     * @return
+     */
     public static double dps(Fight fight) {
         long timeMs = getDurationMs(fight);
         int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null);
@@ -67,6 +83,12 @@ public class Stats {
         return (double) dmg / timeS;
     }
 
+    /**
+     * healing taken per s
+     *
+     * @param fight
+     * @return
+     */
     public static double htps(Fight fight) {
         long timeMs = getDurationMs(fight);
         int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner());
@@ -74,7 +96,12 @@ public class Stats {
         return (double) dmg / timeS;
     }
 
-    //TODO when ability activation class is done, redo this
+    /**
+     * ability usage per min
+     *
+     * @param fight
+     * @return
+     */
     public static double apm(Fight fight) {
         int i = 0; //counter for ability activations
         for (Row r : fight.getRows()) {
@@ -86,6 +113,12 @@ public class Stats {
         return (double) i / lengthMinutes;
     }
 
+    /**
+     * healing per s
+     *
+     * @param fight
+     * @return
+     */
     public static double hps(Fight fight) {
         long timeMs = getDurationMs(fight);
         int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null);
@@ -93,6 +126,12 @@ public class Stats {
         return (double) dmg / timeS;
     }
 
+    /**
+     * damage taken per s
+     *
+     * @param fight
+     * @return
+     */
     public static double dtps(Fight fight) {
         long timeMs = getDurationMs(fight);
         int dmg = getSumOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner());
@@ -116,6 +155,12 @@ public class Stats {
         return time;
     }
 
+    /**
+     * fight duration in ms
+     *
+     * @param fight
+     * @return
+     */
     public static long getDurationMs(Fight fight) {
         ArrayList<Row> rows = fight.getRows();
         LocalTime start = rows.get(0).getTimestamp();
@@ -131,6 +176,12 @@ public class Stats {
         return avg;
     }
 
+    /**
+     * total generated threat
+     *
+     * @param fight
+     * @return
+     */
     public static int totalThreat(Fight fight) {
         int sum = 0;
         for (Row r : fight.getRows()) {
@@ -141,6 +192,16 @@ public class Stats {
         return sum;
     }
 
+    /**
+     * count the number of hits/heal against target for all targets/sources use
+     * null
+     *
+     * @param fight
+     * @param effect
+     * @param source
+     * @param target
+     * @return
+     */
     public static int getNumberOfEffectsFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
 
         int i = 0;
@@ -177,6 +238,13 @@ public class Stats {
         return big;
     }
 
+    /**
+     * miss% of done attacks against target
+     *
+     * @param fight
+     * @param target
+     * @return
+     */
     public static double missPrecentageAgainstTarget(Fight fight, String target) {
         int all = 0;
         int misses = 0;
@@ -196,6 +264,12 @@ public class Stats {
         return precentage;
     }
 
+    /**
+     * miss% of done attacks
+     *
+     * @param fight
+     * @return
+     */
     public static double missPrecentage(Fight fight) {
         int all = 0;
         int misses = 0;
@@ -215,6 +289,16 @@ public class Stats {
         return precentage;
     }
 
+    /**
+     * crit% of Damage/Heal effect from a source against a target If
+     * source/target doesn't matter use null
+     *
+     * @param fight
+     * @param effect
+     * @param source
+     * @param target
+     * @return
+     */
     public static Double getCritOfEffectFromSourceAgainstTarget(Fight fight, String effect, String source, String target) {
         int crit = 0;
         int i = 0;
@@ -234,6 +318,12 @@ public class Stats {
         return critPre;
     }
 
+    /**
+     * miss% of taken attacks
+     *
+     * @param fight
+     * @return
+     */
     public static double takenMissPrecentage(Fight fight) {
         int all = 0;
         int misses = 0;
@@ -306,30 +396,33 @@ public class Stats {
      */
     public static HashMap<String, Double> avgTimeBetweenActivations(Fight fight) {
         HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
-        HashMap<String, Double> ret = new HashMap();        //returned map
         HashMap<String, Double> sums = new HashMap();
         HashMap<String, Integer> count = new HashMap();
-
-        ArrayList<AbilityActivation> activations=getActivations(fight);
+        ArrayList<AbilityActivation> activations = getActivations(fight);
         for (AbilityActivation a : activations) {
-            String name = a.getAbilityname();
+            String name = a.getAbilityName();
             if (lastTime.get(name) == null) {
                 lastTime.put(name, a.getActivation());
                 sums.put(name, 0.0);
                 count.put(name, 1);
-
             } else {
                 sums.put(name, sums.get(name) + (double) getDiffrence(lastTime.get(name), a.getActivation()) / 1000);
                 count.put(name, count.get(name) + 1);
                 lastTime.put(name, a.getActivation());
             }
-
         }
-
-        for (String s : sums.keySet()) {;
+        return createAvgMap(count, sums);
+    }
+    
+    /**
+     * This method is here to fit checkstyle for avgTimeBetweenactivations
+     * @return 
+     */
+    private static HashMap<String, Double> createAvgMap(HashMap<String, Integer> count, HashMap<String, Double> sums) {
+        HashMap<String, Double> ret = new HashMap(); 
+        for (String s : sums.keySet()) {
             ret.put(s, (double) sums.get(s) / count.get(s));
         }
-
         return ret;
     }
 
@@ -344,10 +437,10 @@ public class Stats {
         HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
         HashMap<String, Double> ret = new HashMap();        //returned map
 
-        ArrayList<AbilityActivation> activations=getActivations(fight);
-        
+        ArrayList<AbilityActivation> activations = getActivations(fight);
+
         for (AbilityActivation a : activations) {
-            String name = a.getAbilityname();
+            String name = a.getAbilityName();
             if (lastTime.get(name) == null) {
                 lastTime.put(name, a.getActivation());
 
@@ -373,12 +466,12 @@ public class Stats {
      * @return
      */
     public static HashMap<String, Double> minTimeBetweenActivations(Fight fight) {
-        ArrayList<AbilityActivation> activations=getActivations(fight);
+        ArrayList<AbilityActivation> activations = getActivations(fight);
         HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
         HashMap<String, Double> ret = new HashMap();        //returned map
 
         for (AbilityActivation a : activations) {
-            String name = a.getAbilityname();
+            String name = a.getAbilityName();
             if (lastTime.get(name) == null) {
                 lastTime.put(name, a.getActivation());
 
@@ -421,33 +514,31 @@ public class Stats {
         return results;
     }
 
-    //TODO make this function more efficient and more readable
-    //TODO test if this method works...
-    public static ArrayList<AbilityActivation> getEffects(Fight fight) {
-        ArrayList<AbilityActivation> activations = new ArrayList();
-        ArrayList<Row> rows = fight.getRows();
-        for (int i = 0; i < rows.size(); i++) {
-            //limits the rows we are dealing with to include only rows where we are the target and the source
-            //Type is never null
-            if (rows.get(i).getType() == Type.ApplyEffect && rows.get(i).getSource().equals(fight.getOwner()) && rows.get(i).getTarget().equals(fight.getOwner())) {
-                //TODO find the ability activation behind this row
-
-                for (int j = i + 1; j < rows.size(); j++) {
-                    //This if is big and confusing asf. TODO, find out if u can remove getSource and getTarget comparisons
-                    //abilityname is never null
-                    if (rows.get(j).getType() == Type.RemoveEffect && rows.get(j).getSource().equals(fight.getOwner()) && rows.get(j).getTarget().equals(fight.getOwner()) && rows.get(i).getAbilityName().equals(rows.get(j).getAbilityName())) {
-                        activations.add(new AbilityActivation(rows.get(i), rows.get(j)));
-                        break;
-                    }
-
-                }
-
-            }
-        }
-
-        return activations;
-    }
-
+    //Unused method for tracking effects
+//    public static ArrayList<AbilityActivation> getEffects(Fight fight) {
+//        ArrayList<AbilityActivation> activations = new ArrayList();
+//        ArrayList<Row> rows = fight.getRows();
+//        for (int i = 0; i < rows.size(); i++) {
+//            //limits the rows we are dealing with to include only rows where we are the target and the source
+//            //Type is never null
+//            if (rows.get(i).getType() == Type.ApplyEffect && rows.get(i).getSource().equals(fight.getOwner()) && rows.get(i).getTarget().equals(fight.getOwner())) {
+//                //TODO find the ability activation behind this row
+//
+//                for (int j = i + 1; j < rows.size(); j++) {
+//                    //This if is big and confusing asf. TODO, find out if u can remove getSource and getTarget comparisons
+//                    //abilityname is never null
+//                    if (rows.get(j).getType() == Type.RemoveEffect && rows.get(j).getSource().equals(fight.getOwner()) && rows.get(j).getTarget().equals(fight.getOwner()) && rows.get(i).getAbilityName().equals(rows.get(j).getAbilityName())) {
+//                        activations.add(new AbilityActivation(rows.get(i), rows.get(j)));
+//                        break;
+//                    }
+//
+//                }
+//
+//            }
+//        }
+//
+//        return activations;
+//    }
     /**
      * return a map with key timestamp, and value dmg/heal done at that point
      *
@@ -541,6 +632,13 @@ public class Stats {
         return list;
     }
 
+    /**
+     * return a list of tuples containg the total dmg done up to that point
+     *
+     * @param fight
+     * @param target
+     * @return
+     */
     public static ArrayList<Tuple> getTotalDpsByTimeAgainstTarget(Fight fight, String target) {
         LocalTime start = fight.getStart();
         ArrayList<Row> rows = getRowsWithSpecficEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), target).getRows(); //Getting only rows with dmg in them to take this a little simpler
@@ -560,7 +658,8 @@ public class Stats {
 
     /**
      * Returns a list of Tuples containing momentary Hps at a given time
-     * (meaning dps in last 10 seconds) for all targets use null
+     * (meaning dps in last 10 seconds) for all targets use null Tuple format:
+     * timestamp, dps
      *
      * @param fight
      * @return <Tuple<LocalTime, Double>>
@@ -575,7 +674,7 @@ public class Stats {
 
     /**
      * Returns a list of Tuples containing momentary Dps at a given time
-     * (meaning dps in last 10 seconds)
+     * (meaning dps in last 10 seconds) Tuple format: timestamp, value
      *
      * @param fight
      * @return <Tuple<LocalTime, Double>>
@@ -619,7 +718,7 @@ public class Stats {
 
     /**
      * Returns a list of Tuples containing momentary dps at a given time against
-     * a target (meaning dps in last 10 seconds)
+     * a target (meaning dps in last 10 seconds) Tuple format: timestamp, dps
      *
      * @param fight
      * @return <Tuple<LocalTime, Double>>
@@ -631,7 +730,6 @@ public class Stats {
 
         ArrayList<Row> rows = onlyDmgRows.getRows();
 
-        //This currently a very inefficient way of doing this, but atm it's not necessary to make this faster
         return momentaryEffect(onlyDmgRows);
     }
 

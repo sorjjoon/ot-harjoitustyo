@@ -20,7 +20,14 @@ import myparser.myparser.stats.Stats;
  */
 public class Reader {
 
-    //TODO find out if  really weird names (like in arabic letters) break this reader
+    /**
+     * Reads the given file and creates a list of fights based on it combines
+     * fights starting and ending within 30 s of each other
+     *
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
     public static ArrayList<Fight> readFile(File file) throws FileNotFoundException {
         Scanner reader = new Scanner(file, "ISO-8859-1");
         ArrayList<Row> lines = new ArrayList();
@@ -45,7 +52,6 @@ public class Reader {
 
                 if (row.getEventtype() == Eventtype.EnterCombat) {
                     inFight = true;
-                    //So we can determine owner
                     owner = row.getSource(); //Owner is only needed to check for Death event targets
 
                     //for some reason,  death events seem to not always register the exitCombat effect correctly (they sometimes do),  so had to add some work arounds for that
@@ -97,32 +103,6 @@ public class Reader {
 
         }
         return fights;
-    }
-
-    //this is an old method you could use to get a date from the logfile name, ( log files have default names which contain the date)
-    public static LocalDate dateFromName(String fileName) throws IllegalFormatException, IndexOutOfBoundsException {
-        int index = fileName.indexOf("_");
-        String date = fileName.substring(index + 1, index + 11);
-        //If this fails,  date not in a valid format
-
-        return LocalDate.parse(date);
-    }
-
-    //this is an old method you could use to get a date from the logfile path, ( log files have default names which contain the date)
-    //It is not used in the current version,  but I'm not yet sure if  it is completelly unnecessary
-    public static LocalDate dateFromPath(String path) throws IllegalFormatException, IndexOutOfBoundsException {
-        String fileName = path.substring(path.lastIndexOf("/") + 1);
-        int index = fileName.indexOf("_");
-        String date = fileName.substring(index + 1, index + 11);
-        LocalDate.parse(date);
-
-        return LocalDate.parse(date);
-    }
-
-    //Get the log file name from the path name
-    public static String nameFromPath(String path) throws IllegalFormatException, IndexOutOfBoundsException {
-        return path.substring(path.lastIndexOf("/") + 1);
-
     }
 
 }

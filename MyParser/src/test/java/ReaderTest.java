@@ -40,18 +40,6 @@ public class ReaderTest {
     @After
     public void tearDown() {
     }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
-//    
-    @Test
-    public void dateFromFile()throws Exception{
-        LocalDate date=Reader.dateFromName("combat_2019-08-21_22_51_05_510269.txt");
-            assertEquals("2019-08-21",date.toString());
-    }
     
     @Test
     public void correctNumberOfRowsAdded() throws Exception{

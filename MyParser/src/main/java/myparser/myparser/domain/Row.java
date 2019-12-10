@@ -39,6 +39,22 @@ public class Row {
         return miss;
     }
 
+    /**
+     * Construct a row from given parameters //TODO add threat
+     *
+     * @param timestamp
+     * @param source
+     * @param target
+     * @param type
+     * @param effecttype
+     * @param eventtype
+     * @param abilityName
+     * @param dmgHeal
+     * @param crit
+     * @param shielded
+     * @param miss
+     * @param rowNumber
+     */
     public Row(LocalTime timestamp, String source, String target, Type type, String effecttype, Eventtype eventtype, String abilityName, int dmgHeal, boolean crit, boolean shielded, boolean miss, int rowNumber) {
         this.timestamp = timestamp;
         this.source = source;
@@ -55,6 +71,25 @@ public class Row {
         this.threat = 0;
     }
 
+    /**
+     *
+     * Create a new row from a rawline and row number (row numbers are only used
+     * for making sure rows are in the correct order when reading from database)
+     * Exceptions should only be thrown in case user has modified the rawline
+     * for some reason
+     *
+     * Note: Effecttype or Eventtype is null, as Row is either an Event or an
+     * Effect (both are null, in case of energy management rows) No other value
+     * can be null Abilityname, owner and target are empty in case of no
+     * name/owner/source
+     *
+     * @param rawline
+     * @param rowNumber
+     * @throws IndexOutOfBoundsException
+     * @throws NumberFormatException
+     * @throws IllegalArgumentException
+     * @throws EnumConstantNotPresentException
+     */
     public Row(String rawline, int rowNumber) throws IndexOutOfBoundsException, NumberFormatException, IllegalArgumentException, EnumConstantNotPresentException {
         this.rowNumber = rowNumber;
         //TODO dmgType
@@ -73,7 +108,7 @@ public class Row {
                 this.threat = Integer.valueOf(rawline.substring(rawline.lastIndexOf("<") + 1, rawline.lastIndexOf(">")));
             } catch (Exception e) {
                 System.out.println(e);
-                //This should only happen if for some reason player name contains < and > (and the line being looked at doesn't contin threat
+                //This should only happen if for some reason player name contains < and > (and the line being looked at doesn't contain threat
 
             }
         }
@@ -157,12 +192,11 @@ public class Row {
                 this.miss = true;
             }
         } else {
-            //this should happen only with resource lines (energy/rage/heat etc usage). We could do something with these , but it would be very complicated (we'd have to take in account owner's ala , spec etc.)
+            //this should happen only with resource lines (energy/rage/heat etc usage).
             this.eventtype = null;
             this.effecttype = null;
         }
-
-//        } 
+ 
     }
 
     @Override
@@ -253,6 +287,12 @@ public class Row {
 
     //Equals method mainly for unit tests
     //this method is split is split in 5 because Checkstyle (I really need this method for unit tests, so I had to find a way to keep it here)
+    /**
+     * Rows are equal if all values inside are equal
+     *
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (!this.checkClass(obj)) {
@@ -304,11 +344,13 @@ public class Row {
         return true;
     }
 
+    /**
+     *
+     * @param other
+     * @return
+     */
     private boolean checkDmg(Row other) {
         if (this.dmgHeal != other.getDmgHeal()) {
-            return false;
-        }
-        if (this.threat != other.getThreat()) {
             return false;
         }
         if (this.crit != other.isCrit()) {

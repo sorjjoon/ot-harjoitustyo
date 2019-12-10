@@ -82,17 +82,33 @@ public class Fight {
         return new Fight(specficRows, this.owner);
     }
 
-    //parameter is the later fight
+    /**
+     * combine 2 fights into a new fight rows in the parameter fight are added
+     * after the previous fihgt
+     *
+     * @param later
+     */
+
     public void combineFights(Fight later) {
         for (Row r : later.getRows()) {
             this.rows.add(r);
         }
     }
 
+    /**
+     * Get the timestamp on the first row in a fight
+     *
+     * @return
+     */
     public LocalTime getStart() {
         return this.rows.get(0).getTimestamp();
     }
 
+    /**
+     * get timestamp on the last row in the fight
+     *
+     * @return
+     */
     public LocalTime getEnd() {
         return this.rows.get(rows.size() - 1).getTimestamp();
 
@@ -106,6 +122,12 @@ public class Fight {
         return hash;
     }
 
+    /**
+     * Rows are equal if all rows in them are equal
+     *
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

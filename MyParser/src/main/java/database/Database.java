@@ -21,8 +21,8 @@ import myparser.myparser.types.Type;
 
 /**
  *
- *Contains all the necessary methods for interacting with the database
- * Atm database needs to be contained at /data/saved_logs
+ * Contains all the necessary methods for interacting with the database Atm
+ * database needs to be contained at /data/saved_logs
  */
 public class Database {
 
@@ -37,21 +37,23 @@ public class Database {
             System.out.println(e);
         }
         //removing .mv.db extension from file name
-        location=location.substring(0, location.lastIndexOf('.'));
-        location=location.substring(0, location.lastIndexOf('.'));
-        
-        this.con = DriverManager.getConnection("jdbc:h2:"+location, "sa", "");
+        location = location.substring(0, location.lastIndexOf('.'));
+        location = location.substring(0, location.lastIndexOf('.'));
+
+        this.con = DriverManager.getConnection("jdbc:h2:" + location, "sa", "");
 //        this.createTables();
 
     }
 
     /**
-     * Calling this method will create the tables needed for  the database to function (in case the file gets deleted for  some reason)
-        Note we are boolean miss deoesn't have a column, because we can get it from dmg (it's 0 for  miss, null for  non attacks)
-    
-     * @throws SQLException 
+     * Calling this method will create the tables needed for the database to
+     * function (in case the file gets deleted for some reason) Note we are
+     * boolean miss deoesn't have a column, because we can get it from dmg (it's
+     * 0 for miss, null for non attacks)
+     *
+     * @throws SQLException
      */
-     private void createTables() throws SQLException {
+    private void createTables() throws SQLException {
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Log (id int NOT NULL AUTO_INCREMENT,date date, type varchar(20),owner varchar(30),log_name varchar(60))").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Fight (id int NOT NULL AUTO_INCREMENT primary key,logId int NOT NULL,FOREIGN KEY(logId) REFERENCES Log(id),  PRIMARY KEY (id));").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,rowNumber int, timestamp varchar(14), Source varchar(50),  Target varchar(50),  AbilityName varchar(60),  type varchar (20),  EventEffectType varchar (50),  DmgHeal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
@@ -59,13 +61,20 @@ public class Database {
 
     }
 
+    /**
+     * close connection
+     *
+     * @throws SQLException
+     */
     public void close() throws SQLException {
         this.con.close();
     }
+
     /**
-     * 
-    Deletes all data in the database and recreates tables
-     * @throws SQLException 
+     *
+     * Deletes all data in the database and recreates tables
+     *
+     * @throws SQLException
      */
     public void reset() throws SQLException {
         con.prepareStatement("DROP TABLE Row IF EXISTS ").executeUpdate();
@@ -74,16 +83,18 @@ public class Database {
         con.prepareStatement("DROP TABLE Log IF EXISTS").executeUpdate();
         createTables();
     }
+
     /**
-     * the original ArrayList<Fight> of a given log name
+     * returns the original ArrayList<Fight> of a given log name
+     *
      * @param logName
      * @return
      * @throws SQLException
-     * @throws NoOwnerException 
+     * @throws NoOwnerException
      */
     public ArrayList<Fight> getFightsFromLog(String logName) throws SQLException, NoOwnerException {
         Integer id = getLogId(logName);
-        if(id==null){
+        if (id == null) {
             throw new IllegalArgumentException();
         }
         ArrayList<Integer> fightIds = getFightIds(id);
@@ -94,11 +105,13 @@ public class Database {
         return fights;
 
     }
+
     /**
      * get the log id of a saved log
+     *
      * @param logname
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     private Integer getLogId(String logname) throws SQLException {
         String sql = "SELECT id FROM Log WHERE log_name LIKE ?";
@@ -113,31 +126,35 @@ public class Database {
         //if not found id is null
         return id;
     }
+
     /**
      * get all fightId from a log id
+     *
      * @param logId
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     private ArrayList<Integer> getFightIds(int logId) throws SQLException {
 //        System.out.println(logId);
         ArrayList<Integer> ids = new ArrayList();
         String sql = "SELECT id FROM Fight WHERE logId = ?";
         PreparedStatement stmnt = con.prepareStatement(sql);
-        
+
         stmnt.setInt(1, logId);
         ResultSet rs = stmnt.executeQuery();
         while (rs.next()) {
             ids.add(rs.getInt(1));
         }
-        
+
         return ids;
-        
+
     }
-    
+
     /**
-     * Creates a new row object based on a Result set and params. Params are there to fit checkstyle
-     * TODO remove params from this method after the course has ended 
+     * Creates a new row object based on a Result set and params. Params are
+     * there to fit checkstyle TODO remove params from this method after the
+     * course has ended
+     *
      * @param rs
      * @param rowNumber
      * @param timestamp
@@ -146,7 +163,7 @@ public class Database {
      * @param abilityName
      * @param type
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     private Row createRow(ResultSet rs, int rowNumber, LocalTime timestamp, String source, String target, String abilityName, Type type) throws SQLException {
 
@@ -170,11 +187,13 @@ public class Database {
         return new Row(timestamp, source, target, type, effecttype, eventtype, abilityName, dmgHeal, crit, shielded, miss, rowNumber);
 
     }
+
     /**
      * get all rows of a specfic fight
+     *
      * @param id
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     private ArrayList<Row> getRowsFromFight(Integer id) throws SQLException {
         String sql = "SELECT * FROM Row WHERE FightId = ? ORDER BY RowNumber";
@@ -253,13 +272,15 @@ public class Database {
         stmnt.execute();
 
     }
+
     /**
      * Save a list of fights into the database
+     *
      * @param fights
      * @param date
      * @param type
      * @param logFileName
-     * @throws SQLException 
+     * @throws SQLException
      */
     public void addListOfFights(ArrayList<Fight> fights, LocalDate date, String type, String logFileName) throws SQLException {
         if (fights.isEmpty()) {
@@ -277,10 +298,12 @@ public class Database {
         }
 
     }
+
     /**
      * Get the names of all logs in the database
+     *
      * @return
-     * @throws SQLException 
+     * @throws SQLException
      */
     public ArrayList<String> getSavedLogs() throws SQLException {
         ArrayList<String> files = new ArrayList();
@@ -293,7 +316,5 @@ public class Database {
         }
         return files;
     }
-    
-    
 
 }
