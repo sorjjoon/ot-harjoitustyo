@@ -17,24 +17,29 @@ public class Fight {
 
     private final ArrayList<Row> rows;
     private final String owner;
-
+    /**
+     * Create a new fight instance from a set of rows. Determines the Fight owner automatically
+     * @param rows
+     */
     public Fight(ArrayList<Row> rows) throws NoOwnerException {
         this.rows = rows;
-        //Determine the "owner" of the log, this method should work everytime
         for (Row r : rows) {
-            //EnterCombat should always be the first row, so the loop is not "necessary", but there just in case, also the ExitCombat tag is here, in case we started logging midfight for  some reason, 
+            //EnterCombat should always be the first row, so the loop is not "necessary", the ExitCombat tag is here, in case we started logging midfight for  some reason, 
             //or the user deleted rows for  some reason (though in the current version if the entercombat row had been deleted the fight wouldn't be read
-            //but in case we ever do a workaround this
+          
             if (r.getEventtype() == Eventtype.EnterCombat || r.getEventtype() == Eventtype.ExitCombat) {
                 this.owner = r.getSource();
                 return;
             }
         }
-        //If we can't determine an owner for  the log, we raise an exception, though I don't see how this is possible, but it's here just in case
+        //If we can't determine an owner for  the log, we raise an exception 
         throw new NoOwnerException("Couldn't determine owner");
     }
-    //In case we can't determine the owner automatically this constructor can be used (mainly when reading from database)
-
+    /**
+      * In case we can't determine the owner automatically this constructor can be used (mainly when reading from database)
+      * @param rows
+      * @param owner
+      */
     public Fight(ArrayList<Row> rows, String owner) {
         this.rows = rows;
         this.owner = owner;
@@ -62,11 +67,15 @@ public class Fight {
     public int getSize() {
         return this.rows.size();
     }
-
+    /**
+      * returns a new fight instance which contains only rows in the given timeframe
+      * @param start
+      * @param end
+      */
     public Fight rowsInTimeFrame(LocalTime start, LocalTime end) {
         ArrayList<Row> specficRows = new ArrayList();
 
-        //Here we are using the stats method of determening distance between two times (which works with midnight the way we want to) to make sure the time we are looking at is between end and start time
+       
         long durationMs = Stats.getDurationMs(this);
 
         for (Row r : this.rows) {
