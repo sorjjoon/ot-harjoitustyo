@@ -39,6 +39,7 @@ public class Database {
         //removing .mv.db extension from file name
         location=location.substring(0, location.lastIndexOf('.'));
         location=location.substring(0, location.lastIndexOf('.'));
+        
         this.con = DriverManager.getConnection("jdbc:h2:"+location, "sa", "");
 //        this.createTables();
 
@@ -53,7 +54,7 @@ public class Database {
      private void createTables() throws SQLException {
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Log (id int NOT NULL AUTO_INCREMENT,date date, type varchar(20),owner varchar(30),log_name varchar(60))").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Fight (id int NOT NULL AUTO_INCREMENT primary key,logId int NOT NULL,FOREIGN KEY(logId) REFERENCES Log(id),  PRIMARY KEY (id));").executeUpdate();
-        con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,rowNumber int, timestamp time, Source varchar(50),  Target varchar(50),  AbilityName varchar(60),  type varchar (20),  EventEffectType varchar (50),  DmgHeal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
+        con.prepareStatement("CREATE TABLE IF NOT EXISTS Row (fightId int NOT NULL,rowNumber int, timestamp varchar(14), Source varchar(50),  Target varchar(50),  AbilityName varchar(60),  type varchar (20),  EventEffectType varchar (50),  DmgHeal varchar(10),  crit boolean,shield boolean,FOREIGN KEY(fightId) REFERENCES Fight(id) );").executeUpdate();
         con.prepareStatement("CREATE TABLE IF NOT EXISTS Stats (fightId int NOT NULL, dps int, hps int,FOREIGN KEY(fightId) REFERENCES Fight(id));").executeUpdate();
 
     }
@@ -74,7 +75,7 @@ public class Database {
         createTables();
     }
     /**
-     * the original ArrayList<Fight> of a given logId
+     * the original ArrayList<Fight> of a given log name
      * @param logName
      * @return
      * @throws SQLException
@@ -82,6 +83,9 @@ public class Database {
      */
     public ArrayList<Fight> getFightsFromLog(String logName) throws SQLException, NoOwnerException {
         Integer id = getLogId(logName);
+        if(id==null){
+            throw new IllegalArgumentException();
+        }
         ArrayList<Integer> fightIds = getFightIds(id);
         ArrayList<Fight> fights = new ArrayList();
         for (Integer fightId : fightIds) {
@@ -96,7 +100,7 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    public Integer getLogId(String logname) throws SQLException {
+    private Integer getLogId(String logname) throws SQLException {
         String sql = "SELECT id FROM Log WHERE log_name LIKE ?";
         PreparedStatement stmnt = con.prepareStatement(sql);
         stmnt.setString(1, logname);
@@ -115,10 +119,12 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    public ArrayList<Integer> getFightIds(Integer logId) throws SQLException {
+    private ArrayList<Integer> getFightIds(int logId) throws SQLException {
+//        System.out.println(logId);
         ArrayList<Integer> ids = new ArrayList();
         String sql = "SELECT id FROM Fight WHERE logId = ?";
         PreparedStatement stmnt = con.prepareStatement(sql);
+        
         stmnt.setInt(1, logId);
         ResultSet rs = stmnt.executeQuery();
         while (rs.next()) {
@@ -153,7 +159,7 @@ public class Database {
             eventtype = null;
             effecttype = rs.getString("EventEffectType");
         }
-        int dmgHeal = rs.getInt("Dmg_heal");
+        int dmgHeal = rs.getInt("DmgHeal");
         boolean crit = rs.getBoolean("Crit");
         boolean shielded = rs.getBoolean("Shield");
         //seting miss
@@ -170,16 +176,16 @@ public class Database {
      * @return
      * @throws SQLException 
      */
-    public ArrayList<Row> getRowsFromFight(Integer id) throws SQLException {
-        String sql = "SELECT * FROM Row WHERE FightId = ? ORDER BY Row_number";
+    private ArrayList<Row> getRowsFromFight(Integer id) throws SQLException {
+        String sql = "SELECT * FROM Row WHERE FightId = ? ORDER BY RowNumber";
         PreparedStatement stmnt = con.prepareStatement(sql);
         stmnt.setInt(1, id);
         ResultSet rs = stmnt.executeQuery();
         ArrayList<Row> rows = new ArrayList();
         while (rs.next()) {
             //In order to fit checkstyle, had to split creating row into 2 methods 
-            int rowNumber = rs.getInt("Row_number");
-            LocalTime timestamp = rs.getTime("Timestamp").toLocalTime();
+            int rowNumber = rs.getInt("RowNumber");
+            LocalTime timestamp = LocalTime.parse(rs.getString("Timestamp"));
             String source = rs.getString("Source");
             String target = rs.getString("Target");
             String abilityName = rs.getString("AbilityName");

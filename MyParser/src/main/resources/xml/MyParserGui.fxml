@@ -13,6 +13,8 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -30,6 +32,8 @@
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#chooseFile" text="Open file" />
                     <MenuItem mnemonicParsing="false" onAction="#saveFile" text="Save file" />
+                    
+                    <MenuItem mnemonicParsing="false" onAction="#loadFile" text="Load file" />
                   </items>
                 </Menu>
 
@@ -599,6 +603,26 @@
                               </Pane>
                            </content>
                         </ScrollPane>
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+            <Tab text="Ability Usage">
+               <content>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Pane>
+                           <children>
+                              <TableView prefHeight="400.0" prefWidth="945.0">
+                                 <columns>
+                                    <TableColumn prefWidth="75.0" text="Ability" />
+                                    <TableColumn prefWidth="75.0" text="Avg time between uses" />
+                                    <TableColumn prefWidth="75.0" text="Min time between uses" />
+                                    <TableColumn prefWidth="75.0" text="Max time between uses" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </Pane>
                      </children>
                   </VBox>
                </content>

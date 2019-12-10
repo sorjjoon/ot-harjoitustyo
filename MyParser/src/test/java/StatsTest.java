@@ -91,23 +91,29 @@ public class StatsTest {
         
     }
     
+    @Test
+    public void minActivation(){
+        ArrayList<Row> rows =new ArrayList();
+        rows.add(e)
+    }
+    
     @After
     public void tearDown() {
     }
     
     @Test
     public void biggestTakenHit() {
-        assertEquals(8433, Stats.biggestTakenHit(fight));
+        assertEquals(8433, Stats.getBigOfEffectFromSourceAgainstTarget(fight,"Damage",null,fight.getOwner()));
     }
     
     @Test
     public void biggestHeal() {
-        assertEquals(92, Stats.biggestHeal(fight));
+        assertEquals(92, Stats.getBigOfEffectFromSourceAgainstTarget(fight,"Heal",fight.getOwner(),null));
     }
     
     @Test
     public void biggestHit() {
-        assertEquals(2452, Stats.biggestHit(fight));
+        assertEquals(2452, Stats.getBigOfEffectFromSourceAgainstTarget(fight,"Damage",fight.getOwner(),null));
     }
     
     @Test
@@ -149,7 +155,7 @@ public class StatsTest {
     
     @Test
     public void divideByAbility(){
-        HashMap<String, Integer> test = Stats.divideDamageDealtByAbility(fight);
+        HashMap<String, Integer> test = Stats.divideEffectSumByAbilityF(fight,"Damage",fight.getOwner(),null);
         int charge =test.get("Force Charge");
         int flame =test.get("Flame Burst");
         int assault =test.get("Battering Assault");
@@ -161,8 +167,8 @@ public class StatsTest {
     @Test
     public void divideByAbilityByTarget(){
         
-        HashMap<String, Integer> testFlame = Stats.divideDamageDealtAgainstTargetByAbility(fight, "@Tecktime");
-        HashMap<String, Integer> test = Stats.divideDamageDealtAgainstTargetByAbility(fight, "@Firakn");
+        HashMap<String, Integer> testFlame = Stats.divideEffectSumByAbilityF(fight,"Damage",fight.getOwner(),"@Tecktime");
+        HashMap<String, Integer> test = Stats.divideEffectSumByAbilityF(fight,"Damage",fight.getOwner(),"@Firakn");
 
         Integer charge =test.get("Force Charge");
         Integer flame =test.get("Flame Burst");
@@ -193,12 +199,12 @@ public class StatsTest {
     }
     @Test
     public void critPrecentageDmg(){
-        assertEquals(0.75,Stats.dmgCritPrecentage(fight),0.1);
+        assertEquals(0.75,Stats.getCritOfEffectFromSourceAgainstTarget(fight,"Damage",fight.getOwner(),null),0.1);
     }
     
     @Test
     public void allDamageTaken(){
-        assertEquals(10402,Stats.getAllDamageToOwner(fight));
+        assertEquals(10402,Stats.getSumOfEffectFromSourceAgainstTarget(fight,"Damage",null,fight.getOwner()));
     }
     @Test
     public void dtps(){
@@ -256,13 +262,13 @@ public class StatsTest {
     @Test
     public void allDamageFromOwner()throws Exception{
         ArrayList<Row> rows=new ArrayList();
-        assertEquals(4949,Stats.getAllDamageByOwner(fight));
+        assertEquals(4949,Stats.getSumOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null));
     } 
     
     @Test
     public void allHealingToOwner()throws Exception{
      
-        assertEquals(9113,Stats.getAllHealingToOwner(fight));
+        assertEquals(9113,Stats.getSumOfEffectFromSourceAgainstTarget(fight,"Heal",null,fight.getOwner()));
     }
     @Test
     public void htps()throws Exception{
@@ -270,7 +276,7 @@ public class StatsTest {
     }
     @Test
     public void allHealingByOwner()throws Exception{
-        assertEquals(94,Stats.getAllHealingByOwner(fight));
+        assertEquals(94,Stats.getSumOfEffectFromSourceAgainstTarget(fight,"Heal",fight.getOwner(),null));
     }
  
     @Test

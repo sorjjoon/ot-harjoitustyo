@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -34,6 +35,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TreeItem;
@@ -43,6 +45,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javax.swing.event.ChangeListener;
 import myparser.myparser.domain.Fight;
+import myparser.myparser.domain.NoOwnerException;
 import myparser.myparser.readers.Reader;
 import myparser.myparser.stats.Stats;
 import myparser.myparser.stats.Tuple;
@@ -244,14 +247,14 @@ public class GuiController implements Initializable {
             
         }
         try{
-            Alert alert = new Alert(AlertType.CONFIRMATION, "Delete  ?", ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-            alert.show();
-            //TODO add file type selection
+            //TODO add file type selection (dummy, pvp, op etc)
+            if(database.getSavedLogs().contains(fileName)) {
+                
+                new Alert(AlertType.ERROR,"Database contains a file with this name").show();
+                return;
+            }
             database.addListOfFights(fights, LocalDate.now(),"",fileName);
 
-            for(String s:database.getSavedLogs()){
-                System.out.println(s);
-            }
         }catch(SQLException e){
             System.out.println("Saving failed");
             System.out.println(e.getMessage());
@@ -259,6 +262,38 @@ public class GuiController implements Initializable {
         
         
     }
+    
+    public void loadFile(){
+        if(database==null){
+            setDatabase();
+        }
+        
+        //TODO add more info about logs to choices
+        try{
+        ChoiceDialog<String> dialog = new ChoiceDialog<>("", database.getSavedLogs());
+        dialog.setTitle("Log Selection");
+        dialog.setHeaderText("Select Log");
+        dialog.setContentText("Choose a log");
+
+        // Traditional way to get the response value.
+        Optional<String> logName = dialog.showAndWait();
+        if(!logName.isPresent()){
+            return; //This shouldn't happen
+        }
+            System.out.println(logName.get());
+        newFile(database.getFightsFromLog(logName.get()),logName.get());
+        
+        
+        
+        }catch(SQLException e){
+            System.out.println(e.getMessage());
+        }catch(NoOwnerException e){
+            //TODO
+        }
+    }
+    
+    
+    
     //TODO check ListView with a big log (if it fits on the screen)
     @FXML
     public void chooseFile() {
@@ -273,16 +308,24 @@ public class GuiController implements Initializable {
             return;
         }
         try {
-            fights = Reader.readFile(file);
-            this.analysis = new ArrayList();
-            for (Fight f : fights) {
-                this.analysis.add(new Analysis(f));
-            }
-            this.fileName=file.getName();
-            createListView(fights);
+            
+            newFile(Reader.readFile(file),file.getName());
         } catch (FileNotFoundException e) {
             //TODO, I don't know why this would happen
         }
+    }
+    /**
+     * Doesn't change current file name!
+     * @param newFights 
+     */
+    public void newFile(ArrayList<Fight> newFights,String fileName){
+            this.fileName=fileName;
+            this.analysis = new ArrayList();
+            this.fights=newFights;
+            for (Fight f : fights) {
+                this.analysis.add(new Analysis(f));
+            }
+            createListView(fights);
     }
 
     public void createListView(ArrayList<Fight> fights) {
@@ -636,6 +679,7 @@ public class GuiController implements Initializable {
         }
         try{
             this.database=new Database(file.getPath());
+            this.database.reset();
         }catch(SQLException e ){
             System.out.println("Connection failed");
             System.out.println(e.getMessage());

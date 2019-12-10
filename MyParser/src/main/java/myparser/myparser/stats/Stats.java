@@ -280,6 +280,49 @@ public class Stats {
     }
 
     /**
+     * returns a list of all ability activations
+     *
+     * @param fight
+     *
+     * @return
+     */
+    public static ArrayList<AbilityActivation> getActivations(Fight fight) {
+        ArrayList<AbilityActivation> activations = new ArrayList();
+
+        for (Row r : fight.getRows()) {
+            if (r.getEventtype() == Eventtype.AbilityActivate) {
+                activations.add(new AbilityActivation(r));
+            }
+        }
+        return activations;
+    }
+    /**
+     * map key is ability name, value the min time between activations for that ability
+     * @param activations
+     * @param fightStart
+     * @return 
+     */
+    public static HashMap<String, Double> minTimeBetweenActivations(ArrayList<AbilityActivation> activations, LocalTime fightStart) {
+        HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
+        HashMap<String, Double> ret = new HashMap();        //returned map
+
+        for (AbilityActivation a : activations) {
+            String name = a.getAbilityname();
+            if (lastTime.get(name) == null) {
+                lastTime.put(name, a.getActivation() );
+            
+                ret.put(name, Double.valueOf(getDiffrence(fightStart, a.getActivation()) / 1000));
+            }else if(ret.get(name)>Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation()))){
+                lastTime.put(name, a.getActivation());
+                ret.put(name, Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation())));
+                
+            }
+
+        }
+        return ret;
+    }
+
+    /**
      * returns a map where the key is target, and value is dmg/heal by the
      * ability. If target/source doesn't matter, use null
      *

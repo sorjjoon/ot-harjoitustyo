@@ -57,9 +57,9 @@ public class Row {
 
     public Row(String rawline, int rowNumber) throws IndexOutOfBoundsException, NumberFormatException, IllegalArgumentException, EnumConstantNotPresentException {
         this.rowNumber = rowNumber;
-        //TODO threat , dmgType
+        //TODO dmgType
         //TODO pve names for source/target, + tests for pve source/target
-        //these are values changed later if  needed
+        //these values are changed later if  needed
         this.miss = false;
         this.threat = 0;
         this.crit = false;

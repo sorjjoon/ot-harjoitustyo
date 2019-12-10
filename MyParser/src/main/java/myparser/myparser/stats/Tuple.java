@@ -7,7 +7,7 @@ package myparser.myparser.stats;
 
 /**
  *
- * Just a simple tuple class for usage in Stats
+ * A simple tuple class for usage in Stats
  */
 public class Tuple<A, B> {
 
