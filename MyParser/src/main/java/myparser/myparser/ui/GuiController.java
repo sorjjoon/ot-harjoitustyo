@@ -5,6 +5,7 @@
  */
 package myparser.myparser.ui;
 
+import com.sun.xml.internal.bind.v2.runtime.property.PropertyFactory;
 import database.Database;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,8 +39,11 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -196,8 +200,22 @@ public class GuiController implements Initializable {
     private NumberAxis hpsChartYAxis;
     @FXML
     private LineChart<?, ?> momentHpsChart;
+    private TableColumn<String, Columndata> abilityColumn;
+    private TableColumn<String, Columndata> avgColumn;
+    private TableColumn<String, Columndata> minColumn;
+    private TableColumn<String, Columndata> maxColumn;
+    @FXML
+    private Text abilityNameUsageTab;
+    @FXML
+    private Text avgUsage;
+    @FXML
+    private Text minUsage;
+    @FXML
+    private Text maxUsage;
+
 
     /**
+     * tableView.getItems().add(new                                     
      * Initializes the controller class.
      */
     @Override
@@ -217,7 +235,18 @@ public class GuiController implements Initializable {
         dmgLineChart.getXAxis().setTickLabelsVisible(false);
         MomentDpsChart.setCreateSymbols(false);
         MomentDpsChart.getXAxis().setTickLabelsVisible(false);
-
+        
+        
+        abilityColumn.setCellValueFactory(new PropertyValueFactory<>("abilityName"));
+        
+        avgColumn.setCellValueFactory(new PropertyValueFactory<>("avg"));
+        
+        maxColumn.setCellValueFactory(new PropertyValueFactory<>("max"));
+        
+        
+        minColumn.setCellValueFactory(new PropertyValueFactory<>("min"));
+        
+        
         fight_list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             //This method triggers everytime you double click the ListView
             @Override
@@ -263,6 +292,7 @@ public class GuiController implements Initializable {
         
     }
     
+    @FXML
     public void loadFile(){
         if(database==null){
             setDatabase();
@@ -399,6 +429,11 @@ public class GuiController implements Initializable {
         //set the dmg tab selection boxx
         updateDmgTabChoiceBox();
         updateHealTabChoiceBox();
+        updateAbilityUsage();
+
+    }
+    
+    public void updateAbilityUsage(){
 
     }
 

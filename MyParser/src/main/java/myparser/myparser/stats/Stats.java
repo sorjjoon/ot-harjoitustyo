@@ -286,7 +286,7 @@ public class Stats {
      *
      * @return
      */
-    public static ArrayList<AbilityActivation> getActivations(Fight fight) {
+    private static ArrayList<AbilityActivation> getActivations(Fight fight) {
         ArrayList<AbilityActivation> activations = new ArrayList();
 
         for (Row r : fight.getRows()) {
@@ -296,26 +296,99 @@ public class Stats {
         }
         return activations;
     }
+
     /**
-     * map key is ability name, value the min time between activations for that ability
-     * @param activations
-     * @param fightStart
-     * @return 
+     * map key is ability name, value the avg time between activations for that
+     * ability
+     *
+     * @param fight
+     * @return
      */
-    public static HashMap<String, Double> minTimeBetweenActivations(ArrayList<AbilityActivation> activations, LocalTime fightStart) {
+    public static HashMap<String, Double> avgTimeBetweenActivations(Fight fight) {
+        HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
+        HashMap<String, Double> ret = new HashMap();        //returned map
+        HashMap<String, Double> sums = new HashMap();
+        HashMap<String, Integer> count = new HashMap();
+
+        ArrayList<AbilityActivation> activations=getActivations(fight);
+        for (AbilityActivation a : activations) {
+            String name = a.getAbilityname();
+            if (lastTime.get(name) == null) {
+                lastTime.put(name, a.getActivation());
+                sums.put(name, 0.0);
+                count.put(name, 1);
+
+            } else {
+                sums.put(name, sums.get(name) + (double) getDiffrence(lastTime.get(name), a.getActivation()) / 1000);
+                count.put(name, count.get(name) + 1);
+                lastTime.put(name, a.getActivation());
+            }
+
+        }
+
+        for (String s : sums.keySet()) {;
+            ret.put(s, (double) sums.get(s) / count.get(s));
+        }
+
+        return ret;
+    }
+
+    /**
+     * map key is ability name, value the max time between activations for that
+     * ability
+     *
+     * @param fight
+     * @return
+     */
+    public static HashMap<String, Double> maxTimeBetweenActivations(Fight fight) {
+        HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
+        HashMap<String, Double> ret = new HashMap();        //returned map
+
+        ArrayList<AbilityActivation> activations=getActivations(fight);
+        
+        for (AbilityActivation a : activations) {
+            String name = a.getAbilityname();
+            if (lastTime.get(name) == null) {
+                lastTime.put(name, a.getActivation());
+
+            } else if (ret.get(name) == null || ret.get(name) < Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation())) / 1000.0) {
+
+                ret.put(name, Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation())) / 1000.0);
+                lastTime.put(name, a.getActivation());
+
+            } else {
+                lastTime.put(name, a.getActivation());
+
+            }
+
+        }
+        return ret;
+    }
+
+    /**
+     * map key is ability name, value the min time between activations for that
+     * ability
+     *
+     * @param fight
+     * @return
+     */
+    public static HashMap<String, Double> minTimeBetweenActivations(Fight fight) {
+        ArrayList<AbilityActivation> activations=getActivations(fight);
         HashMap<String, LocalTime> lastTime = new HashMap(); //Helper map, to store timestamp of last activation
         HashMap<String, Double> ret = new HashMap();        //returned map
 
         for (AbilityActivation a : activations) {
             String name = a.getAbilityname();
             if (lastTime.get(name) == null) {
-                lastTime.put(name, a.getActivation() );
-            
-                ret.put(name, Double.valueOf(getDiffrence(fightStart, a.getActivation()) / 1000));
-            }else if(ret.get(name)>Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation()))){
                 lastTime.put(name, a.getActivation());
-                ret.put(name, Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation())));
-                
+
+            } else if (ret.get(name) == null || ret.get(name) > Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation())) / 1000.0) {
+
+                ret.put(name, Double.valueOf(getDiffrence(lastTime.get(name), a.getActivation())) / 1000.0);
+                lastTime.put(name, a.getActivation());
+
+            } else {
+                lastTime.put(name, a.getActivation());
             }
 
         }

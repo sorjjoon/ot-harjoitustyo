@@ -107,7 +107,11 @@ public class Analysis {
 
     private final ArrayList<Tuple<LocalTime, Double>> momentaryHpsByTime;
     private HashMap<String, ArrayList<Tuple<LocalTime, Double>>> momentaryHpsByTimeBreakdownByTarget;
+    
+    private final HashMap<String, Double> minActivations;
 
+    private final HashMap<String, Double> avgActivations;
+    private final HashMap<String, Double> maxActivations;
     
     /**
      * Formats all data created calculated using Stats to Strings
@@ -297,11 +301,29 @@ public class Analysis {
         for (String s : healBreakdownByTarget.keySet()) {
             momentaryHpsByTimeBreakdownByTarget.put(s, Stats.momentaryHpsAgainstTarget(f, s));
         }
+        
+        //Ability activations
+        minActivations=Stats.minTimeBetweenActivations(f);
+        
+        maxActivations=Stats.maxTimeBetweenActivations(f);
 
+        avgActivations=Stats.avgTimeBetweenActivations(f);
     }
 
     public HashMap<String, Integer> getHealBreakdownByTarget() {
         return healBreakdownByTarget;
+    }
+
+    public HashMap<String, Double> getMinActivations() {
+        return minActivations;
+    }
+
+    public HashMap<String, Double> getAvgActivations() {
+        return avgActivations;
+    }
+
+    public HashMap<String, Double> getMaxActivations() {
+        return maxActivations;
     }
 
     public HashMap<String, String> getHealAvgBreakdownByTarget() {
