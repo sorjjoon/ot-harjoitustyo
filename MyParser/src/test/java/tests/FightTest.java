@@ -1,3 +1,5 @@
+package tests;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -63,6 +65,7 @@ public class FightTest {
          test.add(row3);
          Fight fight=new Fight(test);
          assertEquals("@Firaksîan",fight.getOwner());
+         assertEquals("@Firaksîan",Fight.determineOwner(test));
      }
      
      @Test

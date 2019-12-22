@@ -1,33 +1,39 @@
 package myparser.myparser.domain;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import myparser.myparser.types.Eventtype;
-import static java.time.temporal.ChronoUnit.MILLIS;
+import myparser.myparser.types.EventType;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 import myparser.myparser.stats.Stats;
 
 /**
  * contains all the rows to a specific fight
+ * <p>
+ * ArrayList of rows given to the constructor must be ordered by row number
  */
 public class Fight {
 
     private final ArrayList<Row> rows;
     private final String owner;
+
     /**
-     * Create a new fight instance from a set of rows. Determines the Fight owner automatically
+     * Create a new fight instance from a set of rows. Determines the Fight
+     * owner automatically from EnterCombat row target
+     * <p>
+     * given ArrayList of rows must be ordered by row number
+     *
      * @param rows
+     * @throws NoOwnerException in case an owner can't be determined
+     * automatically (will only happen, if both enter and exit combat rows have
+     * been removed)
      */
     public Fight(ArrayList<Row> rows) throws NoOwnerException {
         this.rows = rows;
         for (Row r : rows) {
             //EnterCombat should always be the first row, so the loop is not "necessary", the ExitCombat tag is here, in case we started logging midfight for  some reason, 
             //or the user deleted rows for  some reason (though in the current version if the entercombat row had been deleted the fight wouldn't be read
-          
-            if (r.getEventtype() == Eventtype.EnterCombat || r.getEventtype() == Eventtype.ExitCombat) {
+
+            if (r.getEventtype() == EventType.EnterCombat || r.getEventtype() == EventType.ExitCombat) {
                 this.owner = r.getSource();
                 return;
             }
@@ -35,11 +41,14 @@ public class Fight {
         //If we can't determine an owner for  the log, we raise an exception 
         throw new NoOwnerException("Couldn't determine owner");
     }
+
     /**
-      * In case we can't determine the owner automatically this constructor can be used (mainly when reading from database)
-      * @param rows
-      * @param owner
-      */
+     * In case we can't determine the owner automatically this constructor can
+     * be used (mainly when reading from database)
+     *
+     * @param rows
+     * @param owner
+     */
     public Fight(ArrayList<Row> rows, String owner) {
         this.rows = rows;
         this.owner = owner;
@@ -67,16 +76,18 @@ public class Fight {
     public int getSize() {
         return this.rows.size();
     }
+
     /**
-      * returns a new fight instance which contains only rows in the given timeframe
-      * @param start
-      * @param end
-      */
+     * returns a new fight instance which contains only rows in the given time
+     * frame
+     *
+     * @param start
+     * @param end
+     */
     public Fight rowsInTimeFrame(LocalTime start, LocalTime end) {
         ArrayList<Row> specficRows = new ArrayList();
 
-       
-        long durationMs = Stats.getDurationMs(this);
+        long durationMs = Stats.durationMs(this);
 
         for (Row r : this.rows) {
             LocalTime time = r.getTimestamp();
@@ -92,12 +103,13 @@ public class Fight {
     }
 
     /**
-     * combine 2 fights into a new fight rows in the parameter fight are added
-     * after the previous fihgt
+     * combine 2 fights into a new fight.
+     * <p>
+     * Rows in the parameter fight are added after the fight this method is
+     * called on
      *
      * @param later
      */
-
     public void combineFights(Fight later) {
         for (Row r : later.getRows()) {
             this.rows.add(r);
@@ -121,6 +133,24 @@ public class Fight {
     public LocalTime getEnd() {
         return this.rows.get(rows.size() - 1).getTimestamp();
 
+    }
+
+    /**
+     * In case of NoOwnerException, because enter and exit combat rows have been
+     * deleted, this method checks for Owner by looking at rows, which have the
+     * same source and target
+     *
+     * @param rows
+     * @return
+     * @throws NoOwnerException if owner can't be determined
+     */
+    public static String determineOwner(ArrayList<Row> rows) throws NoOwnerException {
+        for (Row r : rows) {
+            if (r.getTarget().equals(r.getSource())) {
+                return r.getTarget();
+            }
+        }
+        throw new NoOwnerException();
     }
 
     //these are only used for testing (at least in the current version)

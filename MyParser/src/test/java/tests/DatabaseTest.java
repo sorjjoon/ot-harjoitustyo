@@ -1,3 +1,5 @@
+package tests;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.readers.Reader;
+import myparser.myparser.stats.Tuple;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -65,9 +68,12 @@ public class DatabaseTest {
     
     @Test
     public void listOfEntries()throws Exception{
+        
         String path="src/test/test.txt";
         ArrayList<Fight> fights=Reader.readFile(new File(path));
         this.database.addListOfFights(fights, LocalDate.now(), "test", "test.txt");
-        assertEquals(true,this.database.getSavedLogs().contains("test.txt"));
+        assertEquals(true,this.database.getSavedLogsAndMessages()[0].contains("test.txt"));
+        assertEquals(true,this.database.getSavedLogsAndMessages()[1].contains("test"));
+        
     }
 }

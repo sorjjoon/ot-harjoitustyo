@@ -7,10 +7,10 @@ package myparser.myparser.types;
 
 
 /**
- *
- * Diffrent possible Event types
+ * Constains the (english) String representation of all possible Events (see Type) found in logs <p>
+ * Only ones used by the application are Enter and ExitCombat, death and abilityActivate 
  */
-public enum Eventtype {
+public enum EventType {
     
     Death,
     Revived,

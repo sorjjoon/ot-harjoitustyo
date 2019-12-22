@@ -10,8 +10,8 @@ import myparser.myparser.domain.Row;
 
 /**
  *
- * This class provides a way to deal with ability activations, and helps track
- * ends and starts of effects Current version doesn't use this yet
+ * This class represents a single ability activation and provides  a way to deal with ability activations, and helps track
+ * ends and starts of effects. Current version uses this to only track ability activations, but not any effect they may have
  */
 public class AbilityActivation {
 
@@ -36,7 +36,7 @@ public class AbilityActivation {
     /**
      * used for only tracking ability activations
      *
-     * @param activate
+     * @param  activate 
      */
     public AbilityActivation(Row activate) {
         this.abilityName = activate.getAbilityName();
@@ -82,10 +82,5 @@ public class AbilityActivation {
         return dmgHeal;
     }
 
-    //this is for testing mostly
-    @Override
-    public String toString() {
-        return "AbilityActivation{" + "applyEffect = " + applyEffect.getTimestamp() + ", removeEffect = " + removeEffect.getTimestamp() + '}';
-    }
 
 }

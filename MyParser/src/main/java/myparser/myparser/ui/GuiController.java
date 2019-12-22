@@ -5,21 +5,19 @@
  */
 package myparser.myparser.ui;
 
-import com.sun.xml.internal.bind.v2.runtime.property.PropertyFactory;
 import database.Database;
+import database.LogStorage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
-
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -30,29 +28,24 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ListView;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javax.swing.event.ChangeListener;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.NoOwnerException;
 import myparser.myparser.readers.Reader;
-import myparser.myparser.stats.Stats;
 import myparser.myparser.stats.Tuple;
+import myparser.myparser.types.DamageType;
 
 /**
  * FXML Controller class
@@ -60,12 +53,13 @@ import myparser.myparser.stats.Tuple;
  * @author joona
  */
 public class GuiController implements Initializable {
+
     private ArrayList<Fight> fights;
     private ArrayList<Analysis> analysis;
     private Analysis currentView;
     private String fileName;
-    private Database database;
-    
+    private LogStorage database;
+
     @FXML
     private ListView fight_list;
 
@@ -201,30 +195,53 @@ public class GuiController implements Initializable {
     @FXML
     private LineChart<?, ?> momentHpsChart;
     @FXML
-    private TableColumn<String, Columndata> abilityColumn;
+    private TableColumn<String, ColumnData> abilityColumn;
     @FXML
-    private TableColumn<String, Columndata> avgColumn;
+    private TableColumn<String, ColumnData> avgColumn;
     @FXML
-    private TableColumn<String, Columndata> minColumn;
+    private TableColumn<String, ColumnData> minColumn;
     @FXML
-    private TableColumn<String, Columndata> maxColumn;
+    private TableColumn<String, ColumnData> maxColumn;
     @FXML
-    private TableView<Columndata> tableView;
-    private ObservableList usageData;
+    private TableView<ColumnData> tableView;
+    @FXML
+    private TableColumn<?, ?> countColumn;
+    @FXML
+    private ChoiceBox<String> dmgTakenChoiceBox;
+    @FXML
+    private Text totalDamageTakenTab;
+    @FXML
+    private Text dtpsDamageTakenTab;
+    @FXML
+    private Text hitsDamageTakenTab;
+    @FXML
+    private Text avgDamageTakenTab;
+    @FXML
+    private Text bigDamageTakenTab;
+    @FXML
+    private Text critsDamageTakenTab;
+    @FXML
+    private Text hitPrecentageDamageTakenTab;
+    @FXML
+    private Text totalPrecentageDamageTakenTab;
+    @FXML
+    private PieChart dmgTakengByTypePieChart;
+    @FXML
+    private PieChart dmgTakenByAbilityPieChart;
 
     /**
-     * tableView.getItems().add(new                                     
-     * Initializes the controller class.
+     * Initialize controller class
+     *
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        this.analysis=new ArrayList();
+        this.analysis = new ArrayList();
+        this.fights = new ArrayList();
         dmgLineChart.setCreateSymbols(false);
         dpsChart.setCreateSymbols(false);
         dpsChartYAxis.setLowerBound(0);
         hpsChart.setCreateSymbols(false);
         healLineChart.setCreateSymbols(false);
-
         hpsChart.getXAxis().setTickLabelsVisible(false);
         healLineChart.getXAxis().setTickLabelsVisible(false);
         momentHpsChart.setCreateSymbols(false);
@@ -233,19 +250,18 @@ public class GuiController implements Initializable {
         dmgLineChart.getXAxis().setTickLabelsVisible(false);
         MomentDpsChart.setCreateSymbols(false);
         MomentDpsChart.getXAxis().setTickLabelsVisible(false);
-        
-        
-        
+
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         abilityColumn.setCellValueFactory(new PropertyValueFactory<>("abilityName"));
-        
+
         avgColumn.setCellValueFactory(new PropertyValueFactory<>("avg"));
-        
+
         maxColumn.setCellValueFactory(new PropertyValueFactory<>("max"));
-        
-        
+
         minColumn.setCellValueFactory(new PropertyValueFactory<>("min"));
-        
+
+        countColumn.setCellValueFactory(new PropertyValueFactory<>("count"));
+
         fight_list.setOnMouseClicked(new EventHandler<MouseEvent>() {
             //This method triggers everytime you double click the ListView
             @Override
@@ -257,109 +273,150 @@ public class GuiController implements Initializable {
                 }
             }
         });
-        //set listener for dmgTab choice box
+        //set listener for  choice box
         this.dmgChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> dmgTabSelection(newSelect));
         this.healChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> healTabSelection(newSelect));
+        this.dmgTakenChoiceBox.getSelectionModel().selectedItemProperty().addListener((v, oldSelect, newSelect) -> dmgTakenTabSelection(newSelect));
 
     }
+
     //TODO add a way to create an empty database
+    /**
+     * save the currently analyzed file to a database
+     */
     @FXML
-    public void saveFile() {
-        if(this.analysis.isEmpty()){
+    private void saveFile() {
+        if (this.analysis.isEmpty()) {
+
+            new Alert(AlertType.ERROR, "Choose a log to analyze first").show();
             return;
         }
-        
-        
-        if(database==null){
+
+        if (database == null) {
             setDatabase();
-            
+
         }
-        try{
-            //TODO add file type selection (dummy, pvp, op etc)
-            if(database.getSavedLogs().contains(fileName)) {
-                
-                new Alert(AlertType.ERROR,"Database contains a file with this name").show();
+        try {
+            if (database.getSavedLogsAndMessages()[0].contains(fileName)) {
+
+                new Alert(AlertType.ERROR, "Database contains a file with this name").show();
                 return;
             }
-            database.addListOfFights(fights, LocalDate.now(),"",fileName);
 
-        }catch(SQLException e){
-            System.out.println("Saving failed");
-            System.out.println(e.getMessage());
+            TextInputDialog dialog = new TextInputDialog("");
+            dialog.setTitle("File type");
+            dialog.setContentText("Add a short message with the log?");
+
+            Optional<String> result = dialog.showAndWait();
+            if (result.isPresent()) {
+                if (result.get().length() > 200) {
+                    new Alert(AlertType.ERROR, "Message can't be longer than 200 characters").show();
+                    return;
+
+                }
+                String message = result.get();
+                database.addListOfFights(fights, LocalDate.now(), message, fileName);
+            }
+
+        } catch (SQLException e) {
+            new Alert(AlertType.ERROR, "Error connecting to database (database most likely in use)" + "\n" + e.getMessage()).show();
+
+        } catch (IllegalArgumentException e) {
+            new Alert(AlertType.ERROR, "No log being analyzed").show();
         }
-        
-        
+
     }
-    
+
+    /**
+     * Prompt the user to choose a file to load from the database
+     */
     @FXML
-    public void loadFile(){
-        if(database==null){
+    private void loadFile() {
+        if (database == null) {
             setDatabase();
         }
-        
-        //TODO add more info about logs to choices
-        try{
-        ChoiceDialog<String> dialog = new ChoiceDialog<>("", database.getSavedLogs());
-        dialog.setTitle("Log Selection");
-        dialog.setHeaderText("Select Log");
-        dialog.setContentText("Choose a log");
 
-        // Traditional way to get the response value.
-        Optional<String> logName = dialog.showAndWait();
-        if(!logName.isPresent()){
-            return; //This shouldn't happen
-        }
-            System.out.println(logName.get());
-        newFile(database.getFightsFromLog(logName.get()),logName.get());
-        
-        
-        
-        }catch(SQLException e){
-            System.out.println(e.getMessage());
-        }catch(NoOwnerException e){
-            //TODO
+        //TODO add more info about logs to choices
+        try {
+            List<String>[] logsAndMessages = database.getSavedLogsAndMessages();
+            ArrayList<String> logList = new ArrayList();
+            for (int i = 0; i < logsAndMessages[0].size(); i++) {
+                logList.add(logsAndMessages[0].get(i) + ", " + logsAndMessages[1].get(i));
+            }
+
+            ChoiceDialog<String> dialog = new ChoiceDialog<>("", logList);
+            dialog.setTitle("Log Selection");
+            dialog.setHeaderText("Select Log");
+            dialog.setContentText("Choose a log");
+
+            Optional<String> logName = dialog.showAndWait();
+            if (logName.isPresent()) {
+                String justLogName = logName.get().substring(0, logName.get().indexOf(",")); //logName.get() has user message as well
+                newFile(database.getFightsFromLog(justLogName), justLogName);
+            }
+
+        } catch (SQLException e) {
+            new Alert(AlertType.ERROR, "Error connecting to database (database most likely in use)" + "\n" + e.getMessage()).show();
+        } catch (NoOwnerException e) {
+            //Shouldn't be possible
+        } catch (IllegalArgumentException e) {
+            new Alert(AlertType.ERROR, "Error connecting to database (database most likely in use)" + "\n" + e.getMessage()).show();
         }
     }
-    
-    
-    
-    //TODO check ListView with a big log (if it fits on the screen)
+
+    /**
+     * prompt the user to choose a new file to read
+     */
     @FXML
-    public void chooseFile() {
+    private void chooseFile() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file;
-        try {
-
-            file = fileChooser.showOpenDialog(null);
-        } catch (NullPointerException e) {  //Happens if user closes the selection window without choosing anything
+        File file = fileChooser.showOpenDialog(null);
+        if (file == null) {
             return;
         }
+
         try {
-            
-            newFile(Reader.readFile(file),file.getName());
+
+            newFile(Reader.readFile(file), file.getName());
         } catch (FileNotFoundException e) {
-            //TODO, I don't know why this would happen
+            new Alert(AlertType.ERROR, e.getMessage()).show(); //This should happen only for lack of permissions (in which case e.getMessage is enough of a error message)
         }
     }
+
     /**
-     * Doesn't change current file name!
-     * @param newFights 
+     * Create Analysis objects based on the new view, and update the fight list
+     * selection
+     *
+     * @param newFights
+     * @param fileName
      */
-    public void newFile(ArrayList<Fight> newFights,String fileName){
-            this.fileName=fileName;
-            this.analysis = new ArrayList();
-            this.fights=newFights;
-            for (Fight f : fights) {
-                this.analysis.add(new Analysis(f));
-            }
-            createListView(fights);
+    private void newFile(ArrayList<Fight> newFights, String fileName) {
+
+        this.fileName = fileName;
+        this.analysis = new ArrayList();
+        if (newFights.isEmpty()) {
+            new Alert(AlertType.ERROR, "The log you've given does not appear to be combat log").show();
+        }
+        this.fights = newFights;
+
+        for (Fight f : fights) {
+            this.analysis.add(new Analysis(f));
+        }
+
+        createListView(fights);
     }
 
-    public void createListView(ArrayList<Fight> fights) {
-        int i = 1;
+    /**
+     * create the fight list selection
+     *
+     * @param fights
+     */
+    private void createListView(ArrayList<Fight> fights) {
+
         fight_list.getItems().clear();
+        int i = 1;
         for (Fight f : fights) {
             fight_list.getItems().add(i + ": " + f.getStart() + " - " + f.getEnd());
             i++;
@@ -367,7 +424,10 @@ public class GuiController implements Initializable {
 
     }
 
-    public void updateOverViewTab() {
+    /**
+     * update all overview data displayed
+     */
+    private void updateOverViewTab() {
 
         //overview
         owner.setText(currentView.getOwner());
@@ -415,69 +475,141 @@ public class GuiController implements Initializable {
         tps.setText(currentView.getTps());
     }
 
-    //this method updates the current view for the fight being looked at    
-    public void updateView(String fightName) {
+    /**
+     * updates the view to match current fight selection
+     *
+     * @param fightName
+     */
+    private void updateView(String fightName) {
+
         //TODO figure out a better way to get the fight we are looking at
         int index = Integer.valueOf(fightName.substring(0, fightName.indexOf(":"))) - 1;
 
         this.currentView = analysis.get(index);
 
-        //OVERVIEW TAB
+        clearView();
         updateOverViewTab();
-
-        //set the dmg tab selection boxx
+        updateDmgTakenTabChoiceBox();
         updateDmgTabChoiceBox();
         updateHealTabChoiceBox();
         updateAbilityUsage();
 
     }
-    
-    public void updateAbilityUsage(){
-        
-        for(String s :currentView.getMaxActivations().keySet()){    //all maps have same keyset
-            tableView.getItems().add(new Columndata(s,currentView.getAvgActivations().get(s),currentView.getMaxActivations().get(s),currentView.getMinActivations().get(s)));
-        }
+
+    /**
+     * Clears data from all objects currently in view
+     */
+    private void clearView() {
+
+        this.healChoiceBox.getItems().clear();
+        this.dmgTakenChoiceBox.getItems().clear();
+        this.dmgChoiceBox.getItems().clear();
+
+        dmgLineChart.getData().clear();
+        dpsChart.getData().clear();
+        MomentDpsChart.getData().clear();
+        healLineChart.getData().clear();
+        hpsChart.getData().clear();
+        momentHpsChart.getData().clear();
+
+        tableView.getItems().clear();
     }
 
-    public void updateHealTabChoiceBox() {
+    /**
+     * Set new data for the ability usage table
+     */
+    private void updateAbilityUsage() {
+        for (String s : currentView.getMaxActivations().keySet()) {    //all maps have same keyset
+
+            tableView.getItems().add(new ColumnData(s, currentView.getAvgActivations().get(s), currentView.getMaxActivations().get(s), currentView.getMinActivations().get(s), currentView.getCountActivations().get(s)));
+        }
+        tableView.sort();
+    }
+
+    /**
+     * update heal tab choice box to match current fight selection NOTE doesn't
+     * clear old choice box, so clearView must be called first
+     */
+    private void updateDmgTakenTabChoiceBox() {
+        ObservableList targets = FXCollections.observableArrayList();
+
+        targets.add("All");
+        for (String s : currentView.getDmgTakenBreakdownBySource().keySet()) {
+            targets.add(s);
+        }
+        this.dmgTakenChoiceBox.getItems().addAll(targets);
+
+        this.dmgTakenChoiceBox.setValue("All");
+    }
+
+    /**
+     * update heal tab choice box to match current fight selection NOTE doesn't
+     * clear old choice box, so clearView must be called first
+     */
+    private void updateHealTabChoiceBox() {
         ObservableList targets = FXCollections.observableArrayList();
 
         targets.add("All");
         for (String s : currentView.getHealBreakdownByTarget().keySet()) {
             targets.add(s);
         }
-        this.healChoiceBox.getItems().clear();
         this.healChoiceBox.getItems().addAll(targets);
 
         this.healChoiceBox.setValue("All");
+        targets = null;
     }
 
-    public void updateDmgTabChoiceBox() {
+    /**
+     * update dmg choice box to match current fight selection NOTE doesn't clear
+     * old choice box, so clearView must be called first
+     */
+    private void updateDmgTabChoiceBox() {
         ObservableList targets = FXCollections.observableArrayList();
 
         targets.add("All");
         for (String s : currentView.getDmgBreakdownByTarget().keySet()) {
             targets.add(s);
         }
-        this.dmgChoiceBox.getItems().clear();
         this.dmgChoiceBox.getItems().addAll(targets);
 
         this.dmgChoiceBox.setValue("All");
     }
 
-    //TODO make linegraph pretty
-    public void dmgTabSelection(String newValue) {
-        //ignore nulls
-        if (newValue == null) {
-            return;
-        }
-        //set overview texts
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+    /**
+     * Clears all data from dmg tab charts
+     */
+    private void clearDmgCharts() {
         dmgLineChart.getData().clear();
         dpsChart.getData().clear();
         MomentDpsChart.getData().clear();
 
-        //note, even char name "All" is not an issue (@ at start)
+    }
+
+    /**
+     * clear all data from healing tab charts
+     */
+    private void clearHealCharts() {
+        healLineChart.getData().clear();
+        hpsChart.getData().clear();
+        momentHpsChart.getData().clear();
+    }
+
+    //TODO make linegraph pretty
+    /**
+     * update dmg tab to match current fight selection
+     *
+     * @param newValue
+     */
+    private void dmgTabSelection(String newValue) {
+        //ignore nulls
+        if (newValue == null) {
+            return;
+        }
+        clearDmgCharts();
+        //set overview texts
+        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+
+        //note, char name "All" is not an issue (@ at start)
         if (newValue.equals("All")) {
             totalDamageTab.setText(currentView.getAllDmgDone());
             dpsDamageTab.setText(currentView.getDps());
@@ -497,7 +629,6 @@ public class GuiController implements Initializable {
             HashMap<LocalTime, Integer> lineData = currentView.getDmgCumulative();
             XYChart.Series data = new XYChart.Series();
 
-            //TODO make this look pretty
             LocalTime[] sortedLineData = lineData.keySet().stream().sorted().toArray(LocalTime[]::new);
             for (LocalTime l : sortedLineData) {
                 data.getData().add(new XYChart.Data(l.toString(), lineData.get(l)));
@@ -505,7 +636,6 @@ public class GuiController implements Initializable {
 
             dmgLineChart.getData().add(data);
 
-//             
             ArrayList<Tuple> dpsChartData = currentView.getTotalDpsByTime();
             XYChart.Series dpsData = new XYChart.Series();
             for (Tuple<LocalTime, Double> t : dpsChartData) {
@@ -549,7 +679,6 @@ public class GuiController implements Initializable {
             HashMap<LocalTime, Integer> lineData = currentView.getDmgCumulativeBreakdownByTarget().get(newValue);
             XYChart.Series data = new XYChart.Series();
 
-            //TODO make this look pretty
             LocalTime[] sortedLineData = lineData.keySet().stream().sorted().toArray(LocalTime[]::new);
             for (LocalTime l : sortedLineData) {
                 data.getData().add(new XYChart.Data(l.toString(), lineData.get(l)));
@@ -584,16 +713,68 @@ public class GuiController implements Initializable {
 
     }
 
-    public void healTabSelection(String newValue) {
+    private void setTextFieldsDmgTakenTab(String newValue) {
+        if (newValue.equals("All")) {
+            totalDamageTakenTab.setText(currentView.getAllDmgTaken());
+            dtpsDamageTakenTab.setText(currentView.getDtps());
+        } else {
+            totalDamageTakenTab.setText(currentView.getDmgTakenBreakdownBySource().get(newValue).toString());
+            dtpsDamageTakenTab.setText(currentView.getDtpsBreakdownBySource().get(newValue));
+
+        }
+
+        hitsDamageTakenTab.setText(currentView.getDmgTakenHitsBySource().get(newValue));
+        avgDamageTakenTab.setText(currentView.getDmgTakenAvgBreakdownBySource().get(newValue));
+        bigDamageTakenTab.setText(currentView.getDmgTakenBigBreakdownBySource().get(newValue));
+        critsDamageTakenTab.setText(currentView.getDmgTakenCritBreakdownBySource().get(newValue));
+        hitPrecentageDamageTakenTab.setText(currentView.getDmgTakenHitPrecentageBySource().get(newValue));
+        totalPrecentageDamageTakenTab.setText(currentView.getDmgTakenTotalPrecentageByTarget().get(newValue));
+
+    }
+
+    private void setDmgTakenCharts(String newValue) {
+        this.dmgTakenByAbilityPieChart.getData().clear();
+        this.dmgTakengByTypePieChart.getData().clear();
+
+        for (DamageType s : currentView.getDmgTakenBreakdownByTypeAndBySource().get(newValue).keySet()) {
+
+            dmgTakengByTypePieChart.getData().add(new PieChart.Data(String.valueOf(s), currentView.getDmgTakenBreakdownByTypeAndBySource().get(newValue).get(s)));
+
+        }
+
+        for (String s : currentView.getDmgTakenBreakdownByAbility().get(newValue).keySet()) {
+            dmgTakenByAbilityPieChart.getData().add(new PieChart.Data(s, currentView.getDmgTakenBreakdownByAbility().get(newValue).get(s)));
+        }
+    }
+
+    /**
+     * update dmg taken tab to match new selection
+     *
+     * @param newValue
+     */
+    private void dmgTakenTabSelection(String newValue) {
+        if (newValue == null) {
+            return;
+        }
+        setDmgTakenCharts(newValue);
+
+        setTextFieldsDmgTakenTab(newValue);
+
+    }
+
+    /**
+     * update heal tab to match current fight selection
+     *
+     * @param newValue
+     */
+    private void healTabSelection(String newValue) {
         //ignore nulls
         if (newValue == null) {
             return;
         }
+        clearHealCharts();
         //set overview texts
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        healLineChart.getData().clear();
-        hpsChart.getData().clear();
-        momentHpsChart.getData().clear();
 
         //note, even char name "All" is not an issue (@ at start)
         if (newValue.equals("All")) {
@@ -636,17 +817,13 @@ public class GuiController implements Initializable {
             ArrayList<Tuple<LocalTime, Double>> momentChartData = currentView.getMomentaryHpsByTime();
             XYChart.Series momentData = new XYChart.Series();
             for (Tuple<LocalTime, Double> t : momentChartData) {
-//                System.out.println(t);
-
                 //We are rounding here because I can't get the linechart to work with doubles
-                //TODO make linechart work with doubles
                 int rounded = (int) Math.round(t.getSecond());
                 momentData.getData().add(new XYChart.Data(t.getFirst().toString(), rounded));
             }
 
             momentHpsChart.getData().add(momentData);
 
-//             
         } else {
             totalHealTab.setText(String.valueOf(currentView.getHealBreakdownByTarget().get(newValue)));
             hpsHealTab.setText(currentView.getHpsBreakdownByTarget().get(newValue));
@@ -689,7 +866,6 @@ public class GuiController implements Initializable {
             ArrayList<Tuple<LocalTime, Double>> momentChartData = currentView.getMomentaryHpsByTimeBreakdownByTarget().get(newValue);
             XYChart.Series momentData = new XYChart.Series();
             for (Tuple<LocalTime, Double> t : momentChartData) {
-//                System.out.println(t);
 
                 //We are rounding here because I can't get the linechart to work with doubles
                 //TODO make linechart work with doubles
@@ -702,25 +878,59 @@ public class GuiController implements Initializable {
         }
 
     }
-    
-    private void setDatabase(){
+
+    /**
+     * create a new empty database file
+     */
+    @FXML
+    private void newDatabase() {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Choose Location");
+        File selectedDirectory = chooser.showDialog(null);
+        if (selectedDirectory == null) {
+            return;
+        }
+        TextInputDialog dialog = new TextInputDialog("saved_logs");
+        dialog.setTitle("Database name");
+        dialog.setContentText("Give the new database name:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            try (LogStorage data = new Database(selectedDirectory.toString() + File.separator + result.get())) {
+                data.reset();
+            } catch (SQLException e) {
+                new Alert(AlertType.ERROR, "Error creating database " + e.getMessage()).show();
+
+            }
+        }
+
+    }
+
+    /**
+     * choose a new database file to connect to
+     */
+    @FXML
+    private void setDatabase() {
+        if (this.database != null) {
+
+            database.close();
+        }
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(" (*.mv.db)", "*.mv.db");
         fileChooser.getExtensionFilters().add(extFilter);
-        File file;
         try {
 
-            file = fileChooser.showOpenDialog(null);
-        } catch (NullPointerException e) {  //Happens if user closes the selection window without choosing anything
-            return;
+            File file = fileChooser.showOpenDialog(null);
+            if (file == null) {
+                return;
+            }
+            this.database = new Database(file.getPath());
+
+        } catch (SQLException e) {
+            new Alert(AlertType.ERROR, "Error connecting to database (database most likely in use)" + "\n" + e.getMessage()).show();
+
         }
-        try{
-            this.database=new Database(file.getPath());
-        }catch(SQLException e ){
-            System.out.println("Connection failed");
-            System.out.println(e.getMessage());
-        }
-        
+
     }
 
 }

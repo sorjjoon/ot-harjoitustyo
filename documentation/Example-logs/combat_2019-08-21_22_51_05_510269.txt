@@ -4488,7 +4488,6 @@
 [23:08:41.548] [@Blonde'kate] [@Firaksîan] [Recuperative Nanotech {815232037421056}] [ApplyEffect {836045448945477}: Recuperative Nanotech {815232037421056}] ()
 [23:08:41.548] [@Blonde'kate] [@Firaksîan] [Recuperative Nanotech {815232037421056}] [ApplyEffect {836045448945477}: Heal {836045448945500}] (1288*)
 [23:08:41.684] [@Shâløm Kappa] [@Firaksîan] [Flame Sweep {814227015073792}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (3261 elemental {836045448940875}) <8152>
-[23:08:41.845] [] [@Firaksîan] [Burning Slices {3971238431031296}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (359 elemental {836045448940875}) <359>
 [23:08:42.059] [@Firaksîan] [@Firaksîan] [Pooled Hatred {3426524908748800}] [RemoveEffect {836045448945478}: Pooled Hatred {3426524908748800}] ()
 [23:08:42.247] [@Firaksîan] [@Shâløm Kappa] [Piercing Chill {3909511161053184}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (355 elemental {836045448940875}) <889>
 [23:08:42.247] [@Firaksîan] [@Shâløm Kappa] [Piercing Chill {3909511161053184}] [RemoveEffect {836045448945478}: Piercing Chill {3909511161053184}] ()
@@ -4522,7 +4521,6 @@
 [23:08:44.259] [@Blonde'kate] [@Firaksîan] [Kolto Waves {3402082249867264}] [ApplyEffect {836045448945477}: Heal {836045448945500}] (1813)
 [23:08:44.468] [@Firaksîan] [@Firaksîan] [Backhand {1582326081388544}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()
 [23:08:44.468] [@Firaksîan] [@Predori] [Backhand {1582326081388544}] [ApplyEffect {836045448945477}: Stunned (Force) {1582326081388800}] ()
-[23:08:44.469] [] [@Firaksîan] [Burning Slices {3971238431031296}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (339 elemental {836045448940875} (338 absorbed {836045448945511})) <339>
 [23:08:44.748] [@Shâløm Kappa] [@Firaksîan] [Suppressive Tools {3390885270126592}] [RemoveEffect {836045448945478}: Slowed (Tech) {3390885270126856}] ()
 [23:08:44.757] [@Firaksîan] [@Shâløm Kappa] [Backhand {1582326081388544}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (874 kinetic {836045448940873}) <3279>
 [23:08:44.757] [@Firaksîan] [@Predori] [Backhand {1582326081388544}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (3594* kinetic {836045448940873}) <13477>
@@ -6860,7 +6858,6 @@
 [23:17:23.872] [@Firaksîan] [@Who ?¶wintrader] [Aegis Assault {3438288824172544}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (0 -dodge {836045448945505}) <1>
 [23:17:23.872] [@Firaksîan] [@Who ?¶wintrader] [Aegis Assault {3438288824172544}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (0 -dodge {836045448945505}) <1>
 [23:17:24.095] [@Firaksîan] [@Firaksîan] [ {3699220972306432}] [RemoveEffect {836045448945478}: War Leader's Damage Reduction Bonus {3699220972306694}] ()
-[23:17:24.198] [] [@Firaksîan] [Maul {808269895434240}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (5541 energy {836045448940874}) <5541>
 [23:17:24.388] [@Mamalookiamamagician] [@Firaksîan] [Crushed (Demolish) {3400617666019619}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (721* kinetic {836045448940873}) <721>
 [23:17:24.488] [@Alec] [@Firaksîan] [Challenging Call {812079531425792}] [ApplyEffect {836045448945477}: Taunt {812079531426137}] ()
 [23:17:24.788] [@Mamalookiamamagician] [@Firaksîan] [Creeping Terror {808424514256896}] [ApplyEffect {836045448945477}: Damage {836045448945501}] (911* internal {836045448940876}) <911>

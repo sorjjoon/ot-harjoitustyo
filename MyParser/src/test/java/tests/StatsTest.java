@@ -1,3 +1,5 @@
+package tests;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -7,15 +9,16 @@
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javafx.event.Event;
 import myparser.myparser.domain.Fight;
 import myparser.myparser.domain.Row;
+import myparser.myparser.stats.ActivationStats;
 import myparser.myparser.stats.Stats;
 import myparser.myparser.stats.Tuple;
-import static myparser.myparser.types.Damagetype.elemental;
-import static myparser.myparser.types.Damagetype.energy;
-import static myparser.myparser.types.Eventtype.AbilityActivate;
-import static myparser.myparser.types.Eventtype.EnterCombat;
+import myparser.myparser.types.DamageType;
+import static myparser.myparser.types.DamageType.elemental;
+import static myparser.myparser.types.DamageType.energy;
+import static myparser.myparser.types.EventType.AbilityActivate;
+import static myparser.myparser.types.EventType.EnterCombat;
 import static myparser.myparser.types.Type.ApplyEffect;
 import org.h2.tools.Restore;
 
@@ -91,6 +94,19 @@ public class StatsTest {
         this.momentFight = new Fight(rows);
 
     }
+    
+    
+    @Test
+    public void dmgTypes() {
+        
+        HashMap<DamageType, Integer> dmgTypes = Stats.dmgTakenByType(fight, fight.getOwner(), null);
+        assertEquals(Integer.valueOf(3452), dmgTypes.get(DamageType.elemental));
+        assertEquals(null, dmgTypes.get(DamageType.internal));
+        assertEquals(Integer.valueOf(1497), dmgTypes.get(DamageType.energy));
+        
+        assertEquals(null, dmgTypes.get(DamageType.kinetic));
+        
+    }
 
     @Test
     public void maxActivation() throws Exception {
@@ -104,7 +120,7 @@ public class StatsTest {
         rows.add(new Row("[22:12:12.009] [@Firaksian] [@Firaksian] [Kolto Probe {814832605462528}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()", 1));
         rows.add(new Row("[22:12:13.809] [@Firaksian] [@Firaksian] [Kolto Probe {814832605462528}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()", 1));
         Fight moi = new Fight(rows);
-        HashMap<String, Double> test = Stats.maxTimeBetweenActivations(moi);
+        HashMap<String, Double> test = ActivationStats.maxTimeBetweenActivations(moi);
 
         assertEquals(1.8, test.get("Kolto Probe"), 0.01);
 
@@ -122,9 +138,9 @@ public class StatsTest {
         rows.add(new Row("[22:12:12.009] [@Firaksian] [@Firaksian] [Kolto Probe {814832605462528}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()", 1));
         rows.add(new Row("[22:12:13.809] [@Firaksian] [@Firaksian] [Kolto Probe {814832605462528}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()", 1));
         Fight moi = new Fight(rows);
-        HashMap<String, Double> test = Stats.avgTimeBetweenActivations(moi);
+        HashMap<String, Double> test = ActivationStats.avgTimeBetweenActivations(moi)[1];
 
-        assertEquals(5.7 / 6.0, test.get("Kolto Probe"), 0.05);
+        assertEquals(5.7 / 5.0, test.get("Kolto Probe"), 0.05);
 
     }
 
@@ -140,7 +156,7 @@ public class StatsTest {
         rows.add(new Row("[22:12:12.009] [@Firaksian] [@Firaksian] [Kolto Probe {814832605462528}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()", 1));
         rows.add(new Row("[22:12:13.709] [@Firaksian] [@Firaksian] [Kolto Probe {814832605462528}] [Event {836045448945472}: AbilityActivate {836045448945479}] ()", 1));
         Fight moi = new Fight(rows);
-        HashMap<String, Double> test = Stats.minTimeBetweenActivations(moi);
+        HashMap<String, Double> test = ActivationStats.minTimeBetweenActivations(moi);
 
         assertEquals(0.3, test.get("Kolto Probe"), 0.1);
 
@@ -152,22 +168,22 @@ public class StatsTest {
 
     @Test
     public void biggestTakenHit() {
-        assertEquals(8433, Stats.getBigOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner()));
+        assertEquals(8433, Stats.biggestEffect(fight, "Damage", null, fight.getOwner()));
     }
 
     @Test
     public void biggestHeal() {
-        assertEquals(92, Stats.getBigOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null));
+        assertEquals(92, Stats.biggestEffect(fight, "Heal", fight.getOwner(), null));
     }
 
     @Test
     public void biggestHit() {
-        assertEquals(2452, Stats.getBigOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null));
+        assertEquals(2452, Stats.biggestEffect(fight, "Damage", fight.getOwner(), null));
     }
 
     @Test
     public void momentTest() {
-        ArrayList<Tuple<LocalTime, Double>> list = Stats.momentaryDps(momentFight);
+        ArrayList<Tuple<LocalTime, Double>> list = Stats.momentaryEffectAgainstTarget(momentFight,"Damage",fight.getOwner(), null);
         Tuple<LocalTime, Double> t = list.get(0);
         assertEquals(LocalTime.parse("22:36:10.733"), t.getFirst());
         assertEquals(Double.valueOf(149.7), t.getSecond(), 0.4);
@@ -188,7 +204,7 @@ public class StatsTest {
 
     @Test
     public void getTotalDpsByTime() {
-        ArrayList<Tuple> list = Stats.getTotalDpsByTime(fight);
+        ArrayList<Tuple> list = Stats.totalDpsByTime(fight);
 
         Tuple<LocalTime, Double> t = list.get(0);
         assertEquals(LocalTime.parse("22:36:58.733"), t.getFirst());
@@ -244,17 +260,17 @@ public class StatsTest {
 
     @Test
     public void missPrecentage() {
-        assertEquals((double) 1 / 4, Stats.missPrecentage(fight), 0.1);
+        assertEquals((double) 1 / 4, Stats.missPrecentage(fight, null), 0.1);
     }
 
     @Test
     public void critPrecentageDmg() {
-        assertEquals(0.75, Stats.getCritOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null), 0.1);
+        assertEquals(0.75, Stats.critPrecentage(fight, "Damage", fight.getOwner(), null), 0.1);
     }
 
     @Test
     public void allDamageTaken() {
-        assertEquals(10402, Stats.getSumOfEffectFromSourceAgainstTarget(fight, "Damage", null, fight.getOwner()));
+        assertEquals(10402, Stats.sumOfEffect(fight, "Damage", null, fight.getOwner()));
     }
 
     @Test
@@ -274,7 +290,7 @@ public class StatsTest {
         test.add(row2);
         Fight fight = new Fight(test);
         assertEquals("@Firaksîan", fight.getOwner());
-        assertEquals(Stats.getDurationMs(fight), (long) 1);
+        assertEquals(Stats.durationMs(fight), (long) 1);
 
     }
 
@@ -290,7 +306,7 @@ public class StatsTest {
         test.add(row2);
         Fight fight = new Fight(test);
         assertEquals("@Firaksîan", fight.getOwner());
-        assertTrue(Stats.getDurationMs(fight) == (long) 1 + 3.66e+6);
+        assertTrue(Stats.durationMs(fight) == (long) 1 + 3.66e+6);
 
     }
 
@@ -306,20 +322,20 @@ public class StatsTest {
         test.add(row2);
         Fight fight = new Fight(test);
 
-        assertEquals((long) 1 + 7.26e+6, Stats.getDurationMs(fight), 0);
+        assertEquals((long) 1 + 7.26e+6, Stats.durationMs(fight), 0);
         assertEquals("@Firaksîan", fight.getOwner());
     }
 
     @Test
     public void allDamageFromOwner() throws Exception {
         ArrayList<Row> rows = new ArrayList();
-        assertEquals(4949, Stats.getSumOfEffectFromSourceAgainstTarget(fight, "Damage", fight.getOwner(), null));
+        assertEquals(4949, Stats.sumOfEffect(fight, "Damage", fight.getOwner(), null));
     }
 
     @Test
     public void allHealingToOwner() throws Exception {
 
-        assertEquals(9113, Stats.getSumOfEffectFromSourceAgainstTarget(fight, "Heal", null, fight.getOwner()));
+        assertEquals(9113, Stats.sumOfEffect(fight, "Heal", null, fight.getOwner()));
     }
 
     @Test
@@ -329,7 +345,7 @@ public class StatsTest {
 
     @Test
     public void allHealingByOwner() throws Exception {
-        assertEquals(94, Stats.getSumOfEffectFromSourceAgainstTarget(fight, "Heal", fight.getOwner(), null));
+        assertEquals(94, Stats.sumOfEffect(fight, "Heal", fight.getOwner(), null));
     }
 
     @Test
@@ -344,4 +360,5 @@ public class StatsTest {
 
         assertEquals(dps, Stats.dps(fight), 0.1);
     }
+    
 }
