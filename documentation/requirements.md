@@ -11,7 +11,7 @@ Basic properities
  > - Also this information can be divided between targets (meaning for example dmg done to a specfic target, in the event that multiple enemies have been dealt dmg in a fight) 
  > - Breakdown of dmg and healing dealt in a single fight by ability  
 > - Storage of analyzed logs 
-> - Calcluating momentary dps, hps and dtps from the log
+> - Calcluating momentary dps, hps and dtps from the log (meaning dps, hps or dtps in last 10 s)
 > - Average, highest and lowest uptime for each ability used (uptime meaning time player could have used a specfic abilty but chose not to)
 
 User Interace
