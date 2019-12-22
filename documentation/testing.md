@@ -58,9 +58,7 @@ this exception is never thrown)
 stats package coverage is currenly only 67 %. The Tuple class has only a 17 % coverage, but this because the toString, hashcode and equals methods
 are not used by the current application in anyway (excpet for manual testing), so their testing was deemed unnecessary.  
 The abstact class Stats has currently several new methods that were added to support the damage taken tab added in this release,
-and due to time constrains there wasn't enough time to automate tests for these methods, but were all manually tested, to
-show corrext values
-
+and due to time constrains there wasn't enough time to automate tests for these methods, but all recieved only surface level manual testing (for example with cumulative dmg to show they were printing lines that ascended with the same rate as the log they were reading). These methods however are very similar to several methods that are already found on the application, and therefore their testing was given a low priority when preparing the latest release.   
 
 ### Installation and configuration
 
@@ -74,4 +72,4 @@ should this or a future release have an error not accounted for, it would print 
 
 ## Remaining problems  
 
-All problems currently found, but without a solution are presented (mainly javafx internal error handling)
+All problems currently found, but without a solution are presented (mainly javafx internal error handling, and lack of automated tests for latest Stats methods)
