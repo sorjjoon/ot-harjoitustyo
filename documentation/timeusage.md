@@ -18,4 +18,10 @@
 | 3.12 | 5 | Checkstyle... Split a few methods in Database and Row equals method to smaller parts. pom.xml configurations, can not get the project to run on latest java version |
 | 8.12 | 5 | Database integration into gui |
 | 10.12 | 7 | Release 6, documentation and testing, healing tab and Ability Usage tab |
-|Total | 70 |
+| 13.12 | 3 | Damage taken tab, Stats cleanup |
+| 15.12 | 4 | Damage taken tab, Stats cleanup |
+| 20.12 | 3 | Damage taken tab, Stats cleanup |
+| 21.12 | 2 | GuiController cleanup, Analysis cleanup |
+| 21.12 | 11 | javadoc, some testing |
+| 21.12 | 7 | finshing javadoc, final comments, final release, github cleanup |
+|Total | 101 |
