@@ -1,7 +1,7 @@
 ## Application Logic
-Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes, so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly the abstract classes Stats and Reader. Stats contains all methods used for the calculation of stats. Reader is responsible for turning the information in the log txt file into Fights. All methods and in Stats and Reader have been made static.
+Classes in the domain package (Row and Fight) are as used as wrappers to pass information from events inside between diffrent classes about the log being analyzed (Row represent a single line in a log file, and Fight represents are Rows that belong to a single in-game fight), so all classes (apart from ui, which uses these via the Analysis class) have some of their functionality dependant on these two classes, most importantly the abstract classes Stats and Reader. Stats contains all methods used for the calculation of stats. Reader is responsible for turning the information in the log txt file into Fights. All methods in Stats and Reader have been made static. Making Fight and Reader the only two objects used by the application logic.
 
-The Ui package contains 2 important classes, GuiController and Analysis, others are classes in the package are the main class (and gui , which creates a Scene using GuiController). The Analysis object is a wrapper for all information shown on the Gui page, formated into Strings (in a few cases data is Integers or Doubles, such as for chart data). GuiController contains all the logic behind the gui page and handles all user input. (See core functionality for more details). The Columndate class is a simple wrapper for Guicontroller to use for inputing data into the Ability usage tab tableView.
+The Ui package contains 2 important classes, GuiController and Analysis, others are classes in the package are the main class (and gui , which creates a Scene using GuiController). The Analysis object is a wrapper for all information shown on the Gui page, formated into Strings (in a few cases data is Integers or Doubles, such as for chart data). GuiController contains all the logic behind the gui page and handles all user input. (See core functionality for more details). The ColumnData class is a simple wrapper for Guicontroller to use for inputing data into the Ability usage tab tableView.
 
 Row and Fight, shown below.  
 ![architecture](/documentation/images/architecture.png)
@@ -14,7 +14,6 @@ Reader provides the static method
 Which is responsible for reading a given log file
 
 The class Stats contains numerous static methods for calculating different metrics about a specfic fight, such as
-  * getAllDamageByOwner(Fight fight) : int
   * dps(Fight fight) double
   * getDuration(Fight fight) long
   * divideDamageDealtByAbility (Fight fight) : HashMap<String, Integer>
